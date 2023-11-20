@@ -6,13 +6,14 @@ import { StoreService } from '../store.service';
   selector: 'app-place',
   template: `
     <div class="flex flex-col gap-4">
-      <div class="cart-item" *ngFor="let item of placeholderItems">
-        <app-item [item]="item" />
+      <div class="cart-item" *ngFor="let item of placeholderItems; let i = index">
+        <app-item [item]="item" [index]="i"/>
       </div>
       <div class="flex flex-row">
         <button (click)="addItem()" class="btn">Add</button>
-        <button class="btn">Submit</button>
+        <button (click)="saveItems(placeholderItems)" class="btn">Save</button>
       </div>
+      <button class="btn">Submit</button>
     </div>
   `,
   styles: [
@@ -32,5 +33,10 @@ export class PlaceComponent {
 
   get addItem() {
     return this.storeService.addItem;
+  }
+
+  saveItems(newItems: Item[]) {
+    this.storeService.placeholderItems = newItems;
+    return;
   }
 }

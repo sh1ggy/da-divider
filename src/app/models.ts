@@ -5,7 +5,7 @@ export interface Contact {
 }
 
 export interface Item {
-  name: string, 
-  price: number,
+  name: string | null, 
+  price: number | null,
   contact?: Contact,
 }
