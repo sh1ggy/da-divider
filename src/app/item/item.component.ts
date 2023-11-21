@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Item } from '../models';
+import { Contact, Item, Place } from '../models';
 import { StoreService } from '../store.service';
 
 @Component({
@@ -8,19 +8,19 @@ import { StoreService } from '../store.service';
   template: `
     <div class="flex join">
       <div class="form-control">
-        <label class="label">
+        <!-- <label class="label">
           <span class="label-text">{{item?.name}}</span>
-        </label>
+        </label> -->
         <label class="input-group">
           <!-- TODO: change how focus & unfocus works, this might not be the best way -->
           <input type="text" (focus)="focusForm()" (focusout)="unfocusForm()" [placeholder]="item?.name" [formControl]="itemName" class="input input-bordered"/>
-          <input type="number" (focus)="focusForm()" (focusout)="unfocusForm()" [placeholder]="item?.price" [formControl]="itemPrice" class="input input-bordered" />
+          <input type="number" min="0.00" max="300.00" step="0.01" (focus)="focusForm()" (focusout)="unfocusForm()" [placeholder]="item?.price" [formControl]="itemPrice" class="input input-bordered" />
           <select (focus)="focusForm()" (focusout)="unfocusForm()" [formControl]="contactName" class="select select-bordered" >
             <option *ngIf="!(item?.contact)" disabled selected>Pick contact</option>
-            <option *ngFor="let contact of placeholderContacts" [selected]="item?.contact?.name == contact?.name">{{contact.name}}</option>
+            <option *ngFor="let contact of contacts" [selected]="item?.contact?.name == contact?.name">{{contact.name}}</option>
           </select>
         </label>
-        <button *ngIf="editing" class="btn" (click)="saveItem()">Save</button>
+        <button (click)="saveItem()" *ngIf="editing" type="submit" class="btn">Save</button>
       </div>
     </div>
   `,
@@ -29,6 +29,8 @@ import { StoreService } from '../store.service';
 })
 export class ItemComponent {
   @Input() item: Item | undefined;
+  @Input() contacts: Contact[] | undefined;
+  @Input() place: Place | undefined;
   @Input() index: number = 0;
   
   itemName = new FormControl();
@@ -38,28 +40,19 @@ export class ItemComponent {
   newItem: Item | undefined;
   editing: boolean = false;
 
-  constructor(
-    private storeService: StoreService,
-  ) {}
-
-  get placeholderContacts() {
-    return this.storeService.placeholderContacts;
-  }
-
-  get placeholderItems() {
-    return this.storeService.placeholderItems;
-  }
-
   saveItem() {
+    console.log("Saving...")
+    if (!this.place) return;
     this.newItem = {
       name: this.itemName.value,
       price: this.itemPrice.value,
-      contact: this.placeholderContacts.find((item) => item.name == this.contactName.value),
+      contact: this.contacts?.find((item) => item.name == this.contactName.value),
     }
     // var currentIndex = this.placeholderItems.findIndex((item) => item.name == "");
-    this.placeholderItems[this.index] = this.newItem;
-    console.log("SAVED:", this.placeholderItems);
+    this.place.items[this.index] = this.newItem;
+    console.log("SAVED:", this.place.items);
     this.editing = false;
+    return;
   }
 
   focusForm() {
@@ -67,6 +60,9 @@ export class ItemComponent {
   }
 
   unfocusForm() {
+    setTimeout(function () {
+      console.log("SUP")
+      }, 5000)
     this.editing = false;
   }
 }

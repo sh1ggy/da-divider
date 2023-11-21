@@ -6,12 +6,14 @@ import { AppComponent } from './app.component';
 import { PlaceComponent } from './place/place.component';
 import { ItemComponent } from './item/item.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NightComponent } from './night/night.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PlaceComponent,
-    ItemComponent
+    ItemComponent,
+    NightComponent
   ],
   imports: [
     BrowserModule,
