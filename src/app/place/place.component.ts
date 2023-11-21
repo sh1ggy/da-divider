@@ -7,7 +7,7 @@ import { StoreService } from '../store.service';
   template: `
     <div class="flex flex-col gap-4">
       <div *ngFor="let item of this.place?.items; let i = index">
-        <app-item [item]="item" [contacts]="this.place?.contactList" [index]="i" />
+        <app-item [item]="item" [place]="this.place" [contacts]="this.place?.contactList" [index]="i" />
       </div>
       <div class="flex flex-row">
         <button (click)="addItem(this.place?.items)" class="btn">Add Item</button>

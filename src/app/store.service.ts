@@ -44,14 +44,17 @@ export class StoreService {
   }
 
   addPlace() {
-    console.log("Adding place!")
-    this.placeholderPlaces.push({ name: `Place ${this.placeholderPlaces.length + 1}`, items: [{ name: "", price: 0 }] })
+    console.log("Adding place!");
+
+    this.placeholderPlaces.push({ name: `Place ${this.placeholderPlaces.length + 1}`, items: [{ name: "", price: 0 }], contactList: this.placeholderContacts })
+    
     return;
   }
 
   addItem(items: Item[] | undefined) {
-    console.log("Adding item!")
     if (!items) return;
+    console.log("Adding item!");
+    
     items.push({ name: "", price: 0 });
     return;
   }
