@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Contact, Item, Place } from '../models';
 import { StoreService } from '../store.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-place',
@@ -16,12 +17,13 @@ import { StoreService } from '../store.service';
           <button (click)="addItem(this.place?.items)" class="btn">Add Item</button>
         </div>
       </div>
-      <div *ngIf="assignment" class="flex flex-col justify-content">
-        <select class="select select-bordered" >
+      <div *ngIf="assignment" class="flex flex-col justify-content gap-3">
+        <select (change)="setContact($event)" class="select select-bordered" >
           <option disabled selected>Pick contact</option>
           <option *ngFor="let contact of this.place?.contactList">{{contact.name}}</option>
         </select>
         <app-assignment *ngFor="let item of this.place?.items; let i = index" [item]="item" [place]="this.place" [contacts]="this.place?.contactList" [index]="i" />
+        <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total}}</p>
       </div>
     </div>
   `,
@@ -31,6 +33,10 @@ import { StoreService } from '../store.service';
 export class PlaceComponent {
   @Input() place: Place | undefined;
   @Input() index: number = 0;
+
+  chosenContact: string = "";
+
+  total: number = 10;
 
   pricing: boolean = false;
   assignment: boolean = true;
@@ -51,5 +57,11 @@ export class PlaceComponent {
   setAssignment() {
     this.assignment = true;
     this.pricing = false;
+  }
+
+  setContact(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    console.log("CHOSEN: ", target.value);
+    this.chosenContact = target.value;
   }
 }

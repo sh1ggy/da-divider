@@ -29,23 +29,22 @@ export class PricingComponent {
   @Input() place: Place | undefined;
   @Input() index: number = 0;
 
-  itemName = new FormControl();
-  itemPrice = new FormControl();
-  contactName = new FormControl();
+  itemName = new FormControl(null);
+  itemPrice = new FormControl(null);
+  // contactName = new FormControl(null);
 
   newItem: Item | undefined;
   editing: boolean = false;
 
   saveItem() {
-    if (!this.place) return;
-    // if (this.itemName == null || this.itemPrice == null || this.contactName == undefined) {
-    //   console.log("NO CHANGES");
-    //   return;
-    // }
+    if (!this.place || this.itemName.value == null || this.itemPrice.value == null) {
+      console.log("NO CHANGES")
+      return
+    };
     this.newItem = {
       name: this.itemName.value,
       price: this.itemPrice.value,
-      contact: this.contacts?.find((item) => item.name == this.contactName.value),
+      // contact: this.contacts?.find((item) => item.name == this.contactName.value),
     }
     this.place.items[this.index] = this.newItem;
     console.log("SAVED:", this.place);

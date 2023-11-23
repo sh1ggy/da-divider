@@ -4,13 +4,14 @@ import { Item, Contact, Place } from 'src/app/models';
 @Component({
   selector: 'app-assignment',
   template: `
-    <div class="form-control">
-    <label class="flex gap-3 label cursor-pointer">
-      <span class="label-text">{{item?.name}}</span> 
-      <span class="label-text">{{item?.price}}</span> 
-      <input type="checkbox" className="checkbox" />
-    </label>
+    <div class="form-control gap-3">
+      <label class="flex gap-3 label cursor-pointer hover:bg-slate-800 rounded-lg p-3">
+        <span class="label-text">{{item?.name}}</span> 
+        <span class="label-text">{{item?.price}}</span> 
+        <input type="checkbox" className="checkbox" />
+      </label>
     </div>
+
   `,
   styles: [
   ]
