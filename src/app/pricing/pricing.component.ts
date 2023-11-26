@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Contact, Item, Place } from '../../models';
-import { StoreService } from '../../store.service';
+import { Contact, Item, Place } from '../models';
+import { StoreService } from '../store.service';
 
 @Component({
   selector: 'app-pricing',

@@ -13,5 +13,5 @@ export interface Place {
 export interface Item {
   name: string | null, 
   price: number | null,
-  contact?: Contact,
+  contacts?: Contact[],
 }

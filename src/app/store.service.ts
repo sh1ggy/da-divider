@@ -12,14 +12,14 @@ export class StoreService {
   ];
   private _placeholderItems1: Item[] = [
     { name: "Item 1", price: 10 },
-    { name: "Item 2", price: 20, contact: this.placeholderContacts[1] },
-    { name: "Item 3", price: 30, contact: this.placeholderContacts[2] },
+    { name: "Item 2", price: 20, contacts: [this.placeholderContacts[1]] },
+    { name: "Item 3", price: 30, contacts: [this.placeholderContacts[2]] },
   ];
 
   private _placeholderItems2: Item[] = [
     { name: "Item 4", price: 40 },
-    { name: "Item 5", price: 50, contact: this.placeholderContacts[1] },
-    { name: "Item 6", price: 60, contact: this.placeholderContacts[2] },
+    { name: "Item 5", price: 50, contacts: [this.placeholderContacts[1]] },
+    { name: "Item 6", price: 60, contacts: [this.placeholderContacts[2]] },
   ];
 
   private _placeholderPlaces: Place[] = [
@@ -41,6 +41,11 @@ export class StoreService {
     this._placeholderItems1 = newItems;
     console.log(this._placeholderItems1);
     return;
+  }
+
+  getSplitPrice(item: Item) {
+    if (!item.price || !item.contacts || item.contacts.length == 0) return;
+    return (item.price/item.contacts.length);
   }
 
   addPlace() {
