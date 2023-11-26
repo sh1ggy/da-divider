@@ -47,7 +47,7 @@ import { FormControl } from '@angular/forms';
                   <input 
                     (change)="setTotal(item, $event)" 
                     [disabled]="!chosenContact" 
-                    [defaultChecked]="chosenContact && item.contacts?.includes(chosenContact)"
+                    [checked]="chosenContact && item.contacts?.includes(chosenContact)"
                     type="checkbox" 
                     className="checkbox"
                     />
