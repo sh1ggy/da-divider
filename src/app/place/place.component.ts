@@ -26,21 +26,23 @@ import { FormControl } from '@angular/forms';
         </select>
         <div class="form-control gap-3">
           <table class="table">
-            <!-- head -->
             <thead>
               <tr>
                 <th>Item Name</th>
                 <th>Total Price</th>
                 <th>Split Price</th>
+                <th>Contacts</th>
                 <th>Assigned</th>
               </tr>
             </thead>
             <tbody>
-              <!-- row 1 -->
               <tr *ngFor="let item of this.place?.items; let i = index;">
                 <td>{{item?.name}}</td>
                 <td>{{item.price | number:'1.2-2'}}</td>
                 <td>{{this.storeService.getSplitPrice(item) | number:'1.2-2'}}</td>
+                <td>
+                  <div *ngFor="let contact of item.contacts" className="badge badge-primary">{{contact.name}}</div>
+                </td>
                 <td>
                   <input 
                     (change)="setTotal(item, $event)" 
@@ -101,15 +103,16 @@ export class PlaceComponent {
       return target.value == pContact.name
     });
     if (this.chosenContact) this.total = this.storeService.calcTotal(this.chosenContact);
+    // console.log("LIST: ", this.storeService.placeholderItems);
   }
 
   setTotal(item: Item, event: Event) {
     // Initialisation
-    if (!item.price) return;
+    if (!item || item.price == undefined) return;
     var splitPrice: number | undefined = undefined;
     const target = event.target as HTMLInputElement;
     if (!this.chosenContact) return;
-    
+
     // Handle item being checked/assigned
     if (target.checked) {
       if (!item.contacts || item.contacts.length == 0) {
@@ -133,17 +136,17 @@ export class PlaceComponent {
     // Handle item being unchecked/unassigned
     if (!target.checked) {
       splitPrice = this.storeService.getSplitPrice(item);
-
       if (splitPrice) this.total -= splitPrice;
-      // const contactIndex = item.contacts?.findIndex((pContact, index) => {
-      //   if (pContact == this.chosenContact) return index;
-      //   else return -1;
-      // });
-      // if (item.contacts != undefined && contactIndex) console.log(item.contacts[contactIndex-1]);
-      // if (contactIndex) item.contacts?.splice(contactIndex-1, 1);
-      console.log(`REMOVED CONTACT: ${this.chosenContact.name} from ${item.name}`);
+
+      var contactIndex: number | undefined = 0;
+      contactIndex = item.contacts?.findIndex((pContact) => pContact == this.chosenContact);
+
+      if (contactIndex == undefined || !item.contacts) return;
+
+      console.log(`REMOVED CONTACT: ${item.contacts[contactIndex].name} from ${item.name}`);
+      item.contacts?.splice(contactIndex, 1);
     }
 
-    console.log(this.storeService.placeholderItems);
+    // console.log("LIST: ", this.storeService.placeholderItems);
   }
 }
