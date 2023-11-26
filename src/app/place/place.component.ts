@@ -39,22 +39,22 @@ import { FormControl } from '@angular/forms';
               <!-- row 1 -->
               <tr *ngFor="let item of this.place?.items; let i = index;">
                 <td>{{item?.name}}</td>
-                <td>{{item.price}}</td>
-                <td>{{this.storeService.getSplitPrice(item)}}</td>
+                <td>{{item.price | number:'1.2-2'}}</td>
+                <td>{{this.storeService.getSplitPrice(item) | number:'1.2-2'}}</td>
                 <td>
                   <input 
-                    (change)="setTotal(item, index, $event)" 
+                    (change)="setTotal(item, $event)" 
                     [disabled]="!chosenContact" 
+                    [defaultChecked]="chosenContact && item.contacts?.includes(chosenContact)"
                     type="checkbox" 
                     className="checkbox"
                     />
-                    <!-- [checked]="item.contacts && item.contacts[i].name == chosenContact"  -->
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total}}</p>
+        <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total | number:'1.2-2'}}</p>
       </div>
     </div>
   `,
@@ -65,7 +65,7 @@ export class PlaceComponent {
   @Input() place: Place | undefined;
   @Input() index: number = 0;
 
-  chosenContact: string = "";
+  chosenContact: Contact | undefined = undefined;
   total: number = 0;
 
   pricing: boolean = false;
@@ -87,44 +87,61 @@ export class PlaceComponent {
   setAssignment() {
     this.assignment = true;
     this.pricing = false;
-    this.chosenContact = ""
+    this.chosenContact = undefined;
   }
+
+
 
   setContact(event: Event) {
+    this.total = 0;
     const target = event.target as HTMLSelectElement;
     console.log("CHOSEN: ", target.value);
-    this.chosenContact = target.value;
+    this.chosenContact = this.storeService.placeholderContacts.find((pContact) => {
+      // Find the contact based on the selected contact
+      return target.value == pContact.name
+    });
+    if (this.chosenContact) this.total = this.storeService.calcTotal(this.chosenContact);
   }
 
-  setTotal(item: Item, index: number, event: Event) {
+  setTotal(item: Item, event: Event) {
     // Initialisation
     if (!item.price) return;
+    var splitPrice: number | undefined = undefined;
     const target = event.target as HTMLInputElement;
-    const contact = this.storeService.placeholderContacts.find((pContact) => {
-      return this.chosenContact == pContact.name
-    });
-    if (!contact) return;
-
-    // Handling checking of item
+    if (!this.chosenContact) return;
+    
+    // Handle item being checked/assigned
     if (target.checked) {
-      
-      if (!item.contacts) {
-        const tempArr = Array(0).fill(contact);
+      if (!item.contacts || item.contacts.length == 0) {
+        const tempArr = Array(0).fill(this.chosenContact);
         item.contacts = tempArr;
         this.total += item.price; // item price isn't split because only one contact
       }
-      item.contacts?.push(contact);
+      // Add in the selected contact into the item's contactList
+      if (item.contacts?.includes(this.chosenContact)) {
+        console.log("CONTACT EXISTS")
+        return
+      };
+      item.contacts?.push(this.chosenContact);
 
-      var splitPrice = this.storeService.getSplitPrice(item);
+      // Add the split price to the total
+      splitPrice = this.storeService.getSplitPrice(item);
       if (splitPrice && item.contacts.length != 1) this.total += splitPrice;
-      console.log(`ADDED CONTACT: ${contact.name} to ${item.name}`);
+      console.log(`ADDED CONTACT: ${this.chosenContact.name} to ${item.name}`);
     }
 
-    // Handling unchecking of item
+    // Handle item being unchecked/unassigned
     if (!target.checked) {
-      this.total -= item.price;
-      item.contacts?.splice(index, 1);
-      console.log(`REMOVED CONTACT: ${contact.name} from ${item.name}`);
+      splitPrice = this.storeService.getSplitPrice(item);
+
+      if (splitPrice) this.total -= splitPrice;
+      // const contactIndex = item.contacts?.findIndex((pContact, index) => {
+      //   if (pContact == this.chosenContact) return index;
+      //   else return -1;
+      // });
+      // if (item.contacts != undefined && contactIndex) console.log(item.contacts[contactIndex-1]);
+      // if (contactIndex) item.contacts?.splice(contactIndex-1, 1);
+      console.log(`REMOVED CONTACT: ${this.chosenContact.name} from ${item.name}`);
     }
 
     console.log(this.storeService.placeholderItems);
