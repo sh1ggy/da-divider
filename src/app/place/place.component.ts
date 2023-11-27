@@ -7,57 +7,62 @@ import { FormControl } from '@angular/forms';
   selector: 'app-place',
   template: `
     <div class="flex flex-col gap-4">
-      <div role="tablist" class="flex justify-center tabs tabs-boxed">
-        <button (click)="setPricing()" role="tab" class="tab">Pricing</button>
-        <button (click)="setAssignment()" role="tab" class="tab">Assignment</button>
-      </div>
-      <!-- Pricing Tab -->
-      <div *ngIf="pricing">
-        <app-pricing *ngFor="let item of this.place?.items; let i = index" [item]="item" [place]="this.place" [contacts]="this.place?.contactList" [index]="i" />
-        <div class="flex flex-row">
-          <button (click)="addItem(this.place?.items)" class="btn">Add Item</button>
+      <h1 class="hover:cursor-pointer text-xl text-center text-green-700 font-bold">{{this.place?.name}}</h1>
+      
+      <div *ngIf="!editingPlace">
+        <div role="tablist" class="flex justify-center tabs tabs-boxed">
+          <button (click)="setPricing()" role="tab" class="tab">Pricing</button>
+          <button (click)="setAssignment()" role="tab" class="tab">Assignment</button>
+        </div>
+        <!-- Pricing Tab -->
+        <div *ngIf="pricing">
+          <app-pricing *ngFor="let item of this.place?.items; let i = index" [item]="item" [place]="this.place" [contacts]="this.place?.contactList" [index]="i" />
+          <div class="flex flex-row">
+            <button (click)="addItem(this.place?.items)" class="btn">Add Item</button>
+          </div>
+        </div>
+        <!-- Assignment Tab -->
+        <div *ngIf="assignment" class="flex flex-col justify-content gap-3">
+          <select (change)="setContact($event)" class="select select-bordered" >
+            <option disabled selected>Pick contact</option>
+            <option *ngFor="let contact of this.place?.contactList">{{contact.name}}</option>
+          </select>
+          <div class="form-control gap-3">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Item Name</th>
+                  <th>Total Price</th>
+                  <th>Split Price</th>
+                  <th>Contacts</th>
+                  <th>Assigned</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of this.place?.items; let i = index;">
+                  <td>{{item?.name}}</td>
+                  <td>{{item.price | number:'1.2-2'}}</td>
+                  <td>{{this.storeService.getSplitPrice(item) | number:'1.2-2'}}</td>
+                  <td>
+                    <div *ngFor="let contact of item.contacts" className="badge badge-primary">{{contact.name}}</div>
+                  </td>
+                  <td>
+                    <input 
+                      (change)="setTotal(item, $event)" 
+                      [disabled]="!chosenContact" 
+                      [checked]="chosenContact && item.contacts?.includes(chosenContact)"
+                      type="checkbox" 
+                      className="checkbox"
+                      />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total | number:'1.2-2'}}</p>
         </div>
       </div>
-      <!-- Assignment Tab -->
-      <div *ngIf="assignment" class="flex flex-col justify-content gap-3">
-        <select (change)="setContact($event)" class="select select-bordered" >
-          <option disabled selected>Pick contact</option>
-          <option *ngFor="let contact of this.place?.contactList">{{contact.name}}</option>
-        </select>
-        <div class="form-control gap-3">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Item Name</th>
-                <th>Total Price</th>
-                <th>Split Price</th>
-                <th>Contacts</th>
-                <th>Assigned</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of this.place?.items; let i = index;">
-                <td>{{item?.name}}</td>
-                <td>{{item.price | number:'1.2-2'}}</td>
-                <td>{{this.storeService.getSplitPrice(item) | number:'1.2-2'}}</td>
-                <td>
-                  <div *ngFor="let contact of item.contacts" className="badge badge-primary">{{contact.name}}</div>
-                </td>
-                <td>
-                  <input 
-                    (change)="setTotal(item, $event)" 
-                    [disabled]="!chosenContact" 
-                    [checked]="chosenContact && item.contacts?.includes(chosenContact)"
-                    type="checkbox" 
-                    className="checkbox"
-                    />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total | number:'1.2-2'}}</p>
-      </div>
+      <app-place-edit *ngIf="editingPlace" [place]="this.place" [index]="this.index" />
     </div>
   `,
   styles: [
@@ -66,12 +71,18 @@ import { FormControl } from '@angular/forms';
 export class PlaceComponent {
   @Input() place: Place | undefined;
   @Input() index: number = 0;
+  
+  placeName = new FormControl(null);
+
+  get editingPlace() {
+    return this.storeService.editMode;
+  }
 
   chosenContact: Contact | undefined = undefined;
   total: number = 0;
 
-  pricing: boolean = false;
-  assignment: boolean = true;
+  pricing: boolean = true;
+  assignment: boolean = false;
 
   constructor(
     public storeService: StoreService,
@@ -79,6 +90,10 @@ export class PlaceComponent {
 
   get addItem() {
     return this.storeService.addItem;
+  }
+
+  get placeholderPlaces() {
+    return this.storeService.placeholderPlaces;
   }
 
   setPricing() {
@@ -91,8 +106,6 @@ export class PlaceComponent {
     this.pricing = false;
     this.chosenContact = undefined;
   }
-
-
 
   setContact(event: Event) {
     this.total = 0;

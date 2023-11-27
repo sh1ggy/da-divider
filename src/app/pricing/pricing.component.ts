@@ -54,13 +54,16 @@ export class PricingComponent {
 
   deleteItem() {
     this.place?.items.splice(this.index, 1);
+    return;
   }
 
   focusForm() {
     this.editing = true;
+    return;
   }
 
   unfocusForm() {
     this.editing = false;
+    return;
   }
 }

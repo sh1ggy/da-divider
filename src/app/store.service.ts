@@ -5,6 +5,7 @@ import { Contact, Item, Place } from './models';
   providedIn: 'root'
 })
 export class StoreService {
+  private _editMode = false;
   private _placeholderContacts: Contact[] = [
     { name: "Tyrone", mobile: "0401222222", email: "tyrone@test.com.au" },
     { name: "Doug", mobile: "0401333333", email: "doug@test.com.au" },
@@ -31,6 +32,14 @@ export class StoreService {
   set placeholderContacts(newContacts: Contact[]) {
     this._placeholderContacts = newContacts;
     console.log(this._placeholderContacts);
+    return;
+  }
+
+  get editMode() {
+    return this._editMode;
+  }
+  set editMode(edit: boolean) {
+    this._editMode = edit;
     return;
   }
 
