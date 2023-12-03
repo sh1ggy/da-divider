@@ -92,12 +92,19 @@ export class StoreService {
     return;
   }
 
-  addContact() {
+  addContact(name: string, email: string, mobile: string) {
     console.log("Adding contact!");
 
-    this.placeholderContacts.push({name: "Test cunt", email: "", mobile: ""});
+    this.placeholderContacts.push({name: name, email: email, mobile: mobile});
     return;
   } 
+  editContact(name: string, email: string, mobile: string, index: number) {
+    console.log("Editing contact!");
+
+    this.placeholderContacts[index] = ({name: name, email: email, mobile: mobile});
+    return;
+  } 
+
 
   calcTotal(contact: Contact) {
     var total: number = 0;

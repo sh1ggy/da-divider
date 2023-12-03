@@ -22,18 +22,7 @@ import { Night, Place } from '../models';
       </div>
       <app-night *ngIf="this.night" [night]="this.night"/>
     </div>
-
-    <!-- CONTACT -->
-    <div class="flex flex-col">
-      <h1 class="font-bold text-2xl text-center mt-12">Contacts</h1>
-      <div *ngFor="let contact of this.storeService.placeholderContacts">
-        <p>{{contact.name}}</p>
-      </div>
-      <button (click)="this.storeService.addContact()" class="btn">
-        Add Contact
-      </button>
-    </div>
-    
+    <app-contacts/>
   </div>
   `,
   styles: [
@@ -49,4 +38,5 @@ export class HomeComponent {
   setNight(newNight: Night) {
     this.night = newNight;
   }
+
 }
