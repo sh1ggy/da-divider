@@ -25,11 +25,7 @@ export class PlaceEditComponent {
   constructor(
     private storeService: StoreService,
   ) { }
-
-  get placeholderPlaces() {
-    return this.storeService.placeholderPlaces;
-  }
-
+  
   savePlace(place: Place) {
     if (!this.placeName.value) {
       console.log("NO CHANGES");
@@ -43,7 +39,7 @@ export class PlaceEditComponent {
   }
 
   deletePlace(i: number) {
-    this.placeholderPlaces.splice(i, 1);
+    this.storeService.placeholderPlaces.splice(i, 1);
     this.storeService.editMode = false;
     return;
   }

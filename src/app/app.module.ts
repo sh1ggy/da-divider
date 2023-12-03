@@ -8,6 +8,7 @@ import { PricingComponent } from './pricing/pricing.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NightComponent } from './night/night.component';
 import { PlaceEditComponent } from './place-edit/place-edit.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { PlaceEditComponent } from './place-edit/place-edit.component';
     PricingComponent,
     NightComponent,
     PlaceEditComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,

@@ -12,6 +12,13 @@ export interface Place {
 
 export interface Item {
   name: string | null, 
+  quantity?: number | null,
   price: number | null,
+  contacts?: Contact[],
+}
+
+export interface Night {
+  date: Date,
+  places: Place[],
   contacts?: Contact[],
 }

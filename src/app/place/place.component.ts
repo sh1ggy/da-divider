@@ -9,7 +9,7 @@ import { FormControl } from '@angular/forms';
     <div class="flex flex-col gap-4">
       <h1 class="hover:cursor-pointer text-xl text-center text-green-700 font-bold">{{this.place?.name}}</h1>
       
-      <div *ngIf="!editingPlace">
+      <div *ngIf="!this.editMode">
         <div role="tablist" class="flex justify-center tabs tabs-boxed">
           <button (click)="setPricing()" role="tab" class="tab">Pricing</button>
           <button (click)="setAssignment()" role="tab" class="tab">Assignment</button>
@@ -18,7 +18,7 @@ import { FormControl } from '@angular/forms';
         <div *ngIf="pricing">
           <app-pricing *ngFor="let item of this.place?.items; let i = index" [item]="item" [place]="this.place" [contacts]="this.place?.contactList" [index]="i" />
           <div class="flex flex-row">
-            <button (click)="addItem(this.place?.items)" class="btn">Add Item</button>
+            <button (click)="this.place && this.storeService.addItem(this.place.items)" class="btn">Add Item</button>
           </div>
         </div>
         <!-- Assignment Tab -->
@@ -32,6 +32,7 @@ import { FormControl } from '@angular/forms';
               <thead>
                 <tr>
                   <th>Item Name</th>
+                  <th>Quantity</th>
                   <th>Total Price</th>
                   <th>Split Price</th>
                   <th>Contacts</th>
@@ -41,7 +42,8 @@ import { FormControl } from '@angular/forms';
               <tbody>
                 <tr *ngFor="let item of this.place?.items; let i = index;">
                   <td>{{item?.name}}</td>
-                  <td>{{item.price | number:'1.2-2'}}</td>
+                  <td>{{item?.quantity ? item?.quantity : 1}}</td>
+                  <td>{{(item?.quantity ? this.storeService.calcQuantPrice(item) : item.price)  | number:'1.2-2'}}</td>
                   <td>{{this.storeService.getSplitPrice(item) | number:'1.2-2'}}</td>
                   <td>
                     <div *ngFor="let contact of item.contacts" className="badge badge-primary">{{contact.name}}</div>
@@ -62,7 +64,7 @@ import { FormControl } from '@angular/forms';
           <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total | number:'1.2-2'}}</p>
         </div>
       </div>
-      <app-place-edit *ngIf="editingPlace" [place]="this.place" [index]="this.index" />
+      <app-place-edit *ngIf="this.storeService.editMode" [place]="this.place" [index]="this.index" />
     </div>
   `,
   styles: [
@@ -74,10 +76,6 @@ export class PlaceComponent {
   
   placeName = new FormControl(null);
 
-  get editingPlace() {
-    return this.storeService.editMode;
-  }
-
   chosenContact: Contact | undefined = undefined;
   total: number = 0;
 
@@ -88,12 +86,8 @@ export class PlaceComponent {
     public storeService: StoreService,
   ) { }
 
-  get addItem() {
-    return this.storeService.addItem;
-  }
-
-  get placeholderPlaces() {
-    return this.storeService.placeholderPlaces;
+  get editMode() {
+    return this.storeService.editMode;
   }
 
   setPricing() {
