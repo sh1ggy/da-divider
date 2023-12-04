@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PlaceComponent } from './place/place.component';
 import { PricingComponent } from './pricing/pricing.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NightComponent } from './night/night.component';
 import { PlaceEditComponent } from './place-edit/place-edit.component';
 import { HomeComponent } from './home/home.component';
@@ -25,6 +25,7 @@ import { ContactsComponent } from './contacts/contacts.component';
     BrowserModule,
     AppRoutingModule, 
     ReactiveFormsModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

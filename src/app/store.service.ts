@@ -6,12 +6,23 @@ import { Contact, Item, Night, Place } from './models';
 })
 export class StoreService {
   private _editMode = false;
+  // GROUP CONTACTS
   private _placeholderContacts: Contact[] = [
     { name: "Tyrone", mobile: "0401222222", email: "tyrone@test.com.au" },
     { name: "Doug", mobile: "0401333333", email: "doug@test.com.au" },
     { name: "Ray", mobile: "0401444444", email: "ray@test.com.au" },
     { name: "Amara", mobile: "0401444444", email: "amara@test.com.au" },
   ];
+
+  private _night1PlaceholderContacts: Contact[] = [
+    { name: "Tyrone", mobile: "0401222222", email: "tyrone@test.com.au" },
+    { name: "Amara", mobile: "0401444444", email: "amara@test.com.au" },
+  ];
+  private _night2PlaceholderContacts: Contact[] = [
+    { name: "Doug", mobile: "0401333333", email: "doug@test.com.au" },
+    { name: "Ray", mobile: "0401444444", email: "ray@test.com.au" },
+  ];
+
   private _placeholderItems1: Item[] = [
     { name: "Item 1", price: 10 },
     { name: "Item 2", price: 20, quantity: 2, contacts: [this.placeholderContacts[1], this.placeholderContacts[0]] },
@@ -34,8 +45,8 @@ export class StoreService {
   ]
 
   private _placeholderNights: Night[] = [
-    {places: this._placeholderPlaces, date: new Date(Date.now()), contacts: this.placeholderContacts},
-    {places: this._placeholderPlaces2, date: new Date(Date.now()), contacts: this.placeholderContacts},
+    {places: this._placeholderPlaces, date: new Date(Date.now()), contacts: this._night1PlaceholderContacts},
+    {places: this._placeholderPlaces2, date: new Date(Date.now()), contacts: this._night2PlaceholderContacts},
   ]
 
   get placeholderContacts(): Contact[] { return this._placeholderContacts; }
@@ -98,6 +109,7 @@ export class StoreService {
     this.placeholderContacts.push({name: name, email: email, mobile: mobile});
     return;
   } 
+
   editContact(name: string, email: string, mobile: string, index: number) {
     console.log("Editing contact!");
 
@@ -105,6 +117,9 @@ export class StoreService {
     return;
   } 
 
+  removeContact(nightIndex: number, contactIndex: number) {
+    this.placeholderNights[nightIndex].contacts?.splice(contactIndex, 1);
+  }
 
   calcTotal(contact: Contact) {
     var total: number = 0;

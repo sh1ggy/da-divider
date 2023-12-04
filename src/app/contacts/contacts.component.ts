@@ -1,7 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { StoreService } from '../store.service';
-import { DOCUMENT } from '@angular/common'; 
 
 
 @Component({
