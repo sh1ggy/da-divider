@@ -20,7 +20,7 @@ import { Contact, Night, Place } from '../models';
 
             <!-- UNSURE if this is the best approach -->
             <!-- REF: https://chat.openai.com/share/21a60361-f8fd-4148-99cd-c7d19e63601a -->
-            <select [(ngModel)]="contact" #contactsList (change)="this.contact && night.contacts.push(this.contact)" *ngIf="night.contacts" class="badge badge-secondary">
+            <select [(ngModel)]="contact" #contactsList (change)="addContact(night.contacts)" *ngIf="night.contacts" class="badge badge-secondary">
               <option disabled selected>+</option>
               <ng-container *ngFor="let contact of this.storeService.placeholderContacts, let i = index">
                 <option *ngIf="!checkContact(contact, night.contacts)" [ngValue]="contact">
@@ -50,6 +50,12 @@ export class HomeComponent {
 
   setNight(newNight: Night) {
     this.night = newNight;
+  }
+
+  addContact(nightContacts: Contact[]) {
+    if (!this.contact) return;
+    nightContacts.push(this.contact);
+    this.contact = undefined;
   }
 
   checkContact(contact: Contact, nightContacts: Contact[]) {

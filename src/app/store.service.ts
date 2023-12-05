@@ -118,7 +118,12 @@ export class StoreService {
   } 
 
   removeContact(nightIndex: number, contactIndex: number) {
+    if (this.placeholderNights[nightIndex].contacts?.length == 1) {
+      console.log("ERROR: Night needs to have at least one contact")
+      return false;
+    }
     this.placeholderNights[nightIndex].contacts?.splice(contactIndex, 1);
+    return true;
   }
 
   calcTotal(contact: Contact) {
