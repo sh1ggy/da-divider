@@ -26,7 +26,10 @@ import { StoreService } from '../store.service';
           <div class="modal-action">
             <form method="dialog">
               <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-              <button (click)="addContact()" class="btn w-full">Submit</button>
+              <div class="flex items-center justify-center">
+                <button (click)="this.storeService.removeGroupContact(this.index)" class="btn btn-error w-1/2">Delete</button>
+                <button (click)="addContact()" class="btn w-1/2">Submit</button>
+              </div>
             </form>
           </div>
         </div>
@@ -57,6 +60,7 @@ export class ContactsComponent {
     this.contactPhone.setValue(mobile);
     this.editContact = true;
     this.index = index;
+    return;
   }
   
   addContact() {

@@ -126,6 +126,17 @@ export class StoreService {
     return true;
   }
 
+  removeGroupContact(contactIndex: number) {
+    // TODO: also invoke remove contact from night because you need to delete instances 
+    // of this contact everywhere
+    if (this.placeholderContacts.length == 1) {
+      console.log("ERROR: Night needs to have at least one contact")
+      return false;
+    }
+    this.placeholderContacts.splice(contactIndex, 1);
+    return true;
+  }
+
   calcTotal(contact: Contact) {
     var total: number = 0;
     
