@@ -37,20 +37,20 @@ export class PricingComponent {
   itemQuantity = new FormControl(null);
   itemName = new FormControl(null);
   itemPrice = new FormControl(null);
-  // contactName = new FormControl(null);
-
+  
   newItem: Item | undefined;
   editing: boolean = false;
 
+  // TODO: move all this logic to the service.
   saveItem() {
-    if (!this.place || this.itemName.value == null || this.itemPrice.value == null) {
+    if (!this.place || !this.item) {
       console.log("NO CHANGES")
       return
     };
     this.newItem = {
-      name: this.itemName.value,
-      price: this.itemPrice.value,
-      // contact: this.contacts?.find((item) => item.name == this.contactName.value),
+      name: this.itemName.value ? this.itemName.value : this.item.name,
+      quantity: this.itemQuantity.value ? this.itemQuantity.value : this.item.quantity,
+      price: this.itemPrice.value ? this.itemPrice.value : this.item.price,
     }
     this.place.items[this.index] = this.newItem;
     console.log("SAVED:", this.place);
