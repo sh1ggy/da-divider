@@ -25,23 +25,23 @@ export class StoreService {
 
   private _placeholderItems1: Item[] = [
     { name: "Item 1", price: 10 },
-    { name: "Item 2", price: 20, quantity: 2, contacts: [this.placeholderContacts[1], this.placeholderContacts[0]] },
-    { name: "Item 3", price: 30, quantity: 3, contacts: [this.placeholderContacts[1], this.placeholderContacts[2]] },
+    { name: "Item 2", price: 20, quantity: 2, contacts: [this._night1PlaceholderContacts[1], this._night1PlaceholderContacts[0]] },
+    { name: "Item 3", price: 30, quantity: 3, contacts: [this._night1PlaceholderContacts[1], this._night1PlaceholderContacts[0]] },
   ];
 
   private _placeholderItems2: Item[] = [
     { name: "Item 4", price: 40 },
-    { name: "Item 5", price: 50, contacts: [this.placeholderContacts[1]] },
-    { name: "Item 6", price: 60, contacts: [this.placeholderContacts[0], this.placeholderContacts[1], this.placeholderContacts[2]] },
+    { name: "Item 5", price: 50, contacts: [this._night2PlaceholderContacts[1]] },
+    { name: "Item 6", price: 60, contacts: [this._night2PlaceholderContacts[0], this._night2PlaceholderContacts[1]] },
   ];
 
   private _placeholderPlaces: Place[] = [
-    { name: "Place 1", items: this._placeholderItems1, contactList: this._placeholderContacts },
-    { name: "Place 2", items: this._placeholderItems2, contactList: this._placeholderContacts },
+    { name: "Place 1", items: this._placeholderItems1, contactList: this._night1PlaceholderContacts },
+    { name: "Place 2", items: this._placeholderItems2, contactList: this._night2PlaceholderContacts },
   ]
   private _placeholderPlaces2: Place[] = [
-    { name: "Place 3", items: this._placeholderItems2, contactList: this._placeholderContacts },
-    { name: "Place 4", items: this._placeholderItems1, contactList: this._placeholderContacts },
+    { name: "Place 3", items: this._placeholderItems2, contactList: this._night2PlaceholderContacts },
+    { name: "Place 4", items: this._placeholderItems1, contactList: this._night1PlaceholderContacts },
   ]
 
   private _placeholderNights: Night[] = [
@@ -86,12 +86,19 @@ export class StoreService {
     return item.price * item.quantity;
   }
 
-  addPlace() {
+  addNight() {
+    console.log("Adding night!");
+    
+    this.placeholderNights.push({ date: new Date(Date.now()), places:[], contacts: []})
+    console.log(this.placeholderNights)
+  }
+
+  addPlace(night: Night) {
     console.log("Adding place!");
 
-    this.placeholderPlaces.push({ name: `Place ${this.placeholderPlaces.length + 1}`, items: [{ name: "", price: 0 }], contactList: this.placeholderContacts })
+    night.places.push({ name: `Place ${night.places.length + 1}`, items: [{ name: "", price: 0 }], contactList: this.placeholderContacts })
 
-    console.log(this.placeholderPlaces);
+    console.log(night.places);
     return;
   }
 

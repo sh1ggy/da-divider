@@ -22,6 +22,7 @@ import { Contact, Night, Place } from '../models';
             <!-- REF: https://chat.openai.com/share/21a60361-f8fd-4148-99cd-c7d19e63601a -->
             <select [(ngModel)]="contact" #contactsList (change)="addContact(night.contacts)" *ngIf="night.contacts" class="badge badge-secondary">
               <option disabled selected>+</option>
+              <!-- REF: https://stackoverflow.com/questions/38585720/how-to-apply-multiple-template-bindings-on-one-element-in-angular -->
               <ng-container *ngFor="let contact of this.storeService.placeholderContacts, let i = index">
                 <option *ngIf="!checkContact(contact, night.contacts)" [ngValue]="contact">
                   {{contact.name}}
@@ -31,6 +32,7 @@ import { Contact, Night, Place } from '../models';
           </div>
           <button (click)="setNight(night)" class="btn btn-primary ml-3">Edit night</button>
         </div>
+        <button (click)="this.storeService.addNight()" class="btn btn-secondary ml-3 w-full">New night</button>
       </div>
       <app-night *ngIf="this.night" [night]="this.night"/>
     </div>

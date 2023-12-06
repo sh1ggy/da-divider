@@ -12,7 +12,7 @@ import { Night, Place } from '../models';
         <app-place-edit *ngIf="this.storeService.editMode" [place]="place" [index]="i" />
       </div>
       <div class="flex">
-        <button (click)="this.storeService.addPlace()" class="btn w-1/2">Add Place</button>
+        <button (click)="this.storeService.addPlace(this.night)" class="btn w-1/2">Add Place</button>
         <button (click)="this.storeService.editMode = !this.storeService.editMode" class="btn w-1/2">{{this.storeService.editMode ? "Return to Items" : "Edit Places"}}</button>
       </div>
       <button class="btn">Submit</button>
