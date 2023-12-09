@@ -13,6 +13,7 @@ import { FormControl } from '@angular/forms';
         <div role="tablist" class="flex justify-center tabs tabs-boxed">
           <button (click)="setPricing()" role="tab" class="tab">Pricing</button>
           <button (click)="setAssignment()" role="tab" class="tab">Assignment</button>
+          <button (click)="setContacts()" role="tab" class="tab">Contacts</button>
         </div>
         <!-- Pricing Tab -->
         <div *ngIf="pricing">
@@ -20,6 +21,14 @@ import { FormControl } from '@angular/forms';
           <div class="flex flex-row">
             <button (click)="this.place && this.storeService.addItem(this.place.items)" class="btn">Add Item</button>
           </div>
+        </div>
+        <!-- CONTACT ASSIGNMENT -->
+        <div *ngIf="contacts" class="flex flex-col form-control gap-3">
+          <!-- Change this from this.place.contactList to this.storeService.night -->
+          <label *ngFor="let contact of this.place?.contactList" class="label cursor-pointer w-full hover:bg-secondary rounded-lg duration-500 transition-color">
+            <span class="label-text w-1/2">{{contact.name}}</span> 
+            <input type="checkbox" checked="checked" class="checkbox" />
+          </label>
         </div>
         <!-- Assignment Tab -->
         <div *ngIf="assignment" class="flex flex-col justify-content gap-3">
@@ -73,7 +82,7 @@ import { FormControl } from '@angular/forms';
 export class PlaceComponent {
   @Input() place: Place | undefined;
   @Input() index: number = 0;
-  
+
   placeName = new FormControl(null);
 
   chosenContact: Contact | undefined = undefined;
@@ -81,6 +90,7 @@ export class PlaceComponent {
 
   pricing: boolean = true;
   assignment: boolean = false;
+  contacts: boolean = false;
 
   constructor(
     public storeService: StoreService,
@@ -93,11 +103,19 @@ export class PlaceComponent {
   setPricing() {
     this.pricing = true;
     this.assignment = false;
+    this.contacts = false;
+  }
+
+  setContacts() {
+    this.contacts = true;
+    this.pricing = false;
+    this.assignment = false;
   }
 
   setAssignment() {
     this.assignment = true;
     this.pricing = false;
+    this.contacts = false;
     this.chosenContact = undefined;
   }
 
