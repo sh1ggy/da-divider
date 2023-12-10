@@ -4,16 +4,18 @@ import { Contact, Item, Night, Place } from './models';
 @Injectable({
   providedIn: 'root'
 })
+
 export class StoreService {
-  private _editMode = false;
-  // GROUP CONTACTS
+  private _editMode: boolean = false;
+
+  // PLACEHOLDER
+  //-- Group contacts
   private _placeholderContacts: Contact[] = [
     { name: "Tyrone", mobile: "0401222222", email: "tyrone@test.com.au" },
     { name: "Doug", mobile: "0401333333", email: "doug@test.com.au" },
     { name: "Ray", mobile: "0401444444", email: "ray@test.com.au" },
     { name: "Amara", mobile: "0401444444", email: "amara@test.com.au" },
   ];
-
   private _night1PlaceholderContacts: Contact[] = [
     { name: "Tyrone", mobile: "0401222222", email: "tyrone@test.com.au" },
     { name: "Amara", mobile: "0401444444", email: "amara@test.com.au" },
@@ -22,19 +24,16 @@ export class StoreService {
     { name: "Doug", mobile: "0401333333", email: "doug@test.com.au" },
     { name: "Ray", mobile: "0401444444", email: "ray@test.com.au" },
   ];
-
   private _placeholderItems1: Item[] = [
     { name: "Item 1", price: 10 },
     { name: "Item 2", price: 20, quantity: 2, contacts: [this._night1PlaceholderContacts[1], this._night1PlaceholderContacts[0]] },
     { name: "Item 3", price: 30, quantity: 3, contacts: [this._night1PlaceholderContacts[1], this._night1PlaceholderContacts[0]] },
   ];
-
   private _placeholderItems2: Item[] = [
     { name: "Item 4", price: 40 },
     { name: "Item 5", price: 50, contacts: [this._night2PlaceholderContacts[1]] },
     { name: "Item 6", price: 60, contacts: [this._night2PlaceholderContacts[0], this._night2PlaceholderContacts[1]] },
   ];
-
   private _placeholderPlaces: Place[] = [
     { name: "Place 1", items: this._placeholderItems1, contactList: this._night1PlaceholderContacts },
     { name: "Place 2", items: this._placeholderItems2, contactList: this._night2PlaceholderContacts },
@@ -43,11 +42,18 @@ export class StoreService {
     { name: "Place 3", items: this._placeholderItems2, contactList: this._night2PlaceholderContacts },
     { name: "Place 4", items: this._placeholderItems1, contactList: this._night1PlaceholderContacts },
   ]
-
   private _placeholderNights: Night[] = [
     {places: this._placeholderPlaces, date: new Date(Date.now()), contacts: this._night1PlaceholderContacts},
     {places: this._placeholderPlaces2, date: new Date(Date.now()), contacts: this._night2PlaceholderContacts},
   ]
+
+  private _chosenNight: Night = this._placeholderNights[0];
+  get chosenNight(): Night {return this._chosenNight; }
+  set chosenNight(chosenNight: Night) {
+    this._chosenNight = chosenNight; 
+    console.log(this._chosenNight); 
+    return;
+  }
 
   get placeholderContacts(): Contact[] { return this._placeholderContacts; }
   set placeholderContacts(newContacts: Contact[]) {

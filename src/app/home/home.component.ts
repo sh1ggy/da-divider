@@ -5,15 +5,19 @@ import { Contact, Night, Place } from '../models';
 @Component({
   selector: 'app-home',
   template: `
-  <div class="flex gap-3">
+  <div class="flex items-center justify-center gap-5">
     <!-- NIGHTS -->
     <div class="flex flex-col">
+      <nav>
+        <a class="button" routerLink="/place">Place</a> |
+        <a class="button" routerLink="/night">Night</a>
+      </nav>
+      <h1 class="text-4xl">Da-Divider</h1>
       <h1 class="font-bold text-2xl text-center mt-12">Nights</h1>
       <div *ngIf="!this.night">
         <div *ngFor="let night of this.storeService.placeholderNights; let nightIndex = index" class="flex flex-col bg-slate-900 p-4 rounded-lg gap-3" >
           <div class="p-12 bg-base-100 shadow-xl gap-3 rounded-lg">
             <h2>{{night.date.toLocaleDateString()}}</h2>
-
             <div *ngFor="let contact of night.contacts; let contactIndex = index" class="flex flex-row">
               <div (click)="night.contacts && this.storeService.removeContact(nightIndex, contactIndex)" class="badge badge-primary hover:bg-error hover:cursor-pointer">{{contact.name}}</div>
             </div>
@@ -30,7 +34,7 @@ import { Contact, Night, Place } from '../models';
               </ng-container>
             </select>
           </div>
-          <button (click)="setNight(night)" class="btn btn-primary ml-3">Edit night</button>
+          <button routerLink="/night" (click)="this.storeService.chosenNight = night" class="btn btn-primary ml-3">Edit night</button>
         </div>
         <button (click)="this.storeService.addNight()" class="btn btn-secondary ml-3 w-full">New night</button>
       </div>
@@ -49,10 +53,6 @@ export class HomeComponent {
   constructor(
     public storeService: StoreService,
   ) { }
-
-  setNight(newNight: Night) {
-    this.night = newNight;
-  }
 
   addContact(nightContacts: Contact[]) {
     if (!this.contact) return;
