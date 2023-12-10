@@ -5,14 +5,9 @@ import { Contact, Night, Place } from '../models';
 @Component({
   selector: 'app-home',
   template: `
-  <div class="flex items-center justify-center gap-5">
+  <div class="flex items-start gap-5">
     <!-- NIGHTS -->
     <div class="flex flex-col">
-      <nav>
-        <a class="button" routerLink="/place">Place</a> |
-        <a class="button" routerLink="/night">Night</a>
-      </nav>
-      <h1 class="text-4xl">Da-Divider</h1>
       <h1 class="font-bold text-2xl text-center mt-12">Nights</h1>
       <div *ngIf="!this.night">
         <div *ngFor="let night of this.storeService.placeholderNights; let nightIndex = index" class="flex flex-col bg-slate-900 p-4 rounded-lg gap-3" >
