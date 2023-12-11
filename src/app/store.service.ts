@@ -6,7 +6,6 @@ import { Contact, Item, Night, Place } from './models';
 })
 
 export class StoreService {
-  private _editMode: boolean = false;
 
   // PLACEHOLDER
   //-- Group contacts
@@ -63,14 +62,6 @@ export class StoreService {
   }
 
   get placeholderNights(): Night[] {return this._placeholderNights}
-
-  get editMode() {
-    return this._editMode;
-  }
-  set editMode(edit: boolean) {
-    this._editMode = edit;
-    return;
-  }
 
   get placeholderPlaces(): Place[] { return this._placeholderPlaces }
 

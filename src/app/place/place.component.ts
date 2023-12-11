@@ -7,73 +7,88 @@ import { FormControl } from '@angular/forms';
   selector: 'app-place',
   template: `
     <div class="flex flex-col gap-4">
-      <h1 class="hover:cursor-pointer text-xl text-center text-green-700 font-bold">{{this.place?.name}}</h1>
-      
-      <div *ngIf="!this.editMode">
-        <div role="tablist" class="flex justify-center tabs tabs-boxed">
-          <button (click)="setPricing()" role="tab" class="tab">Pricing</button>
-          <button (click)="setAssignment()" role="tab" class="tab">Assignment</button>
-          <button (click)="setContacts()" role="tab" class="tab">Contacts</button>
-        </div>
-        <!-- Pricing Tab -->
-        <div *ngIf="pricing">
-          <app-pricing *ngFor="let item of this.place?.items; let i = index" [item]="item" [place]="this.place" [contacts]="this.place?.contactList" [index]="i" />
-          <div class="flex flex-row">
-            <button (click)="this.place && this.storeService.addItem(this.place.items)" class="btn">Add Item</button>
+      <div class="flex items-center">
+        <h1 class="hover:cursor-pointer text-xl text-center text-green-700 font-bold">{{this.place?.name}}</h1>
+        <button (click)="placeModal.showModal()" class="btn ml-auto">Edit Place</button>
+      </div>
+      <dialog id="placeModal" #placeModal class="modal">
+        <div class="modal-box flex flex-col">
+          <h3 class="font-bold text-lg">Contact Form</h3>
+          <span class="label-text">Place Name</span>
+          <input type="text" [formControl]="placeName" [placeholder]="this.place?.name" class="input input-bordered"/>
+          <div class="modal-action">
+            <form method="dialog">
+              <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+              <div class="flex items-center justify-center">
+                <button (click)="this.deletePlace(index)" class="btn btn-error w-1/2">Delete</button>
+                <button (click)="this.savePlace(this.place!);" class="btn w-1/2">Save</button>
+              </div>
+            </form>
           </div>
         </div>
-        <!-- CONTACT ASSIGNMENT -->
-        <div *ngIf="contacts" class="flex flex-col form-control gap-3">
-          <!-- Change this from this.place.contactList to this.storeService.night -->
-          <label *ngFor="let contact of this.place?.contactList" class="label cursor-pointer w-full hover:bg-secondary rounded-lg duration-500 transition-color">
-            <span class="label-text w-1/2">{{contact.name}}</span> 
-            <input type="checkbox" checked="checked" class="checkbox" />
-          </label>
-        </div>
-        <!-- Assignment Tab -->
-        <div *ngIf="assignment" class="flex flex-col justify-content gap-3">
-          <select (change)="setContact($event)" class="select select-bordered" >
-            <option disabled selected>Pick contact</option>
-            <option *ngFor="let contact of this.place?.contactList">{{contact.name}}</option>
-          </select>
-          <div class="form-control gap-3">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Item Name</th>
-                  <th>Quantity</th>
-                  <th>Total Price</th>
-                  <th>Split Price</th>
-                  <th>Contacts</th>
-                  <th>Assigned</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of this.place?.items; let i = index;">
-                  <td>{{item?.name}}</td>
-                  <td>{{item?.quantity ? item?.quantity : 1}}</td>
-                  <td>{{(item?.quantity ? this.storeService.calcQuantPrice(item) : item.price)  | number:'1.2-2'}}</td>
-                  <td>{{this.storeService.getSplitPrice(item) | number:'1.2-2'}}</td>
-                  <td>
-                    <div *ngFor="let contact of item.contacts" className="badge badge-primary">{{contact.name}}</div>
-                  </td>
-                  <td>
-                    <input 
-                      (change)="setTotal(item, $event)" 
-                      [disabled]="!chosenContact" 
-                      [checked]="chosenContact && item.contacts?.includes(chosenContact)"
-                      type="checkbox" 
-                      className="checkbox"
-                      />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total | number:'1.2-2'}}</p>
+      </dialog>
+      <div role="tablist" class="flex justify-center tabs tabs-boxed">
+        <button (click)="setPricing()" role="tab" class="tab">Pricing</button>
+        <button (click)="setAssignment()" role="tab" class="tab">Assignment</button>
+        <button (click)="setContacts()" role="tab" class="tab">Contacts</button>
+      </div>
+      <!-- Pricing Tab -->
+      <div *ngIf="pricing">
+        <app-pricing *ngFor="let item of this.place?.items; let i = index" [item]="item" [place]="this.place" [contacts]="this.place?.contactList" [index]="i" />
+        <div class="flex flex-row">
+          <button (click)="this.place && this.storeService.addItem(this.place.items)" class="btn">Add Item</button>
         </div>
       </div>
-      <app-place-edit *ngIf="this.storeService.editMode" [place]="this.place" [index]="this.index" />
+      <!-- Contact Assignment Tab, maybe move this to placeEditModal -->
+      <div *ngIf="contacts" class="flex flex-col form-control gap-3">
+        <!-- Change this from this.place.contactList to this.storeService.night -->
+        <label *ngFor="let contact of this.storeService.chosenNight.contacts" class="label cursor-pointer w-full hover:bg-secondary rounded-lg duration-500 transition-color">
+          <span class="label-text w-1/2">{{contact.name}}</span> 
+          <input type="checkbox" [checked]="checkContact(contact)" class="checkbox" />
+        </label>
+      </div>
+      <!-- Assignment Tab -->
+      <div *ngIf="assignment" class="flex flex-col justify-content gap-3">
+        <select (change)="setContact($event)" class="select select-bordered" >
+          <option disabled selected>Pick contact</option>
+          <option *ngFor="let contact of this.place?.contactList">{{contact.name}}</option>
+        </select>
+        <div class="form-control gap-3">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Split Price</th>
+                <th>Contacts</th>
+                <th>Assigned</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of this.place?.items; let i = index;">
+                <td>{{item?.name}}</td>
+                <td>{{item?.quantity ? item?.quantity : 1}}</td>
+                <td>{{(item?.quantity ? this.storeService.calcQuantPrice(item) : item.price)  | number:'1.2-2'}}</td>
+                <td>{{this.storeService.getSplitPrice(item) | number:'1.2-2'}}</td>
+                <td>
+                  <div *ngFor="let contact of item.contacts" className="badge badge-primary">{{contact.name}}</div>
+                </td>
+                <td>
+                  <input 
+                    (change)="setTotal(item, $event)" 
+                    [disabled]="!chosenContact" 
+                    [checked]="chosenContact && item.contacts?.includes(chosenContact)"
+                    type="checkbox" 
+                    className="checkbox"
+                    />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total | number:'1.2-2'}}</p>
+      </div>
     </div>
   `,
   styles: [
@@ -83,7 +98,7 @@ export class PlaceComponent {
   @Input() place: Place | undefined;
   @Input() index: number = 0;
 
-  placeName = new FormControl(null);
+  placeName = new FormControl(undefined);
 
   chosenContact: Contact | undefined = undefined;
   total: number = 0;
@@ -95,10 +110,6 @@ export class PlaceComponent {
   constructor(
     public storeService: StoreService,
   ) { }
-
-  get editMode() {
-    return this.storeService.editMode;
-  }
 
   setPricing() {
     this.pricing = true;
@@ -117,6 +128,35 @@ export class PlaceComponent {
     this.pricing = false;
     this.contacts = false;
     this.chosenContact = undefined;
+  }
+
+  // Logic for modal
+  savePlace(place: Place) {
+    if (!this.placeName.value) {
+      console.log("NO CHANGES");
+      return;
+    };
+
+    place.name = this.placeName.value;
+    console.log("SAVED", place);
+    return;
+  }
+
+  deletePlace(i: number) {
+    this.storeService.chosenNight.places.splice(i, 1);
+    return;
+  }
+
+
+  checkContact(contact: Contact) {
+    var flag: boolean = false;
+    // Check if the chosen night's contact is equal to the currently allocated place's contact
+    this.place?.contactList?.forEach(placeContact => {
+      if (contact.name == placeContact.name) {
+        flag = true;
+      }
+    })
+    return flag;
   }
 
   setContact(event: Event) {

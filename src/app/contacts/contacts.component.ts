@@ -10,7 +10,7 @@ import { StoreService } from '../store.service';
       <h1 class="font-bold text-2xl text-center mt-12">Contacts</h1>
       <div *ngFor="let contact of this.storeService.placeholderContacts, let i = index" class="flex items-center">
         <p class="w-1/2">{{contact.name}}</p>
-        <button onclick="contactModal.showModal()" (click)="setEditContact(contact.name, contact.email, contact.mobile, i)" class="btn w-1/2">Edit</button>
+        <button (click)="contactModal.showModal()" (click)="setEditContact(contact.name, contact.email, contact.mobile, i)" class="btn w-1/2">Edit</button>
       </div>
       <!-- Open the modal using ID.showModal() method -->
       <button class="btn" onclick="contactModal.showModal()">Add Contact</button>
@@ -40,7 +40,6 @@ import { StoreService } from '../store.service';
   ]
 })
 export class ContactsComponent {
-  // @ViewChild('contactModal') contactModal: any;
   contactName = new FormControl("");
   contactEmail = new FormControl("");
   contactPhone = new FormControl("");
