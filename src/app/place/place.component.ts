@@ -27,6 +27,7 @@ import { FormControl } from '@angular/forms';
           </div>
         </div>
       </dialog>
+
       <div role="tablist" class="flex justify-center tabs tabs-boxed">
         <button (click)="setPricing()" role="tab" class="tab">Pricing</button>
         <button (click)="setAssignment()" role="tab" class="tab">Assignment</button>
@@ -34,24 +35,24 @@ import { FormControl } from '@angular/forms';
       </div>
       <!-- Pricing Tab -->
       <div *ngIf="pricing">
-        <app-pricing *ngFor="let item of this.place?.items; let i = index" [item]="item" [place]="this.place" [contacts]="this.place?.contactList" [index]="i" />
+        <app-pricing *ngFor="let item of this.place?.items; let i = index" [item]="item" [place]="this.place" [contacts]="this.place?.contacts" [index]="i" />
         <div class="flex flex-row">
           <button (click)="this.place && this.storeService.addItem(this.place.items)" class="btn">Add Item</button>
         </div>
       </div>
       <!-- Contact Assignment Tab, maybe move this to placeEditModal -->
       <div *ngIf="contacts" class="flex flex-col form-control gap-3">
-        <!-- Change this from this.place.contactList to this.storeService.night -->
+        <!-- Change this from this.place.contacts to this.storeService.night -->
         <label *ngFor="let contact of this.storeService.chosenNight.contacts" class="label cursor-pointer w-full hover:bg-secondary rounded-lg duration-500 transition-color">
           <span class="label-text w-1/2">{{contact.name}}</span> 
-          <input type="checkbox" [checked]="checkContact(contact)" class="checkbox" />
+          <input type="checkbox" (change)="addContact(contact)" [checked]="checkContact(contact)" class="checkbox" />
         </label>
       </div>
       <!-- Assignment Tab -->
       <div *ngIf="assignment" class="flex flex-col justify-content gap-3">
-        <select (change)="setContact($event)" class="select select-bordered" >
+        <select (click)="test()" (change)="setContact($event)" class="select select-bordered" >
           <option disabled selected>Pick contact</option>
-          <option *ngFor="let contact of this.place?.contactList">{{contact.name}}</option>
+          <option *ngFor="let contact of this.place?.contacts">{{contact.name}}</option>
         </select>
         <div class="form-control gap-3">
           <table class="table">
@@ -111,6 +112,10 @@ export class PlaceComponent {
     public storeService: StoreService,
   ) { }
 
+  test() {
+    console.log(this.place?.contacts)
+  }
+
   setPricing() {
     this.pricing = true;
     this.assignment = false;
@@ -150,8 +155,12 @@ export class PlaceComponent {
 
   checkContact(contact: Contact) {
     var flag: boolean = false;
+    if (!this.place || !this.place.contacts) {
+      console.log("swag")
+      return
+    }
     // Check if the chosen night's contact is equal to the currently allocated place's contact
-    this.place?.contactList?.forEach(placeContact => {
+    this.place.contacts.forEach(placeContact => {
       if (contact.name == placeContact.name) {
         flag = true;
       }
@@ -185,7 +194,7 @@ export class PlaceComponent {
         item.contacts = tempArr;
         this.total += item.price; // item price isn't split because only one contact
       }
-      // Add in the selected contact into the item's contactList
+      // Add in the selected contact into the item's contacts
       if (item.contacts?.includes(this.chosenContact)) {
         console.log("CONTACT EXISTS")
         return
@@ -211,7 +220,11 @@ export class PlaceComponent {
       console.log(`REMOVED CONTACT: ${item.contacts[contactIndex].name} from ${item.name}`);
       item.contacts?.splice(contactIndex, 1);
     }
+  }
 
-    // console.log("LIST: ", this.storeService.placeholderItems);
+  addContact(contact: Contact) {
+    if (!this.place || !contact) return
+    this.place?.contacts?.push(contact);
+    console.log(this.place.contacts);
   }
 }

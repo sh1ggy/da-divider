@@ -34,12 +34,12 @@ export class StoreService {
     { id: 6, name: "Item 6", price: 60, contacts: [this._night2PlaceholderContacts[0], this._night2PlaceholderContacts[1]] },
   ];
   private _placeholderPlaces: Place[] = [
-    { id: 1, name: "Place 1", items: this._placeholderItems1, contactList: this._night1PlaceholderContacts },
-    { id: 2, name: "Place 2", items: this._placeholderItems2, contactList: this._night2PlaceholderContacts },
+    { id: 1, name: "Place 1", items: this._placeholderItems1, contacts: this._night1PlaceholderContacts },
+    { id: 2, name: "Place 2", items: this._placeholderItems2, contacts: this._night2PlaceholderContacts },
   ]
   private _placeholderPlaces2: Place[] = [
-    { id: 3, name: "Place 3", items: this._placeholderItems2, contactList: this._night2PlaceholderContacts },
-    { id: 4, name: "Place 4", items: this._placeholderItems1, contactList: this._night1PlaceholderContacts },
+    { id: 3, name: "Place 3", items: this._placeholderItems2, contacts: this._night2PlaceholderContacts },
+    { id: 4, name: "Place 4", items: this._placeholderItems1, contacts: this._night1PlaceholderContacts },
   ]
   private _placeholderNights: Night[] = [
     { id: 1, places: this._placeholderPlaces, date: new Date(Date.now()), contacts: this._night1PlaceholderContacts},
@@ -93,7 +93,7 @@ export class StoreService {
   addPlace(night: Night) {
     console.log("Adding place!");
 
-    night.places.push({ id: this.placeholderNights.length + 1, name: `Place ${night.places.length + 1}`, items: [{id: this.placeholderItems.length + 1, name: "", price: 0 }], contactList: this.placeholderContacts })
+    night.places.push({ id: this.placeholderNights.length + 1, name: `Place ${this.chosenNight.places.length + 1}`, items: [{id: this.placeholderItems.length + 1, name: "", price: 0 }], contacts: [] })
 
     console.log(night.places);
     return;

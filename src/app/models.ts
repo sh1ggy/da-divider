@@ -9,7 +9,7 @@ export interface Place {
   id: number,
   name: string | null,
   items: Item[], 
-  contactList?: Contact[],
+  contacts?: Contact[],
 }
 
 export interface Item {
