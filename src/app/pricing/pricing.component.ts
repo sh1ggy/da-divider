@@ -48,6 +48,7 @@ export class PricingComponent {
       return
     };
     this.newItem = {
+      id: this.storeService.placeholderItems.length + 1,
       name: this.itemName.value ? this.itemName.value : this.item.name,
       quantity: this.itemQuantity.value ? this.itemQuantity.value : this.item.quantity,
       price: this.itemPrice.value ? this.itemPrice.value : this.item.price,
