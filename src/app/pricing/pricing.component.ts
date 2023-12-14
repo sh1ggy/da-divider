@@ -12,7 +12,7 @@ import { StoreService } from '../store.service';
           <!-- TODO: change how focus & unfocus works, this might not be the best way -->
           <input type="number" (focus)="focusForm()" (focusout)="unfocusForm()" [placeholder]="item.quantity ? item.quantity : 1" [formControl]="itemQuantity" class="input input-bordered w-1/6"/>
           <input type="text" (focus)="focusForm()" (focusout)="unfocusForm()" [placeholder]="item.name" [formControl]="itemName" class="input input-bordered w-4/6"/>
-          <input type="number" (focus)="focusForm()" (focusout)="unfocusForm()" [placeholder]="this.storeService.calcQuantPrice(item)" [formControl]="itemPrice" min="0.00" max="300.00" step="0.01" class="input input-bordered" />
+          <input type="number" (focus)="focusForm()" (focusout)="unfocusForm()" [placeholder]="item.price" [formControl]="itemPrice" min="0.00" max="300.00" step="0.01" class="input input-bordered" />
         </label>
         <div class="flex">
           <button (mousedown)="saveItem()" *ngIf="editing" type="submit" class="btn w-1/2 text-green-500">Save</button>

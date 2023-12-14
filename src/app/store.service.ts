@@ -41,16 +41,18 @@ export class StoreService {
     { id: 3, name: "Place 3", items: this._placeholderItems2, contacts: this._night2PlaceholderContacts },
     { id: 4, name: "Place 4", items: this._placeholderItems1, contacts: this._night1PlaceholderContacts },
   ]
+  // private _placeholderNights: Night[] = [
+  //   { id: 1, places: this._placeholderPlaces, date: new Date(Date.now()), contacts: this._night1PlaceholderContacts},
+  //   { id: 2, places: this._placeholderPlaces2, date: new Date(Date.now()), contacts: this._night2PlaceholderContacts},
+  // ]
   private _placeholderNights: Night[] = [
-    { id: 1, places: this._placeholderPlaces, date: new Date(Date.now()), contacts: this._night1PlaceholderContacts},
-    { id: 2, places: this._placeholderPlaces2, date: new Date(Date.now()), contacts: this._night2PlaceholderContacts},
   ]
 
   private _chosenNight: Night = this._placeholderNights[0];
-  get chosenNight(): Night {return this._chosenNight; }
+  get chosenNight(): Night { return this._chosenNight; }
   set chosenNight(chosenNight: Night) {
-    this._chosenNight = chosenNight; 
-    console.log(this._chosenNight); 
+    this._chosenNight = chosenNight;
+    console.log(this._chosenNight);
     return;
   }
 
@@ -61,7 +63,7 @@ export class StoreService {
     return;
   }
 
-  get placeholderNights(): Night[] {return this._placeholderNights}
+  get placeholderNights(): Night[] { return this._placeholderNights }
 
   get placeholderPlaces(): Place[] { return this._placeholderPlaces }
 
@@ -85,15 +87,15 @@ export class StoreService {
 
   addNight() {
     console.log("Adding night!");
-    
-    this.placeholderNights.push({ id: this._placeholderNights.length + 1, date: new Date(Date.now()), places:[], contacts: []})
+
+    this.placeholderNights.push({ id: this._placeholderNights.length + 1, date: new Date(Date.now()), places: [], contacts: [] })
     console.log(this.placeholderNights)
   }
 
   addPlace(night: Night) {
     console.log("Adding place!");
 
-    night.places.push({ id: this.placeholderNights.length + 1, name: `Place ${this.chosenNight.places.length + 1}`, items: [{id: this.placeholderItems.length + 1, name: "", price: 0 }], contacts: [] })
+    night.places.push({ id: this.placeholderNights.length + 1, name: `Place ${this.chosenNight.places.length + 1}`, items: [{ id: this.placeholderItems.length + 1, name: "", price: 0 }], contacts: [] })
 
     console.log(night.places);
     return;
@@ -110,16 +112,16 @@ export class StoreService {
   addContact(name: string, email: string, mobile: string) {
     console.log("Adding contact!");
 
-    this.placeholderContacts.push({id: this.placeholderContacts.length + 1, name: name, email: email, mobile: mobile});
+    this.placeholderContacts.push({ id: this.placeholderContacts.length + 1, name: name, email: email, mobile: mobile });
     return;
-  } 
+  }
 
   editContact(name: string, email: string, mobile: string, index: number) {
     console.log("Editing contact!");
 
-    this.placeholderContacts[index] = ({id: this.placeholderContacts.length + 1, name: name, email: email, mobile: mobile});
+    this.placeholderContacts[index] = ({ id: this.placeholderContacts.length + 1, name: name, email: email, mobile: mobile });
     return;
-  } 
+  }
 
   removeContact(nightIndex: number, contactIndex: number) {
     if (this.placeholderNights[nightIndex].contacts?.length == 1) {
@@ -141,11 +143,11 @@ export class StoreService {
     return true;
   }
 
-  calcTotal(contact: Contact) {
+  calcTotal(contact: Contact, items: Item[]) {
+    if (!items) return 0;
     var total: number = 0;
-    
-    // TODO: change placeholderItems to legit data set.
-    this.placeholderItems.forEach((item, i) => {
+
+    items.forEach((item: Item, i: number) => {
       var splitPrice = this.getSplitPrice(item);
       if (item.contacts?.includes(contact)) {
         if (splitPrice) total += splitPrice;
