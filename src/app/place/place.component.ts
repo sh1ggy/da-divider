@@ -50,7 +50,7 @@ import { FormControl } from '@angular/forms';
       </div>
       <!-- Assignment Tab -->
       <div *ngIf="assignment" class="flex flex-col justify-content gap-3">
-        <select (click)="test()" (change)="setContact($event)" class="select select-bordered" >
+        <select (change)="setContact($event)" class="select select-bordered" >
           <option disabled selected>Pick contact</option>
           <option *ngFor="let contact of this.place?.contacts">{{contact.name}}</option>
         </select>
@@ -112,10 +112,6 @@ export class PlaceComponent {
     public storeService: StoreService,
   ) { }
 
-  test() {
-    console.log(this.place?.contacts)
-  }
-
   setPricing() {
     this.pricing = true;
     this.assignment = false;
@@ -169,19 +165,22 @@ export class PlaceComponent {
   }
 
   setContact(event: Event) {
+    debugger
+    if (!this.place?.contacts) return;
+
     this.total = 0;
     const target = event.target as HTMLSelectElement;
     console.log("CHOSEN: ", target.value);
-    this.chosenContact = this.storeService.placeholderContacts.find((pContact) => {
+    this.chosenContact = this.place.contacts.find((pContact) => {
       // Find the contact based on the selected contact
       return target.value == pContact.name
     });
-    if (this.chosenContact) this.total = this.storeService.calcTotal(this.chosenContact);
-    // console.log("LIST: ", this.storeService.placeholderItems);
+    if (this.chosenContact) this.total = this.storeService.calcTotal(this.chosenContact, this.place.items);
   }
 
   setTotal(item: Item, event: Event) {
     // Initialisation
+    debugger
     if (!item || item.price == undefined) return;
     var splitPrice: number | undefined = undefined;
     const target = event.target as HTMLInputElement;
