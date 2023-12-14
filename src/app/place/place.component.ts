@@ -165,7 +165,6 @@ export class PlaceComponent {
   }
 
   setContact(event: Event) {
-    debugger
     if (!this.place?.contacts) return;
 
     this.total = 0;
@@ -180,7 +179,6 @@ export class PlaceComponent {
 
   setTotal(item: Item, event: Event) {
     // Initialisation
-    debugger
     if (!item || item.price == undefined) return;
     var splitPrice: number | undefined = undefined;
     const target = event.target as HTMLInputElement;
@@ -191,7 +189,7 @@ export class PlaceComponent {
       if (!item.contacts || item.contacts.length == 0) {
         const tempArr = Array(0).fill(this.chosenContact);
         item.contacts = tempArr;
-        this.total += item.price; // item price isn't split because only one contact
+        this.total = item.quantity ? item.price * item.quantity : item.price // item price isn't split because only one contact
       }
       // Add in the selected contact into the item's contacts
       if (item.contacts?.includes(this.chosenContact)) {
