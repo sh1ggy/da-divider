@@ -89,6 +89,7 @@ import { FormControl } from '@angular/forms';
           </table>
         </div>
         <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total | number:'1.2-2'}}</p>
+        <app-total/>
       </div>
     </div>
   `,
