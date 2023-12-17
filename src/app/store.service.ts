@@ -10,10 +10,10 @@ export class StoreService {
   // PLACEHOLDER
   //-- Group contacts
   private _placeholderContacts: Contact[] = [
-    { id: 1, name: "Tyrone", mobile: "0401222222", email: "tyrone@test.com.au" },
-    { id: 2, name: "Doug", mobile: "0401333333", email: "doug@test.com.au" },
-    { id: 3, name: "Ray", mobile: "0401444444", email: "ray@test.com.au" },
-    { id: 4, name: "Amara", mobile: "0401444444", email: "amara@test.com.au" },
+    // { id: 1, name: "Tyrone", mobile: "0401222222", email: "tyrone@test.com.au" },
+    // { id: 2, name: "Doug", mobile: "0401333333", email: "doug@test.com.au" },
+    // { id: 3, name: "Ray", mobile: "0401444444", email: "ray@test.com.au" },
+    // { id: 4, name: "Amara", mobile: "0401444444", email: "amara@test.com.au" },
   ];
   private _night1PlaceholderContacts: Contact[] = [
     { id: 1, name: "Tyrone", mobile: "0401222222", email: "tyrone@test.com.au" },
