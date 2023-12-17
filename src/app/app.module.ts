@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NightComponent } from './night/night.component';
 import { HomeComponent } from './home/home.component';
 import { ContactsComponent } from './contacts/contacts.component';
+import { TotalComponent } from './total/total.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { ContactsComponent } from './contacts/contacts.component';
     NightComponent,
     HomeComponent,
     ContactsComponent,
+    TotalComponent,
   ],
   imports: [
     BrowserModule,

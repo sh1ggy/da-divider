@@ -89,6 +89,7 @@ import { FormControl } from '@angular/forms';
           </table>
         </div>
         <p *ngIf="chosenContact" class="font-bold text-sm text-center">Total: {{this.total | number:'1.2-2'}}</p>
+        <app-total [place]="this.place"/>
       </div>
     </div>
   `,
@@ -189,7 +190,7 @@ export class PlaceComponent {
       if (!item.contacts || item.contacts.length == 0) {
         const tempArr = Array(0).fill(this.chosenContact);
         item.contacts = tempArr;
-        this.total = item.quantity ? item.price * item.quantity : item.price // item price isn't split because only one contact
+        this.total += item.quantity ? item.price * item.quantity : item.price // item price isn't split because only one contact
       }
       // Add in the selected contact into the item's contacts
       if (item.contacts?.includes(this.chosenContact)) {
