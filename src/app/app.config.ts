@@ -1,4 +1,4 @@
-import { provideRouter } from '@angular/router';
-import { routes } from './app-routing.module';
+import { provideRouter } from "@angular/router";
+import { routes } from "./app-routing.module";
 
-providers: [provideRouter(routes)]
+providers: [provideRouter(routes)];

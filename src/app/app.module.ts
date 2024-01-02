@@ -1,15 +1,15 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { PlaceComponent } from './place/place.component';
-import { PricingComponent } from './pricing/pricing.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NightComponent } from './night/night.component';
-import { HomeComponent } from './home/home.component';
-import { ContactsComponent } from './contacts/contacts.component';
-import { TotalComponent } from './total/total.component';
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { PlaceComponent } from "./place/place.component";
+import { PricingComponent } from "./pricing/pricing.component";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NightComponent } from "./night/night.component";
+import { HomeComponent } from "./home/home.component";
+import { ContactsComponent } from "./contacts/contacts.component";
+import { TotalComponent } from "./total/total.component";
 
 @NgModule({
   declarations: [
@@ -21,13 +21,8 @@ import { TotalComponent } from './total/total.component';
     ContactsComponent,
     TotalComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule, 
-    ReactiveFormsModule,
-    FormsModule,
-  ],
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
