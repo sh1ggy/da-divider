@@ -25,11 +25,10 @@ import { StoreService } from "../store.service";
           Edit
         </button>
       </div>
-      <!-- Open the modal using ID.showModal() method -->
       <button class="btn" onclick="contactModal.showModal()">
         Add Contact
       </button>
-      <dialog id="contactModal" #contactModal class="modal">
+      <dialog #contactModal id="contactModal" (cancel)="clearContact()" class="modal">
         <div class="modal-box flex flex-col">
           <h3 class="text-lg font-bold">Contact Form</h3>
           <span class="label-text">Contact Name</span>
@@ -59,12 +58,13 @@ import { StoreService } from "../store.service";
               </button>
               <div class="flex items-center justify-center">
                 <button
+                  *ngIf="editContact"
                   (click)="this.storeService.removeGroupContact(this.index)"
                   class="btn btn-error w-1/2"
                 >
                   Delete
                 </button>
-                <button (click)="addContact()" class="btn w-1/2">Submit</button>
+                <button (click)="onSubmit()" class="btn w-1/2">Submit</button>
               </div>
             </form>
           </div>
@@ -95,13 +95,15 @@ export class ContactsComponent {
     return;
   }
 
-  addContact() {
+  onSubmit() {
     if (
       !this.contactName.value ||
       !this.contactEmail.value ||
       !this.contactPhone.value
-    )
+    ) {
+      this.clearContact();
       return;
+    }
     if (this.editContact) {
       this.storeService.editContact(
         this.contactName.value,
@@ -117,6 +119,11 @@ export class ContactsComponent {
       this.contactEmail.value,
       this.contactPhone.value,
     );
+    this.clearContact();
+    return;
+  }
+
+  clearContact() {
     this.contactName.setValue(null);
     this.contactEmail.setValue(null);
     this.contactPhone.setValue(null);
