@@ -25,10 +25,19 @@ import { StoreService } from "../store.service";
           Edit
         </button>
       </div>
-      <button class="btn" onclick="contactModal.showModal()">
+      <button
+        class="btn"
+        (click)="clearContact()"
+        onclick="contactModal.showModal()"
+      >
         Add Contact
       </button>
-      <dialog #contactModal id="contactModal" (cancel)="clearContact()" class="modal">
+      <dialog
+        #contactModal
+        id="contactModal"
+        (cancel)="clearContact()"
+        class="modal"
+      >
         <div class="modal-box flex flex-col">
           <h3 class="text-lg font-bold">Contact Form</h3>
           <span class="label-text">Contact Name</span>
@@ -52,6 +61,7 @@ import { StoreService } from "../store.service";
           <div class="modal-action">
             <form method="dialog">
               <button
+                (click)="clearContact()"
                 class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
               >
                 ✕
@@ -64,7 +74,7 @@ import { StoreService } from "../store.service";
                 >
                   Delete
                 </button>
-                <button (click)="onSubmit()" class="btn w-1/2">Submit</button>
+                <button (click)="onSubmit()" class="btn">Submit</button>
               </div>
             </form>
           </div>
