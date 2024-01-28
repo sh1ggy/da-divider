@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Divider.Models;
 using Microsoft.EntityFrameworkCore;
+using Divider.Services;
+using Divider.ApiModels;
 
 namespace Divider.Controllers
 {
@@ -9,6 +11,7 @@ namespace Divider.Controllers
   public class DividersController : ControllerBase
   {
     private readonly DividersContext _context;
+    private IItemService _items;
 
     public DividersController(DividersContext context)
     {
@@ -24,15 +27,22 @@ namespace Divider.Controllers
 
     [HttpPost]
     [Route("/contacts")]
-    public async Task<ActionResult<Contact>> CreateContact(Contact contact)
+    public async Task<ActionResult<Contact>> CreateContact(CreateContactRequest createContactRequest)
     {
-      if (contact == null)
+      if (createContactRequest == null)
       {
         return BadRequest();
       }
+
+      var contact = new Contact 
+      { 
+        Name = createContactRequest.Name, 
+        Email = createContactRequest.Email, 
+        Mobile = createContactRequest.Mobile 
+      };
       _context.Contacts.Add(contact);
       await _context.SaveChangesAsync();
-      return CreatedAtRoute("GetContact", new { name = contact.Name }, contact);
+      return CreatedAtAction("CreateContact", new { name = contact.Name }, contact);
     }
 
     [HttpGet]

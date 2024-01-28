@@ -22,9 +22,9 @@ public class DividersContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.UseIdentityColumns();
     }
-    public DbSet<Contact> Contacts {get; set;}
-    public DbSet<Night> Nights {get; set;}
-    public DbSet<Place> Places {get; set;}
-    public DbSet<Item> Items {get; set;}
+    public DbSet<Contact> Contacts { get; set; }
+    public DbSet<Night> Nights { get; set; }
+    public DbSet<Place> Places { get; set; }
+    public DbSet<Item> Items { get; set; }
 
 }

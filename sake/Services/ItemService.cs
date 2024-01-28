@@ -1,8 +1,17 @@
-using Divider.Controllers;
+using Divider.ApiModels;
+using Divider.Models;
 
 namespace Divider.Services;
 
-public class ItemService
+public class ItemService : IItemService
 {
-  private DividersController _controller;
+  public Item CreateItem(CreateItemRequest creationRequest)
+  {
+    throw new NotImplementedException();
+  }
+
+  public Item GetItemsByPlace(int placeId)
+  {
+    throw new NotImplementedException();
+  }
 }
