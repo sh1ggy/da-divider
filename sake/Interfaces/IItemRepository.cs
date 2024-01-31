@@ -4,7 +4,6 @@ namespace Divider.Repository;
 
 public interface IItemRepository
 {
-  public int GetItemsByPlace(int placeId);
-
-  public int CreateItem(Item item);
+  public IEnumerable<Item> GetItemsByPlace(int placeId);
+  public void CreateItem(Item item);
 }

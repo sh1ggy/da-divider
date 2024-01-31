@@ -1,5 +1,4 @@
 using Divider.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Divider.Repository;

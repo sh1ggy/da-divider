@@ -1,7 +1,6 @@
 using Divider.ApiModels;
 using Divider.Models;
 using Divider.Repository;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Divider.Service;
 

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Divider.Models;
-using Microsoft.EntityFrameworkCore;
 using Divider.Service;
+using Divider.ApiModels;
 
 namespace Divider.Controllers;
 [Route("api/[controller]")]
@@ -9,7 +9,6 @@ namespace Divider.Controllers;
 public class ItemController : ControllerBase
 {
 	// TODO: remove;
-	private DividersContext _context;
 	private IItemService _items;
 	public ItemController(IItemService items)
 	{
@@ -17,24 +16,24 @@ public class ItemController : ControllerBase
 	}
 
 	[HttpGet]
-	[Route("/items")]
-	public async Task<ActionResult<IEnumerable<Item>>> GetItems()
+	[Route("/items/{placeId}")]
+	public ActionResult<IEnumerable<Item>> GetItemByPlace(int placeId)
 	{
-		return await _context.Items.ToListAsync();
+		var items = _items.GetItemsByPlace(placeId);
+		return Ok(items);
 	}
 
 	[HttpPost]
 	[ActionName(nameof(Item))]
 	[Route("/items")]
-	public async Task<ActionResult<Item>> CreateItem(Item item)
+	public ActionResult<Item> CreateItem(CreateItemRequest createItemRequest)
 	{
-		if (item == null)
+		if (createItemRequest == null)
 		{
 			return BadRequest();
 		}
-		_context.Items.Add(item);
-		await _context.SaveChangesAsync();
-		return CreatedAtRoute(nameof(CreateItem), new { name = item.Name }, item);
+		_items.CreateItem(createItemRequest);
+		return CreatedAtRoute(nameof(CreateItem), new { name = createItemRequest.Name }, createItemRequest);
 	}
 }
 

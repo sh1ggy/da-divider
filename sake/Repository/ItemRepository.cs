@@ -1,16 +1,27 @@
 using Divider.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Divider.Repository;
 
 public class ItemRepository : IItemRepository
 {
-    public int CreateItem(Item item)
+    protected readonly IUnitOfWork _unitOfWork;
+    public ItemRepository(IUnitOfWork unitOfWork)
     {
-        throw new NotImplementedException();
+        _unitOfWork = unitOfWork;
+        _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking; //default to no tracking.
+    }
+    public void CreateItem(Item item)
+    {
+        _unitOfWork.Context.Items.Add(item);
+        _unitOfWork.Context.SaveChanges();
     }
 
-    public int GetItemsByPlace(int placeId)
+    public IEnumerable<Item> GetItemsByPlace(int placeId)
     {
-        throw new NotImplementedException();
+        List<Item> items = _unitOfWork.Context.Items
+            .Where(i => i.ContactId == placeId)
+            .ToList();
+        return items;
     }
 }

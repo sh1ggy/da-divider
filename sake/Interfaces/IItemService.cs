@@ -5,6 +5,6 @@ namespace Divider.Service;
 
 public interface IItemService
 {
-  public Item GetItemsByPlace(int placeId);
+  public IEnumerable<Item> GetItemsByPlace(int placeId);
   public Item CreateItem(CreateItemRequest creationRequest);
 }

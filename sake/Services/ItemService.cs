@@ -1,17 +1,30 @@
 using Divider.ApiModels;
 using Divider.Models;
+using Divider.Repository;
 
 namespace Divider.Service;
 
 public class ItemService : IItemService
 {
+  private IItemRepository _repository;
+  public ItemService(IItemRepository repository)
+  {
+    _repository = repository;
+  }
   public Item CreateItem(CreateItemRequest creationRequest)
   {
-    throw new NotImplementedException();
+    
+    Item item = new Item
+    {
+      Name = creationRequest.Name,
+      Price = creationRequest.Price,
+    };
+    _repository.CreateItem(item);
+    return item;
   }
 
-  public Item GetItemsByPlace(int placeId)
+  public IEnumerable<Item> GetItemsByPlace(int placeId)
   {
-    throw new NotImplementedException();
+    return _repository.GetItemsByPlace(placeId);
   }
 }
