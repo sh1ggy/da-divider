@@ -13,3 +13,8 @@ public class CreateContactResponse : Contact
 {
   // Empty response
 }
+
+public class GetContactsResponse
+{
+  // Empty response
+}

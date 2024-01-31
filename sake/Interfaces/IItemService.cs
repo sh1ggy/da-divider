@@ -1,7 +1,7 @@
 using Divider.Models;
 using Divider.ApiModels;
 
-namespace Divider.Services;
+namespace Divider.Service;
 
 public interface IItemService
 {
