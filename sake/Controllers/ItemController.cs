@@ -54,5 +54,18 @@ public class ItemController : ControllerBase
 		_items.DeleteItem(itemId);
 		return Ok();
 	}
+
+	[HttpPut]
+	[Route("/items/{itemId}")]
+	public ActionResult<Item> EditItem(EditItemRequest editItemRequest, int itemId)
+	{
+		if (editItemRequest == null)
+		{
+			return BadRequest();
+		}
+		var res = _items.EditItem(editItemRequest, itemId);
+		if (res == null) return BadRequest();
+		return Ok();
+	}
 }
 

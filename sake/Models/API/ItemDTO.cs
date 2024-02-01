@@ -19,3 +19,7 @@ public class CreateItemResponse : Item
   // Empty response
 }
 
+public class EditItemRequest : BaseRequest
+{
+  public Item item { get; set; }
+}

@@ -32,4 +32,11 @@ public class ItemService : IItemService
   {
     return _repository.DeleteItem(itemId);
   }
+
+  public Item? EditItem(EditItemRequest editItemRequest, int itemId)
+  {
+    if (editItemRequest.item.Id != itemId) return null;
+    // TODO: implement proper created/edited at
+    return _repository.EditItem(editItemRequest.item); 
+  }
 }
