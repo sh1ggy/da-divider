@@ -19,9 +19,23 @@ public class ItemRepository : IItemRepository
 
     public IEnumerable<Item> GetItemsByPlace(int placeId)
     {
-        List<Item> items = _unitOfWork.Context.Items
-            .Where(i => i.ContactId == placeId)
-            .ToList();
+        // List<Item> items = _unitOfWork.Context.Items
+        //     .Where(i => i.ContactId == placeId)
+        //     .ToList();
+        List<Item> items = _unitOfWork.Context.Items.ToList();
         return items;
+    }
+
+    public Item DeleteItem(int itemId)
+    {
+        var res = _unitOfWork.Context.Items
+            .FirstOrDefault(i => i.Id == itemId);
+        if (res != null)
+        {
+            _unitOfWork.Context.Items.Remove(res);
+            _unitOfWork.Context.SaveChanges();
+            return res;
+        }
+        return null;
     }
 }

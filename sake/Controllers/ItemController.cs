@@ -19,8 +19,15 @@ public class ItemController : ControllerBase
 	[Route("/items/{placeId}")]
 	public ActionResult<IEnumerable<Item>> GetItemByPlace(int placeId)
 	{
-		var items = _items.GetItemsByPlace(placeId);
-		return Ok(items);
+		try
+		{
+			var items = _items.GetItemsByPlace(placeId);
+			return Ok(items);
+		}
+		catch
+		{
+			return BadRequest();
+		}
 	}
 
 	[HttpPost]
@@ -34,6 +41,18 @@ public class ItemController : ControllerBase
 		}
 		_items.CreateItem(createItemRequest);
 		return CreatedAtRoute(nameof(CreateItem), new { name = createItemRequest.Name }, createItemRequest);
+	}
+
+	[HttpDelete]
+	[Route("/items/{itemId}")]
+	public ActionResult<Item> DeleteItem(int itemId)
+	{
+		if (itemId == null)
+		{
+			return BadRequest();
+		}
+		_items.DeleteItem(itemId);
+		return Ok();
 	}
 }
 
