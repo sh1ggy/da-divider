@@ -34,5 +34,17 @@ public class ContactController : ControllerBase
     _contacts.CreateContact(createContactRequest);
     return CreatedAtAction("CreateContact", createContactRequest);
   }
+
+  [HttpDelete]
+  [Route("/contacts/{contactId}")]
+  public ActionResult<Contact> DeleteContact(int contactId)
+  {
+    if (contactId == 0)
+    {
+      return BadRequest();
+    }
+    _contacts.DeleteContact(contactId);
+    return Ok();
+  }
 }
 

@@ -24,4 +24,17 @@ public class ContactRepository : IContactRepository
     List<Contact> contacts = _unitOfWork.Context.Contacts.ToList();
     return contacts;
   }
+
+  public Contact? DeleteContact(int contactId)
+  {
+    var res = _unitOfWork.Context.Contacts
+      .FirstOrDefault(c => c.Id == contactId);
+    if (res != null)
+    {
+      _unitOfWork.Context.Contacts.Remove(res);
+      _unitOfWork.Context.SaveChanges();
+      return res;
+    }
+    return null;
+  }
 }

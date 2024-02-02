@@ -28,4 +28,9 @@ public class ContactService : IContactService
 	{
 		return _repository.GetContacts();
 	}
+
+	public Contact? DeleteContact(int contactId)
+	{
+		return _repository.DeleteContact(contactId);
+	}
 }

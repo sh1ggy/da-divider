@@ -59,7 +59,7 @@ public class ItemController : ControllerBase
 	[Route("/items/{itemId}")]
 	public ActionResult<Item> EditItem(EditItemRequest editItemRequest, int itemId)
 	{
-		if (editItemRequest == null)
+		if (editItemRequest == null || itemId == 0)
 		{
 			return BadRequest();
 		}

@@ -8,4 +8,5 @@ public interface IContactService
 {
   public IEnumerable<Contact> GetContacts();
   public Contact CreateContact(CreateContactRequest createContactRequest);
+  public Contact? DeleteContact(int contactId);
 }
