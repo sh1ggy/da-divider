@@ -29,8 +29,8 @@ public class ContactService : IContactService
 		return _repository.GetContacts();
 	}
 
-	public Contact? DeleteContact(int contactId)
+	public void DeleteContact(int contactId)
 	{
-		return _repository.DeleteContact(contactId);
+		_repository.DeleteContact(contactId);
 	}
 }

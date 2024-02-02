@@ -43,8 +43,16 @@ public class ContactController : ControllerBase
     {
       return BadRequest();
     }
-    _contacts.DeleteContact(contactId);
-    return Ok();
+    try
+    {
+      _contacts.DeleteContact(contactId);
+      return Ok();
+    }
+    catch
+    {
+      return BadRequest();
+    }
   }
+
 }
 

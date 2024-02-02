@@ -25,7 +25,7 @@ public class ContactRepository : IContactRepository
     return contacts;
   }
 
-  public Contact? DeleteContact(int contactId)
+  public void DeleteContact(int contactId)
   {
     var res = _unitOfWork.Context.Contacts
       .FirstOrDefault(c => c.Id == contactId);
@@ -33,8 +33,6 @@ public class ContactRepository : IContactRepository
     {
       _unitOfWork.Context.Contacts.Remove(res);
       _unitOfWork.Context.SaveChanges();
-      return res;
     }
-    return null;
   }
 }

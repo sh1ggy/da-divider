@@ -6,5 +6,5 @@ public interface IContactRepository
 {
   public IEnumerable<Contact> GetContacts();
   public void CreateContact(Contact contact);
-  public Contact? DeleteContact(int contactId);
+  public void DeleteContact(int contactId);
 }
