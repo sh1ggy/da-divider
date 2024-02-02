@@ -7,6 +7,6 @@ public interface IItemService
 {
   public IEnumerable<Item> GetItemsByPlace(int placeId);
   public Item CreateItem(CreateItemRequest creationRequest);
-  public Item DeleteItem(int itemId);
-  public Item EditItem(EditItemRequest editRequest, int itemId);
+  public Item? DeleteItem(int itemId);
+  public Item? EditItem(EditItemRequest editRequest, int itemId);
 }

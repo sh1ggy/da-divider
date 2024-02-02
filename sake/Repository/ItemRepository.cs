@@ -19,6 +19,7 @@ public class ItemRepository : IItemRepository
 
   public IEnumerable<Item> GetItemsByPlace(int placeId)
   {
+    // TODO, fix logic and relations
     List<Item> items = _unitOfWork.Context.Items.ToList();
     // List<Item> items = _unitOfWork.Context.Items
     //     .Where(i => i.ContactId == placeId)
@@ -26,7 +27,7 @@ public class ItemRepository : IItemRepository
     return items;
   }
 
-  public Item DeleteItem(int itemId)
+  public Item? DeleteItem(int itemId)
   {
     var res = _unitOfWork.Context.Items
         .FirstOrDefault(i => i.Id == itemId);
@@ -39,7 +40,7 @@ public class ItemRepository : IItemRepository
     return null;
   }
 
-  public Item EditItem(Item item)
+  public Item? EditItem(Item item)
   {
     var res = _unitOfWork.Context.Items.FirstOrDefault(i => i.Id == item.Id);
     if (res != null) 
@@ -47,7 +48,8 @@ public class ItemRepository : IItemRepository
       res = item;
       _unitOfWork.Context.Items.Update(res);
       _unitOfWork.Context.SaveChanges();
+      return res;
     }
-    return res;
+    return null;
   }
 }

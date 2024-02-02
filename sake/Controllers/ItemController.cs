@@ -47,7 +47,7 @@ public class ItemController : ControllerBase
 	[Route("/items/{itemId}")]
 	public ActionResult<Item> DeleteItem(int itemId)
 	{
-		if (itemId == null)
+		if (itemId == 0)
 		{
 			return BadRequest();
 		}

@@ -28,9 +28,11 @@ public class ItemService : IItemService
     return _repository.GetItemsByPlace(placeId);
   }
 
-  public Item DeleteItem(int itemId)
+  public Item? DeleteItem(int itemId)
   {
-    return _repository.DeleteItem(itemId);
+    var item = _repository.DeleteItem(itemId);
+    if (item == null) return null;
+    return item;
   }
 
   public Item? EditItem(EditItemRequest editItemRequest, int itemId)

@@ -21,5 +21,5 @@ public class CreateItemResponse : Item
 
 public class EditItemRequest : BaseRequest
 {
-  public Item item { get; set; }
+  public required Item item { get; set; }
 }
