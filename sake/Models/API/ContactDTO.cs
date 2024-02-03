@@ -2,7 +2,7 @@ using Divider.Models;
 
 namespace Divider.ApiModels;
 
-public class CreateContactRequest: BaseRequest
+public class CreateContactRequest : BaseRequest
 {
   public string Name { get; set; } = string.Empty;
   public string Email { get; set; } = string.Empty;
@@ -17,4 +17,9 @@ public class CreateContactResponse : Contact
 public class GetContactsResponse
 {
   // Empty response
+}
+
+public class EditContactRequest : BaseRequest
+{
+  public required Contact Contact { get; set; }
 }

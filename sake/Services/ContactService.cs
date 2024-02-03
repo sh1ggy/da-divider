@@ -33,4 +33,10 @@ public class ContactService : IContactService
 	{
 		_repository.DeleteContact(contactId);
 	}
+
+	public Contact? EditContact(EditContactRequest editContactRequest, int contactId)
+	{
+		if (editContactRequest.Contact.Id != contactId) return null;
+		return _repository.EditContact(editContactRequest.Contact);
+	}
 }

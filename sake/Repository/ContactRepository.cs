@@ -35,4 +35,17 @@ public class ContactRepository : IContactRepository
       _unitOfWork.Context.SaveChanges();
     }
   }
+
+  public Contact? EditContact(Contact contact)
+  {
+    var res = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contact.Id);
+    if (res != null)
+    {
+      res = contact;
+      _unitOfWork.Context.Contacts.Update(res);
+      _unitOfWork.Context.SaveChanges();
+      return res;
+    }
+    return null;
+  }
 }
