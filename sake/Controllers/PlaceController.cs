@@ -4,7 +4,8 @@ using Divider.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Divider.Controllers;
-
+[Route("api/[controller]")]
+[ApiController]
 public class PlaceController : ControllerBase
 {
   private IPlaceService _places;

@@ -12,7 +12,8 @@ public class PlaceService : IPlaceService
     }
     public Place CreatePlace(CreatePlaceRequest creationRequest)
     {
-        Place place = new Place {
+        Place place = new Place
+        {
             Name = creationRequest.Name,
         };
         _repository.CreatePlace(place);
@@ -28,7 +29,7 @@ public class PlaceService : IPlaceService
     public Place? EditPlace(EditPlaceRequest editRequest, int placeId)
     {
         if (editRequest == null) return null;
-        return _repository.EditPlace(editRequest.place);
+        return _repository.EditPlace(editRequest.Place);
     }
 
     public IEnumerable<Place> GetPlaces()

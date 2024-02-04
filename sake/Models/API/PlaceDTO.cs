@@ -13,5 +13,5 @@ public class CreatePlaceResponse : Item
 
 public class EditPlaceRequest : BaseRequest
 {
-  public required Place place { get; set; }
+  public required Place Place { get; set; }
 }
