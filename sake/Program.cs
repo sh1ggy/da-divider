@@ -10,8 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IPlaceRepository, PlaceRepository>();
 builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IPlaceService, PlaceService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // builder.Services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));

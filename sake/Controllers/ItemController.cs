@@ -35,10 +35,7 @@ public class ItemController : ControllerBase
 	[Route("/items")]
 	public ActionResult<Item> CreateItem(CreateItemRequest createItemRequest)
 	{
-		if (createItemRequest == null)
-		{
-			return BadRequest();
-		}
+		if (createItemRequest == null) return BadRequest();
 		_items.CreateItem(createItemRequest);
 		return CreatedAtRoute(nameof(CreateItem), new { name = createItemRequest.Name }, createItemRequest);
 	}
@@ -47,10 +44,7 @@ public class ItemController : ControllerBase
 	[Route("/items/{itemId}")]
 	public ActionResult<Item> DeleteItem(int itemId)
 	{
-		if (itemId == 0)
-		{
-			return BadRequest();
-		}
+		if (itemId == 0) return BadRequest();
 		_items.DeleteItem(itemId);
 		return Ok();
 	}
@@ -59,10 +53,7 @@ public class ItemController : ControllerBase
 	[Route("/items/{itemId}")]
 	public ActionResult<Item> EditItem(EditItemRequest editItemRequest, int itemId)
 	{
-		if (editItemRequest == null || itemId == 0)
-		{
-			return BadRequest();
-		}
+		if (editItemRequest == null || itemId == 0) return BadRequest();
 		var res = _items.EditItem(editItemRequest, itemId);
 		if (res == null) return BadRequest();
 		return Ok();
