@@ -11,8 +11,9 @@ public class GetItemResponse : Item
 // ---- [PUT] Item
 public class CreateItemRequest : BaseRequest
 {
-  public string Name { get; set; } = string.Empty;
-  public float Price { get; set; } = 0;
+  public required string Name { get; set; } = string.Empty;
+  public required float Price { get; set; } = 0;
+  public required int PlaceId {get; set;}
 }
 public class CreateItemResponse : Item
 {

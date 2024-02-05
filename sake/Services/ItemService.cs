@@ -18,6 +18,7 @@ public class ItemService : IItemService
     {
       Name = creationRequest.Name,
       Price = creationRequest.Price,
+      PlaceId = creationRequest.PlaceId,
     };
     _repository.CreateItem(item);
     return item;

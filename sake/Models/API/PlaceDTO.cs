@@ -4,7 +4,8 @@ namespace Divider.ApiModels;
 
 public class CreatePlaceRequest : BaseRequest
 {
-  public string Name { get; set; } = string.Empty;
+  public required string Name { get; set; } = string.Empty;
+  public required int NightId { get; set; }
 }
 public class CreatePlaceResponse : Item
 {

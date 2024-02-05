@@ -16,12 +16,12 @@ public class PlaceController : ControllerBase
   }
 
   [HttpGet]
-  [Route("/places")]
-  public ActionResult<IEnumerable<Place>> GetPlaces()
+  [Route("/places/{nightId}")]
+  public ActionResult<IEnumerable<Place>> GetPlaces(int nightId)
   {
     try
     {
-      var places = _places.GetPlaces();
+      var places = _places.GetPlaces(nightId);
       return Ok(places);
     }
     catch
