@@ -19,11 +19,9 @@ public class ItemRepository : IItemRepository
 
   public IEnumerable<Item> GetItemsByPlace(int placeId)
   {
-    // TODO, fix logic and relations
-    List<Item> items = _unitOfWork.Context.Items.ToList();
-    // List<Item> items = _unitOfWork.Context.Items
-    //     .Where(i => i.ContactId == placeId)
-    //     .ToList();
+    List<Item> items = _unitOfWork.Context.Items
+        .Where(i => i.PlaceId == placeId)
+        .ToList();
     return items;
   }
 

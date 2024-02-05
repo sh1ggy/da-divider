@@ -15,6 +15,7 @@ public class PlaceService : IPlaceService
         Place place = new Place
         {
             Name = creationRequest.Name,
+            NightId = creationRequest.NightId,
         };
         _repository.CreatePlace(place);
         return place;
@@ -32,9 +33,9 @@ public class PlaceService : IPlaceService
         return _repository.EditPlace(editRequest.Place);
     }
 
-    public IEnumerable<Place> GetPlaces()
+    public IEnumerable<Place> GetPlaces(int nightId)
     {
-        IEnumerable<Place> places = _repository.GetPlaces();
+        IEnumerable<Place> places = _repository.GetPlaces(nightId);
         return places;
     }
 }

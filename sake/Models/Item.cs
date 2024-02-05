@@ -10,4 +10,7 @@ public class Item : BaseEntity
 
   [ForeignKey("ContactId")]
   public int ContactId { get; set; }
+  
+  [ForeignKey("PlaceId")]
+  public int PlaceId { get; set; }
 }
