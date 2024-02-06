@@ -10,6 +10,7 @@ import { NightComponent } from "./night/night.component";
 import { HomeComponent } from "./home/home.component";
 import { ContactsComponent } from "./contacts/contacts.component";
 import { TotalComponent } from "./total/total.component";
+import { HttpClientModule } from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -21,7 +22,7 @@ import { TotalComponent } from "./total/total.component";
     ContactsComponent,
     TotalComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, HttpClientModule],
   providers: [],
   bootstrap: [AppComponent],
 })

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { StoreService } from "../store.service";
 import { Contact, Night, Place } from "../models";
 
@@ -79,11 +79,17 @@ import { Contact, Night, Place } from "../models";
   `,
   styles: [],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   contact: Contact | undefined = undefined;
   // night: Night | undefined = undefined;
 
   constructor(public storeService: StoreService) {}
+  
+  ngOnInit(): void {
+    const req = this.storeService.getNights();
+    console.log(req)
+
+  }
 
   addContact(nightContacts: Contact[]) {
     if (!this.contact) return;

@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Contact, Item, Night, Place } from "./models";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "src/environments/environment.development";
 
 @Injectable({
   providedIn: "root",
@@ -102,6 +104,12 @@ export class StoreService {
   private _placeholderNights: Night[] = [];
 
   private _chosenNight: Night = this._placeholderNights[0];
+
+  getNights() {
+    const url = `${environment.apiUrl}/nights`
+    return this.http.get<Night[]>(url);
+  }
+
   get chosenNight(): Night {
     return this._chosenNight;
   }
@@ -239,5 +247,8 @@ export class StoreService {
     return total;
   }
 
-  constructor() {}
+  constructor
+  (
+    private http: HttpClient, 
+  ) {}
 }
