@@ -6,7 +6,7 @@ export interface Contact {
 }
 
 export interface Place {
-  id: number;
+  id?: number;
   name: string | null;
   items: Item[];
   contacts?: Contact[];
@@ -24,5 +24,7 @@ export interface Night {
   id: number;
   date: Date;
   places: Place[];
+  // TODO, remove the above and restructure model for Night. 
+  placeIds?: number[];
   contacts?: Contact[];
 }

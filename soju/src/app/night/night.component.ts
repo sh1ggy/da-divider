@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { StoreService } from "../store.service";
 import { FormControl } from "@angular/forms";
 import { Night, Place } from "../models";
@@ -7,9 +7,8 @@ import { Night, Place } from "../models";
   selector: "app-night",
   template: `
     <div class="flex flex-col items-center justify-center gap-6">
-      <h1 class="text-3xl">
-        Night {{ this.storeService.chosenNight.date.toLocaleDateString() }}
-      </h1>
+      <h1 class="text-3xl">Night #{{this.storeService.chosenNight.id}}</h1>
+      <code>{{ this.storeService.chosenNight.date }} </code>
       <div class="flex"></div>
       <div
         *ngFor="
@@ -32,10 +31,13 @@ import { Night, Place } from "../models";
   `,
   styles: [],
 })
-export class NightComponent {
+export class NightComponent implements OnInit {
   @Input() night: Night | undefined;
 
   constructor(public storeService: StoreService) {}
+  ngOnInit(): void {
+    this.storeService.getNight();
+  }
 
   setNight(newNight: Night) {
     this.night = newNight;

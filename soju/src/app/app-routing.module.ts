@@ -6,7 +6,7 @@ import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'night', component: NightComponent },
+  { path: 'night/:id', component: NightComponent },
   { path: 'place', component: PlaceComponent },
 ];
 

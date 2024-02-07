@@ -14,9 +14,9 @@ import { Contact, Night, Place } from "../models";
             let night of this.nights;
             let nightIndex = index
           "
-          class="flex flex-col gap-3 rounded-lg bg-slate-900 p-4"
+          class="flex flex-col gap-3 rounded-lg p-4"
         >
-          <div class="flex gap-3 rounded-lg bg-base-100 p-12 shadow-xl">
+          <div class="flex gap-3 rounded-lg bg-slate-800 p-12 shadow-xl items-center justify-center">
             <h1><code class="bg-gray-700 rounded-lg p-2">{{ night.id }}</code></h1>
             <h2>{{ night.date }}</h2>
             <div
@@ -59,14 +59,14 @@ import { Contact, Night, Place } from "../models";
                 </option>
               </ng-container>
             </select>
+            <button
+              [routerLink]="['/night', night.id]"
+              (click)="this.storeService.chosenNight = night"
+              class="btn btn-outline btn-sm hover:bg-slate-700 top-0 right-0 relative"
+            >
+              ✏️
+            </button>
           </div>
-          <button
-            routerLink="/night"
-            (click)="this.storeService.chosenNight = night"
-            class="btn btn-primary ml-3"
-          >
-            Edit night
-          </button>
         </div>
         <button
           (click)="this.storeService.addNight()"
@@ -89,7 +89,6 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.storeService.getNights().subscribe((value) => {
       this.nights = value;
-      console.log(value)
       return value;
     });
   }

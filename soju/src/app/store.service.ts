@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Contact, Item, Night, Place } from "./models";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
+import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -110,6 +111,11 @@ export class StoreService {
     return this.http.get<Night[]>(url);
   }
 
+  getNight() {
+    const url = `${environment.apiUrl}/nights`
+    return this.http.get<Night[]>(url);
+  }
+
   get chosenNight(): Night {
     return this._chosenNight;
   }
@@ -167,19 +173,25 @@ export class StoreService {
     });
     console.log(this.placeholderNights);
   }
-
-  addPlace(night: Night) {
+  addPlace(night: Night): Observable<Place> {
     console.log("Adding place!");
 
-    night.places.push({
-      id: this.placeholderNights.length + 1,
-      name: `Place ${this.chosenNight.places.length + 1}`,
-      items: [{ id: this.placeholderItems.length + 1, name: "", price: 0 }],
-      contacts: [],
-    });
-
-    console.log(night.places);
-    return;
+    const url = `${environment.apiUrl}/places`
+    type PlaceRequest = {
+      CreatedUserId: number,
+      name: string,
+      nightId: number,
+    }
+    const place: PlaceRequest = {
+      CreatedUserId: 0,
+      name: `Place ${this.chosenNight.placeIds == undefined ? 1 : this.chosenNight.placeIds.length}`,
+      nightId: night.id
+    }
+    console.log(place)
+    const req = this.http.post<Place>(url, {place})
+    req.subscribe(res => console.log(res))
+    console.log(req);
+    return req;
   }
 
   addItem(items: Item[]) {
