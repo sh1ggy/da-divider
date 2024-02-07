@@ -46,4 +46,10 @@ public class NightRepository : INightRepository
     IEnumerable<Night> nights = _unitOfWork.Context.Nights.ToList();
     return nights;
   }
+
+  public Night GetNightById(int nightId)
+  {
+    Night night = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId);
+    return night;
+  }
 }

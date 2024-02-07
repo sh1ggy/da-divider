@@ -38,4 +38,10 @@ public class NightService : INightService
     IEnumerable<Night> nights = _repository.GetNights();
     return nights;
   }
+
+  public Night GetNightById(int nightId) 
+  {
+    Night night = _repository.GetNightById(nightId);
+    return night;
+  }
 }

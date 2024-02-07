@@ -30,6 +30,21 @@ public class NightController: ControllerBase
     }
   }
 
+  [HttpGet]
+  [Route("/nights/{nightId}")]
+  public ActionResult<Night> GetNightById(int nightId) 
+  {
+    try
+    {
+      var night = _nights.GetNightById(nightId);
+      return Ok(night);
+    }
+    catch 
+    {
+      return BadRequest();
+    }
+  }
+
   [HttpPost]
   [ActionName(nameof(Night))]
   [Route("/nights")]
