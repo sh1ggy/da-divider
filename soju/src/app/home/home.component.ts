@@ -7,17 +7,18 @@ import { Contact, Night, Place } from "../models";
   template: `
     <div class="flex items-start gap-5">
       <!-- NIGHTS -->
-      <div class="flex flex-col">
+      <div class="flex flex-col gap-3">
         <h1 class="mt-12 text-center text-2xl font-bold">Nights</h1>
         <div
           *ngFor="
-            let night of this.storeService.placeholderNights;
+            let night of this.nights;
             let nightIndex = index
           "
           class="flex flex-col gap-3 rounded-lg bg-slate-900 p-4"
         >
-          <div class="gap-3 rounded-lg bg-base-100 p-12 shadow-xl">
-            <h2>{{ night.date.toLocaleDateString() }}</h2>
+          <div class="flex gap-3 rounded-lg bg-base-100 p-12 shadow-xl">
+            <h1><code class="bg-gray-700 rounded-lg p-2">{{ night.id }}</code></h1>
+            <h2>{{ night.date }}</h2>
             <div
               *ngFor="let contact of night.contacts; let contactIndex = index"
               class="flex flex-row"
@@ -81,14 +82,16 @@ import { Contact, Night, Place } from "../models";
 })
 export class HomeComponent implements OnInit {
   contact: Contact | undefined = undefined;
-  // night: Night | undefined = undefined;
+  nights: Night[] = [];
 
   constructor(public storeService: StoreService) {}
-  
-  ngOnInit(): void {
-    const req = this.storeService.getNights();
-    console.log(req)
 
+  ngOnInit(): void {
+    this.storeService.getNights().subscribe((value) => {
+      this.nights = value;
+      console.log(value)
+      return value;
+    });
   }
 
   addContact(nightContacts: Contact[]) {
