@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Contact, Item, Night, Place } from "./models";
-import { HttpClient } from "@angular/common/http";
+import { Contact, Item, Night, Place, NewPlaceRequest } from "./models";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
 import { Observable } from "rxjs";
 
@@ -107,12 +107,12 @@ export class StoreService {
   private _chosenNight: Night = this._placeholderNights[0];
 
   getNights() {
-    const url = `${environment.apiUrl}/nights`
+    const url = `${environment.apiUrl}/nights`;
     return this.http.get<Night[]>(url);
   }
 
   getNight() {
-    const url = `${environment.apiUrl}/nights`
+    const url = `${environment.apiUrl}/nights`;
     return this.http.get<Night[]>(url);
   }
 
@@ -174,23 +174,21 @@ export class StoreService {
     console.log(this.placeholderNights);
   }
   addPlace(night: Night): Observable<Place> {
-    console.log("Adding place!");
+    const url = `${environment.apiUrl}/places`;
+    const headers = new HttpHeaders()
+      .set("Accept", "application/json")
+      .set("Content-Type", "application/json");
 
-    const url = `${environment.apiUrl}/places`
-    type PlaceRequest = {
-      CreatedUserId: number,
-      name: string,
-      nightId: number,
-    }
-    const place: PlaceRequest = {
-      CreatedUserId: 0,
+    const place: NewPlaceRequest = {
+      userCreatedId: 2147483647,
       name: `Place ${this.chosenNight.placeIds == undefined ? 1 : this.chosenNight.placeIds.length}`,
-      nightId: night.id
-    }
-    console.log(place)
-    const req = this.http.post<Place>(url, {place})
-    req.subscribe(res => console.log(res))
-    console.log(req);
+      nightId: night.id,
+    };
+
+    const req = this.http.post<Place>(url, JSON.stringify(place), {headers: headers});
+    req.subscribe((res) => res);
+
+    console.log("Adding place:", {place});
     return req;
   }
 
@@ -259,8 +257,5 @@ export class StoreService {
     return total;
   }
 
-  constructor
-  (
-    private http: HttpClient, 
-  ) {}
+  constructor(private http: HttpClient) {}
 }

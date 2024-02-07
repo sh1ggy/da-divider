@@ -28,3 +28,9 @@ export interface Night {
   placeIds?: number[];
   contacts?: Contact[];
 }
+
+export type NewPlaceRequest = {
+  userCreatedId: number;
+  name: string;
+  nightId: number;
+};
