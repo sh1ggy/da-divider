@@ -29,8 +29,15 @@ export interface Night {
   contacts?: Contact[];
 }
 
-export type NewPlaceRequest = {
-  userCreatedId: number;
+interface BaseRequest {
+  userCreatedId: number, // creating/editing user
+}
+
+export interface NewPlaceRequest extends BaseRequest {
   name: string;
   nightId: number;
 };
+
+export interface NewNightRequest extends BaseRequest {
+  date: string,
+}

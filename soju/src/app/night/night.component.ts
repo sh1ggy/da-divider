@@ -21,7 +21,7 @@ import { ActivatedRoute } from "@angular/router";
         <app-place [place]="place" [index]="i" />
       </div>
       <button
-        (click)="this.storeService.addPlace(storeService.chosenNight)"
+        (click)="addPlace()"
         class="btn w-1/2"
       >
         Add Place
@@ -34,14 +34,21 @@ import { ActivatedRoute } from "@angular/router";
 })
 export class NightComponent implements OnInit {
   night: Night | undefined;
-
   places: Place[] | undefined;
 
   constructor(public storeService: StoreService, private route: ActivatedRoute) {}
+  
   ngOnInit(): void {
     const nightId: string | null = this.route.snapshot.paramMap.get('id');
     if (nightId == null) return;
     this.storeService.getNight(nightId).subscribe((night: Night) => this.night = night);
+    this.storeService.getPlacesByNight(nightId).subscribe((places: Place[]) => this.places = places)
+  }
+
+  addPlace() {
+    const nightId: string | undefined = this.night?.id.toString();
+    if (nightId === undefined) return;
+    this.storeService.addPlace(this.night);
     this.storeService.getPlacesByNight(nightId).subscribe((places: Place[]) => this.places = places)
   }
 

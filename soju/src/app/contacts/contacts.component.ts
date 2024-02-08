@@ -5,82 +5,78 @@ import { StoreService } from "../store.service";
 @Component({
   selector: "app-contacts",
   template: `
-    <div class="flex flex-col">
-      <h1 class="mt-12 text-center text-2xl font-bold">Contacts</h1>
-      <div
-        *ngFor="
-          let contact of this.storeService.placeholderContacts;
-          let i = index
-        "
-        class="flex items-center"
-      >
-        <p class="w-1/2">{{ contact.name }}</p>
-        <button
-          (click)="contactModal.showModal()"
-          (click)="
-            setEditContact(contact.name, contact.email, contact.mobile, i)
-          "
-          class="btn w-1/2"
-        >
-          Edit
-        </button>
-      </div>
+    <h1 class="text-center text-2xl font-bold">Contacts</h1>
+    <div
+      *ngFor="
+        let contact of this.storeService.placeholderContacts;
+        let i = index
+      "
+      class="flex items-center"
+    >
+      <p class="w-1/2">{{ contact.name }}</p>
       <button
-        class="btn"
-        (click)="clearContact()"
-        onclick="contactModal.showModal()"
+        (click)="contactModal.showModal()"
+        (click)="setEditContact(contact.name, contact.email, contact.mobile, i)"
+        class="btn w-1/2"
       >
-        Add Contact
+        Edit
       </button>
-      <dialog
-        #contactModal
-        id="contactModal"
-        (cancel)="clearContact()"
-        class="modal"
-      >
-        <div class="modal-box flex flex-col">
-          <h3 class="text-lg font-bold">Contact Form</h3>
-          <span class="label-text">Contact Name</span>
-          <input
-            type="text"
-            [formControl]="contactName"
-            class="input input-bordered"
-          />
-          <span class="label-text">Contact Email</span>
-          <input
-            type="text"
-            [formControl]="contactEmail"
-            class="input input-bordered"
-          />
-          <span class="label-text">Contact Phone</span>
-          <input
-            type="text"
-            [formControl]="contactPhone"
-            class="input input-bordered"
-          />
-          <div class="modal-action">
-            <form method="dialog">
-              <button
-                (click)="clearContact()"
-                class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-              >
-                ✕
-              </button>
-              <div class="flex items-center justify-center">
-                <button
-                  *ngIf="editContact"
-                  (click)="this.storeService.removeGroupContact(this.index)"
-                  class="btn btn-error w-1/2"
-                >
-                  Delete
-                </button>
-                <button (click)="onSubmit()" class="btn">Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </dialog>
     </div>
+    <button
+      class="btn w-full"
+      (click)="clearContact()"
+      onclick="contactModal.showModal()"
+    >
+      Add Contact
+    </button>
+    <dialog
+      #contactModal
+      id="contactModal"
+      (cancel)="clearContact()"
+      class="modal"
+    >
+      <div class="modal-box flex flex-col">
+        <h3 class="text-lg font-bold">Contact Form</h3>
+        <span class="label-text">Contact Name</span>
+        <input
+          type="text"
+          [formControl]="contactName"
+          class="input input-bordered"
+        />
+        <span class="label-text">Contact Email</span>
+        <input
+          type="text"
+          [formControl]="contactEmail"
+          class="input input-bordered"
+        />
+        <span class="label-text">Contact Phone</span>
+        <input
+          type="text"
+          [formControl]="contactPhone"
+          class="input input-bordered"
+        />
+        <div class="modal-action">
+          <form method="dialog">
+            <button
+              (click)="clearContact()"
+              class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+            >
+              ✕
+            </button>
+            <div class="flex items-center justify-center">
+              <button
+                *ngIf="editContact"
+                (click)="this.storeService.removeGroupContact(this.index)"
+                class="btn btn-error w-1/2"
+              >
+                Delete
+              </button>
+              <button (click)="onSubmit()" class="btn">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
   `,
   styles: [],
 })

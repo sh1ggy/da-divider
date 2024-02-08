@@ -5,10 +5,11 @@ import { Contact, Night, Place } from "../models";
 @Component({
   selector: "app-home",
   template: `
-    <div class="flex items-start gap-5">
-      <!-- NIGHTS -->
-      <div class="flex flex-col gap-3">
-        <h1 class="mt-12 text-center text-2xl font-bold">Nights</h1>
+    <div class="flex flex-col items-start gap-5">
+    <app-contacts class="w-full flex flex-col p-3" />  
+    <!-- NIGHTS -->
+      <div class="flex flex-col gap-3 p-3">
+        <h1 class="text-center text-2xl font-bold">Nights</h1>
         <div
           *ngFor="
             let night of this.nights;
@@ -70,12 +71,11 @@ import { Contact, Night, Place } from "../models";
         </div>
         <button
           (click)="this.storeService.addNight()"
-          class="btn btn-secondary ml-3 w-full"
+          class="btn btn-ghost bg-black"
         >
-          New night
+          Add night
         </button>
       </div>
-      <app-contacts />
     </div>
   `,
   styles: [],

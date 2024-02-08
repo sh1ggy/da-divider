@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Contact, Item, Night, Place, NewPlaceRequest } from "./models";
+import { Contact, Item, Night, Place, NewPlaceRequest, NewNightRequest } from "./models";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
 import { Observable } from "rxjs";
@@ -106,6 +106,12 @@ export class StoreService {
 
   private _chosenNight: Night = this._placeholderNights[0];
 
+  private headers = new HttpHeaders()
+  .set("Accept", "application/json")
+  .set("Content-Type", "application/json");
+
+  private currentUser = 2147483647;
+
   getNights() {
     const url = `${environment.apiUrl}/nights`;
     return this.http.get<Night[]>(url);
@@ -167,33 +173,44 @@ export class StoreService {
     return item.price * item.quantity;
   }
 
-  addNight() {
+  addNight(): Observable<Night> | undefined {
     console.log("Adding night!");
 
-    this.placeholderNights.push({
-      id: this._placeholderNights.length + 1,
-      date: new Date(Date.now()),
-      places: [],
-      contacts: [],
-    });
-    console.log(this.placeholderNights);
-  }
-  addPlace(night: Night): Observable<Place> {
-    const url = `${environment.apiUrl}/places`;
-    const headers = new HttpHeaders()
-      .set("Accept", "application/json")
-      .set("Content-Type", "application/json");
+    const url = `${environment.apiUrl}/nights`
 
-    const place: NewPlaceRequest = {
-      userCreatedId: 2147483647,
-      name: `Place ${this.chosenNight.placeIds == undefined ? 1 : this.chosenNight.placeIds.length}`,
+    const nightReq: NewNightRequest = {
+      userCreatedId: this.currentUser,
+      date: new Date().toISOString(),
+    }
+
+    // this.placeholderNights.push({
+    //   id: this._placeholderNights.length + 1,
+    //   date: new Date(Date.now()),
+    //   places: [],
+    //   contacts: [],
+    // });
+
+    const req = this.http.post<Night>(url, JSON.stringify(nightReq), {headers: this.headers});
+    req.subscribe((res) => res);
+
+    console.log("Adding night:", {nightReq});
+    return req;
+  }
+
+  addPlace(night: Night | undefined): Observable<Place> | undefined {
+    if (night === undefined) return;
+    const url = `${environment.apiUrl}/places`;
+
+    const placeReq: NewPlaceRequest = {
+      userCreatedId: this.currentUser,
+      name: `Place X`,
       nightId: night.id,
     };
 
-    const req = this.http.post<Place>(url, JSON.stringify(place), {headers: headers});
+    const req = this.http.post<Place>(url, JSON.stringify(placeReq), {headers: this.headers});
     req.subscribe((res) => res);
 
-    console.log("Adding place:", {place});
+    console.log("Adding place:", {placeReq});
     return req;
   }
 
