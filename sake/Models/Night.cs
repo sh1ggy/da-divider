@@ -6,7 +6,4 @@ namespace Divider.Models;
 public class Night : BaseEntity
 {
   public required DateTime Date { get; set; }
-
-  [ForeignKey("PlaceIds")]
-  public int[]? PlaceIds { get; set; }
 }
