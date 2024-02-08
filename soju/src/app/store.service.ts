@@ -111,9 +111,14 @@ export class StoreService {
     return this.http.get<Night[]>(url);
   }
 
-  getNight() {
-    const url = `${environment.apiUrl}/nights`;
-    return this.http.get<Night[]>(url);
+  getNight(nightId: string) {
+    const url = `${environment.apiUrl}/nights/${nightId}`;
+    return this.http.get<Night>(url);
+  }
+
+  getPlacesByNight(nightId: string) {
+    const url = `${environment.apiUrl}/places/${nightId}`;
+    return this.http.get<Place[]>(url);
   }
 
   get chosenNight(): Night {
