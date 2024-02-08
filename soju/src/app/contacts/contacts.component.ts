@@ -1,6 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { StoreService } from "../store.service";
+import { Contact } from "../models";
 
 @Component({
   selector: "app-contacts",
@@ -8,7 +9,7 @@ import { StoreService } from "../store.service";
     <h1 class="text-center text-2xl font-bold">Contacts</h1>
     <div
       *ngFor="
-        let contact of this.storeService.placeholderContacts;
+        let contact of this.contacts;
         let i = index
       "
       class="flex items-center"
@@ -80,7 +81,8 @@ import { StoreService } from "../store.service";
   `,
   styles: [],
 })
-export class ContactsComponent {
+export class ContactsComponent implements OnInit {
+  contacts: Contact[] | undefined
   contactName = new FormControl("");
   contactEmail = new FormControl("");
   contactPhone = new FormControl("");
@@ -88,6 +90,12 @@ export class ContactsComponent {
   index: number = 0;
 
   constructor(public storeService: StoreService) {}
+  ngOnInit(): void {
+    this.storeService.getContacts().subscribe((contacts: Contact[]) => {
+      this.contacts = contacts;
+      return contacts;
+    });
+  }
 
   // TODO REFAC this editing logic cos it's kinda garbage and works with the index and editing flag
   // -- which is not ideal

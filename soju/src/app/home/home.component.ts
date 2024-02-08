@@ -67,6 +67,11 @@ import { Contact, Night, Place } from "../models";
             >
               ✏️
             </button>
+            <button
+              class="btn btn-outline btn-error btn-sm hover:bg-slate-700 top-0 right-0 relative"
+            >
+              🗑️
+            </button>
           </div>
         </div>
         <button
@@ -87,9 +92,9 @@ export class HomeComponent implements OnInit {
   constructor(public storeService: StoreService) {}
 
   ngOnInit(): void {
-    this.storeService.getNights().subscribe((value) => {
-      this.nights = value;
-      return value;
+    this.storeService.getNights().subscribe((nights: Night[]) => {
+      this.nights = nights;
+      return nights;
     });
   }
 

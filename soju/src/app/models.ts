@@ -41,3 +41,9 @@ export interface NewPlaceRequest extends BaseRequest {
 export interface NewNightRequest extends BaseRequest {
   date: string,
 }
+
+export interface NewContactRequest extends BaseRequest {
+  name: string,
+  email: string,
+  mobile: string
+}

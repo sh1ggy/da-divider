@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Contact, Item, Night, Place, NewPlaceRequest, NewNightRequest } from "./models";
+import { Contact, Item, Night, Place, NewPlaceRequest, NewNightRequest, NewContactRequest } from "./models";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
 import { Observable } from "rxjs";
@@ -127,6 +127,11 @@ export class StoreService {
     return this.http.get<Place[]>(url);
   }
 
+  getContacts() {
+    const url = `${environment.apiUrl}/contacts`;
+    return this.http.get<Contact[]>(url);
+  }
+
   get chosenNight(): Night {
     return this._chosenNight;
   }
@@ -222,16 +227,29 @@ export class StoreService {
     return;
   }
 
-  addContact(name: string, email: string, mobile: string) {
+  addContact(name: string, email: string, mobile: string): Observable<Contact> | undefined {
     console.log("Adding contact!");
 
-    this.placeholderContacts.push({
-      id: this.placeholderContacts.length + 1,
+    const url = `${environment.apiUrl}/contacts`;
+
+    const contactReq: NewContactRequest = {
+      userCreatedId: this.currentUser,
       name: name,
       email: email,
       mobile: mobile,
-    });
-    return;
+    };
+
+    const req = this.http.post<Contact>(url, JSON.stringify(contactReq), {headers: this.headers});
+    req.subscribe((res) => res);
+
+    // this.placeholderContacts.push({
+    //   id: this.placeholderContacts.length + 1,
+    //   name: name,
+    //   email: email,
+    //   mobile: mobile,
+    // });
+
+    return req;
   }
 
   editContact(name: string, email: string, mobile: string, index: number) {
