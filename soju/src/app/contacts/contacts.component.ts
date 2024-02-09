@@ -9,12 +9,12 @@ import { Contact } from "../models";
     <h1 class="text-center text-2xl font-bold">Contacts</h1>
     <div
       *ngFor="let contact of this.contacts; let i = index"
-      class="my-1 flex items-center"
+      class="my-1 flex items-center p-3"
     >
-      <div class="flex w-full rounded-lg bg-slate-800 p-2">
+      <div class="flex w-full items-center rounded-lg bg-slate-800 p-2">
         <p class="w-1/2">
           <strong>{{ contact.name }}</strong
-          >: {{ contact.mobile }} {{ contact.email }}
+          >: #{{ contact.mobile }}, {{ contact.email }}
         </p>
         <div class="ml-auto flex">
           <button
@@ -56,16 +56,16 @@ import { Contact } from "../models";
           [formControl]="contactName"
           class="input input-bordered"
         />
-        <span class="label-text">Contact Email</span>
-        <input
-          type="text"
-          [formControl]="contactEmail"
-          class="input input-bordered"
-        />
         <span class="label-text">Contact Phone</span>
         <input
           type="text"
           [formControl]="contactPhone"
+          class="input input-bordered"
+        />
+        <span class="label-text">Contact Email</span>
+        <input
+          type="text"
+          [formControl]="contactEmail"
           class="input input-bordered"
         />
         <div class="modal-action">
@@ -122,12 +122,13 @@ export class ContactsComponent implements OnInit {
       return;
     }
     if (this.editContact) {
-      this.storeService.editContact(
-        this.contactName.value,
-        this.contactEmail.value,
-        this.contactPhone.value,
-        this.index,
-      );
+      const contact: Contact = {
+        id: this.index,
+        name: this.contactName.value,
+        email: this.contactEmail.value,
+        mobile: this.contactPhone.value,
+      };
+      this.storeService.editContact(contact);
       this.editContact = false;
       return;
     }

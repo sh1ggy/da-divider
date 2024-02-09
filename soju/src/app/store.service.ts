@@ -7,6 +7,7 @@ import {
   NewPlaceRequest,
   NewNightRequest,
   NewContactRequest,
+  EditContactRequest,
 } from "./models";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
@@ -272,16 +273,23 @@ export class StoreService {
     return req;
   }
 
-  editContact(name: string, email: string, mobile: string, index: number) {
+  editContact(contact: Contact) {
     console.log("Editing contact!");
 
-    this.placeholderContacts[index] = {
-      id: this.placeholderContacts.length + 1,
-      name: name,
-      email: email,
-      mobile: mobile,
+    const url = `${environment.apiUrl}/contacts/${contact.id}`;
+
+    const contactReq: EditContactRequest = {
+      userCreatedId: this.currentUser,
+      contact: contact,
     };
-    return;
+    console.log(JSON.stringify(contactReq));
+
+    const req = this.http.put<Contact>(url, JSON.stringify(contactReq), {
+      headers: this.headers,
+    });
+    console.log(req);
+    req.subscribe((res) => res);
+    return req;
   }
 
   removeContact(nightIndex: number, contactIndex: number) {

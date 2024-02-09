@@ -47,3 +47,7 @@ export interface NewContactRequest extends BaseRequest {
   email: string,
   mobile: string
 }
+
+export interface EditContactRequest extends BaseRequest {
+  contact: Contact,
+}
