@@ -1,5 +1,13 @@
 import { Injectable } from "@angular/core";
-import { Contact, Item, Night, Place, NewPlaceRequest, NewNightRequest, NewContactRequest } from "./models";
+import {
+  Contact,
+  Item,
+  Night,
+  Place,
+  NewPlaceRequest,
+  NewNightRequest,
+  NewContactRequest,
+} from "./models";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
 import { Observable } from "rxjs";
@@ -107,8 +115,8 @@ export class StoreService {
   private _chosenNight: Night = this._placeholderNights[0];
 
   private headers = new HttpHeaders()
-  .set("Accept", "application/json")
-  .set("Content-Type", "application/json");
+    .set("Accept", "application/json")
+    .set("Content-Type", "application/json");
 
   private currentUser = 2147483647;
 
@@ -181,22 +189,24 @@ export class StoreService {
   addNight(): Observable<Night> | undefined {
     console.log("Adding night!");
 
-    const url = `${environment.apiUrl}/nights`
+    const url = `${environment.apiUrl}/nights`;
 
     const nightReq: NewNightRequest = {
       userCreatedId: this.currentUser,
       date: new Date().toISOString(),
-    }
+    };
 
-    const req = this.http.post<Night>(url, JSON.stringify(nightReq), {headers: this.headers});
+    const req = this.http.post<Night>(url, JSON.stringify(nightReq), {
+      headers: this.headers,
+    });
     req.subscribe((res) => res);
 
-    console.log("Adding night:", {nightReq});
+    console.log("Adding night:", { nightReq });
     return req;
   }
 
   deleteNight(nightId: number) {
-    const url = `${environment.apiUrl}/nights/${nightId}`
+    const url = `${environment.apiUrl}/nights/${nightId}`;
     const req = this.http.delete<Night>(url);
     req.subscribe();
     console.log("Deleting night:", nightId);
@@ -213,16 +223,18 @@ export class StoreService {
       nightId: night.id,
     };
 
-    const req = this.http.post<Place>(url, JSON.stringify(placeReq), {headers: this.headers});
+    const req = this.http.post<Place>(url, JSON.stringify(placeReq), {
+      headers: this.headers,
+    });
     req.subscribe((res) => res);
 
-    console.log("Adding place:", {placeReq});
+    console.log("Adding place:", { placeReq });
     return req;
   }
 
   deletePlace(placeId: number | undefined) {
     if (placeId === undefined) return undefined;
-    const url = `${environment.apiUrl}/places/${placeId}`
+    const url = `${environment.apiUrl}/places/${placeId}`;
     const req = this.http.delete<Place>(url);
     req.subscribe();
     console.log("Deleting place:", placeId);
@@ -237,7 +249,11 @@ export class StoreService {
     return;
   }
 
-  addContact(name: string, email: string, mobile: string): Observable<Contact> | undefined {
+  addContact(
+    name: string,
+    email: string,
+    mobile: string,
+  ): Observable<Contact> | undefined {
     console.log("Adding contact!");
 
     const url = `${environment.apiUrl}/contacts`;
@@ -249,16 +265,10 @@ export class StoreService {
       mobile: mobile,
     };
 
-    const req = this.http.post<Contact>(url, JSON.stringify(contactReq), {headers: this.headers});
+    const req = this.http.post<Contact>(url, JSON.stringify(contactReq), {
+      headers: this.headers,
+    });
     req.subscribe((res) => res);
-
-    // this.placeholderContacts.push({
-    //   id: this.placeholderContacts.length + 1,
-    //   name: name,
-    //   email: email,
-    //   mobile: mobile,
-    // });
-
     return req;
   }
 
@@ -283,14 +293,14 @@ export class StoreService {
     return true;
   }
 
-  removeGroupContact(contactIndex: number) {
+  removeGroupContact(contactId: number) {
     // TODO: also invoke remove contact from night because you need to delete instances
     // of this contact everywhere
-    if (this.placeholderContacts.length == 1) {
-      console.log("ERROR: Night needs to have at least one contact");
-      return false;
-    }
-    this.placeholderContacts.splice(contactIndex, 1);
+    if (contactId === undefined) return undefined;
+    const url = `${environment.apiUrl}/contacts/${contactId}`;
+    const req = this.http.delete<Contact>(url);
+    req.subscribe();
+    console.log("Deleting contact:", contactId);
     return true;
   }
 

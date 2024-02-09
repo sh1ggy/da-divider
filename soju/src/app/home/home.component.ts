@@ -5,7 +5,7 @@ import { Contact, Night, Place } from "../models";
 @Component({
   selector: "app-home",
   template: `
-    <div class="flex flex-col items-start gap-5">
+    <div class="flex flex-col items-center gap-5">
     <app-contacts class="w-full flex flex-col p-3" />  
     <!-- NIGHTS -->
       <div class="flex flex-col gap-3 p-3">

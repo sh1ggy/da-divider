@@ -8,23 +8,35 @@ import { Contact } from "../models";
   template: `
     <h1 class="text-center text-2xl font-bold">Contacts</h1>
     <div
-      *ngFor="
-        let contact of this.contacts;
-        let i = index
-      "
-      class="flex items-center"
+      *ngFor="let contact of this.contacts; let i = index"
+      class="my-1 flex items-center"
     >
-      <p class="w-1/2">{{ contact.name }}</p>
-      <button
-        (click)="contactModal.showModal()"
-        (click)="setEditContact(contact.name, contact.email, contact.mobile, i)"
-        class="btn w-1/2"
-      >
-        Edit
-      </button>
+      <div class="flex w-full rounded-lg bg-slate-800 p-2">
+        <p class="w-1/2">
+          <strong>{{ contact.name }}</strong
+          >: {{ contact.mobile }} {{ contact.email }}
+        </p>
+        <div class="ml-auto flex">
+          <button
+            (click)="contactModal.showModal()"
+            (click)="
+              setEditContact(contact.name, contact.email, contact.mobile, i)
+            "
+            class="btn btn-accent btn-outline btn-sm"
+          >
+            ✏
+          </button>
+          <button
+            (click)="this.storeService.removeGroupContact(contact.id)"
+            class="btn btn-error btn-outline btn-sm"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
     </div>
     <button
-      class="btn w-full"
+      class="btn btn-ghost bg-black"
       (click)="clearContact()"
       onclick="contactModal.showModal()"
     >
@@ -64,16 +76,7 @@ import { Contact } from "../models";
             >
               ✕
             </button>
-            <div class="flex items-center justify-center">
-              <button
-                *ngIf="editContact"
-                (click)="this.storeService.removeGroupContact(this.index)"
-                class="btn btn-error w-1/2"
-              >
-                Delete
-              </button>
-              <button (click)="onSubmit()" class="btn">Submit</button>
-            </div>
+            <button (click)="onSubmit()" class="btn">Submit</button>
           </form>
         </div>
       </div>
@@ -82,7 +85,7 @@ import { Contact } from "../models";
   styles: [],
 })
 export class ContactsComponent implements OnInit {
-  contacts: Contact[] | undefined
+  contacts: Contact[] | undefined;
   contactName = new FormControl("");
   contactEmail = new FormControl("");
   contactPhone = new FormControl("");
