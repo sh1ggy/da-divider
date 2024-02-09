@@ -23,7 +23,7 @@ import { Contact } from "../models";
           <button
             (click)="contactModal.showModal()"
             (click)="
-              setEditContact(contact.name, contact.email, contact.mobile, i)
+              setEditContact(contact.name, contact.email, contact.mobile, contact.id)
             "
             class="btn btn-accent btn-outline btn-sm"
           >
