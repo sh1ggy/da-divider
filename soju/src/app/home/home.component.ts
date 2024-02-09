@@ -6,19 +6,20 @@ import { Contact, Night, Place } from "../models";
   selector: "app-home",
   template: `
     <div class="flex flex-col items-center gap-5">
-    <app-contacts class="w-full flex flex-col p-3" />  
-    <!-- NIGHTS -->
+      <app-contacts class="flex w-full flex-col p-3" />
+      <!-- NIGHTS -->
       <div class="flex flex-col gap-3 p-3">
         <h1 class="text-center text-2xl font-bold">Nights</h1>
         <div
-          *ngFor="
-            let night of this.nights$;
-            let nightIndex = index
-          "
+          *ngFor="let night of this.nights$; let nightIndex = index"
           class="flex flex-col gap-3 rounded-lg p-4"
         >
-          <div class="flex gap-3 rounded-lg bg-slate-800 p-12 shadow-xl items-center justify-center">
-            <h1><code class="bg-gray-700 rounded-lg p-2">{{ night.id }}</code></h1>
+          <div
+            class="flex items-center justify-center gap-3 rounded-lg bg-slate-800 px-2 py-12 shadow-xl"
+          >
+            <h1>
+              <code class="rounded-lg bg-gray-700 p-2">{{ night.id }}</code>
+            </h1>
             <h2>{{ night.date }}</h2>
             <div
               *ngFor="let contact of night.contacts; let contactIndex = index"
@@ -60,19 +61,21 @@ import { Contact, Night, Place } from "../models";
                 </option>
               </ng-container>
             </select>
-            <button
-              [routerLink]="['/night', night.id]"
-              (click)="this.storeService.chosenNight = night"
-              class="btn btn-outline btn-accent btn-sm hover:bg-slate-700 top-0 right-0 relative"
-            >
-              ✏️
-            </button>
-            <button
-              (click)="this.storeService.deleteNight(night.id)"
-              class="btn btn-outline btn-error btn-sm hover:bg-slate-700 top-0 right-0 relative"
-            >
-              🗑️
-            </button>
+            <div class="ml-auto flex">
+              <button
+                [routerLink]="['/night', night.id]"
+                (click)="this.storeService.chosenNight = night"
+                class="btn btn-accent btn-outline btn-sm relative right-0 top-0 hover:bg-slate-700"
+              >
+                ✏️
+              </button>
+              <button
+                (click)="this.storeService.deleteNight(night.id)"
+                class="btn btn-error btn-outline btn-sm relative right-0 top-0 hover:bg-slate-700"
+              >
+                🗑️
+              </button>
+            </div>
           </div>
         </div>
         <button

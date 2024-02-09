@@ -11,7 +11,10 @@ import { Contact } from "../models";
       *ngFor="let contact of this.contacts; let i = index"
       class="my-1 flex items-center p-3"
     >
-      <div class="flex w-full items-center rounded-lg bg-slate-800 p-2">
+      <div
+        class="flex w-full items-center gap-3 rounded-lg bg-slate-800 p-2 shadow-md"
+      >
+        <code class="rounded-lg bg-gray-700 p-2">{{ contact.id }}</code>
         <p class="w-1/2">
           <strong>{{ contact.name }}</strong
           >: #{{ contact.mobile }}, {{ contact.email }}

@@ -13,13 +13,13 @@ import { FormControl } from "@angular/forms";
         >
           {{ this.place?.name }}
         </h1>
-        <button (click)="placeModal.showModal()" class="btn ml-auto">
-          Edit Place
+        <button (click)="placeModal.showModal()" class="btn ml-auto btn-outline btn-accent btn-sm">
+          ✏
         </button>
       </div>
       <dialog id="placeModal" #placeModal class="modal">
         <div class="modal-box flex flex-col">
-          <h3 class="text-lg font-bold">Contact Form</h3>
+          <h3 class="text-lg font-bold">Place Form</h3>
           <span class="label-text">Place Name</span>
           <input
             type="text"
@@ -34,17 +34,9 @@ import { FormControl } from "@angular/forms";
               >
                 ✕
               </button>
-              <div class="flex items-center justify-center">
-                <button
-                  (click)="this.storeService.deletePlace(place?.id)"
-                  class="btn btn-error w-1/2"
-                >
-                  Delete
-                </button>
-                <button (click)="this.savePlace(this.place!)" class="btn w-1/2">
-                  Save
-                </button>
-              </div>
+              <button (click)="this.storeService.editPlace(this.place, this.placeName.value)" class="btn btn-success btn-outline">
+                Save
+              </button>
             </form>
           </div>
         </div>
@@ -162,7 +154,7 @@ export class PlaceComponent {
   @Input() place: Place | undefined;
   @Input() index: number = 0;
 
-  placeName = new FormControl(undefined);
+  placeName = new FormControl("");
 
   chosenContact: Contact | undefined = undefined;
   total: number = 0;
@@ -190,18 +182,6 @@ export class PlaceComponent {
     this.pricing = false;
     this.contacts = false;
     this.chosenContact = undefined;
-  }
-
-  // Logic for modal
-  savePlace(place: Place) {
-    if (!this.placeName.value) {
-      console.log("NO CHANGES");
-      return;
-    }
-
-    place.name = this.placeName.value;
-    console.log("SAVED", place);
-    return;
   }
 
   // deletePlace(i: number) {

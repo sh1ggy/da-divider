@@ -51,3 +51,7 @@ export interface NewContactRequest extends BaseRequest {
 export interface EditContactRequest extends BaseRequest {
   contact: Contact,
 }
+
+export interface EditPlaceRequest extends BaseRequest {
+  place: Place,
+}

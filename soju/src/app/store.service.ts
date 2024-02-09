@@ -8,6 +8,7 @@ import {
   NewNightRequest,
   NewContactRequest,
   EditContactRequest,
+  EditPlaceRequest,
 } from "./models";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
@@ -230,6 +231,27 @@ export class StoreService {
     req.subscribe((res) => res);
 
     console.log("Adding place:", { placeReq });
+    return req;
+  }
+
+  editPlace(place: Place | undefined, name: string | null){
+    if (place === undefined || name === null) return;
+    console.log("Editing place!");
+
+    const url = `${environment.apiUrl}/places/${place.id}`;
+
+    place.name = name;
+    const placeReq: EditPlaceRequest = {
+      userCreatedId: this.currentUser,
+      place: place,
+    };
+    console.log(JSON.stringify(placeReq));
+
+    const req = this.http.put<Place>(url, JSON.stringify(placeReq), {
+      headers: this.headers,
+    });
+    console.log(place)
+    req.subscribe((res) => res);
     return req;
   }
 
