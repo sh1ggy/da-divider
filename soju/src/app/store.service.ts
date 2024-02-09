@@ -188,17 +188,18 @@ export class StoreService {
       date: new Date().toISOString(),
     }
 
-    // this.placeholderNights.push({
-    //   id: this._placeholderNights.length + 1,
-    //   date: new Date(Date.now()),
-    //   places: [],
-    //   contacts: [],
-    // });
-
     const req = this.http.post<Night>(url, JSON.stringify(nightReq), {headers: this.headers});
     req.subscribe((res) => res);
 
     console.log("Adding night:", {nightReq});
+    return req;
+  }
+
+  deleteNight(nightId: number) {
+    const url = `${environment.apiUrl}/nights/${nightId}`
+    const req = this.http.delete<Night>(url);
+    req.subscribe();
+    console.log("Deleting night:", nightId);
     return req;
   }
 

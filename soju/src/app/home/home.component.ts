@@ -12,7 +12,7 @@ import { Contact, Night, Place } from "../models";
         <h1 class="text-center text-2xl font-bold">Nights</h1>
         <div
           *ngFor="
-            let night of this.nights;
+            let night of this.nights$;
             let nightIndex = index
           "
           class="flex flex-col gap-3 rounded-lg p-4"
@@ -68,6 +68,7 @@ import { Contact, Night, Place } from "../models";
               ✏️
             </button>
             <button
+              (click)="this.storeService.deleteNight(night.id)"
               class="btn btn-outline btn-error btn-sm hover:bg-slate-700 top-0 right-0 relative"
             >
               🗑️
@@ -87,13 +88,13 @@ import { Contact, Night, Place } from "../models";
 })
 export class HomeComponent implements OnInit {
   contact: Contact | undefined = undefined;
-  nights: Night[] = [];
+  nights$: Night[] = [];
 
   constructor(public storeService: StoreService) {}
 
   ngOnInit(): void {
     this.storeService.getNights().subscribe((nights: Night[]) => {
-      this.nights = nights;
+      this.nights$ = nights;
       return nights;
     });
   }
