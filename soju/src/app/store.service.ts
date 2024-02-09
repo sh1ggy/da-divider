@@ -220,6 +220,15 @@ export class StoreService {
     return req;
   }
 
+  deletePlace(placeId: number | undefined) {
+    if (placeId === undefined) return undefined;
+    const url = `${environment.apiUrl}/places/${placeId}`
+    const req = this.http.delete<Place>(url);
+    req.subscribe();
+    console.log("Deleting place:", placeId);
+    return req;
+  }
+
   addItem(items: Item[]) {
     if (!items) return;
     console.log("Adding item!");

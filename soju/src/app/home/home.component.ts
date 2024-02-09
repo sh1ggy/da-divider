@@ -63,7 +63,7 @@ import { Contact, Night, Place } from "../models";
             <button
               [routerLink]="['/night', night.id]"
               (click)="this.storeService.chosenNight = night"
-              class="btn btn-outline btn-sm hover:bg-slate-700 top-0 right-0 relative"
+              class="btn btn-outline btn-accent btn-sm hover:bg-slate-700 top-0 right-0 relative"
             >
               ✏️
             </button>

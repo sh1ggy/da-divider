@@ -36,7 +36,7 @@ import { FormControl } from "@angular/forms";
               </button>
               <div class="flex items-center justify-center">
                 <button
-                  (click)="this.deletePlace(index)"
+                  (click)="this.storeService.deletePlace(place?.id)"
                   class="btn btn-error w-1/2"
                 >
                   Delete
@@ -204,10 +204,10 @@ export class PlaceComponent {
     return;
   }
 
-  deletePlace(i: number) {
-    this.storeService.chosenNight.places.splice(i, 1);
-    return;
-  }
+  // deletePlace(i: number) {
+  //   this.storeService.placeholderNights.splice(1, i)
+  //   return;
+  // }
 
   checkContact(contact: Contact) {
     var flag: boolean = false;
