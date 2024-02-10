@@ -36,8 +36,15 @@ public class ItemController : ControllerBase
 	public ActionResult<Item> CreateItem(CreateItemRequest createItemRequest)
 	{
 		if (createItemRequest == null) return BadRequest();
-		_items.CreateItem(createItemRequest);
-		return CreatedAtRoute(nameof(CreateItem), new { name = createItemRequest.Name }, createItemRequest);
+		try
+		{
+			_items.CreateItem(createItemRequest);
+			return Ok();
+		}
+		catch
+		{
+			return BadRequest();
+		}
 	}
 
 	[HttpDelete]

@@ -143,8 +143,8 @@ export class StoreService {
     return this.http.get<Contact[]>(url);
   }
 
-  getItems(placeId: string | null) {
-    if (placeId === null) return;
+  getItems(placeId: number | undefined) {
+    if (placeId === undefined) return;
     const url = `${environment.apiUrl}/items/${placeId}`;
     return this.http.get<Item[]>(url);
   }
@@ -271,7 +271,8 @@ export class StoreService {
     return req;
   }
 
-  addItem() {
+  addItem(placeId: number | undefined): Observable<Item> | undefined {
+    if (placeId === undefined) return undefined;
     console.log("Adding item!");
 
     const url = `${environment.apiUrl}/items`;
@@ -280,12 +281,15 @@ export class StoreService {
       userCreatedId: this.currentUser,
       name: "",
       price: 0,
+      placeId: placeId,
     };
+    console.log(JSON.stringify(itemReq))
 
     const req = this.http.post<Item>(url, JSON.stringify(itemReq), {
       headers: this.headers,
     });
     req.subscribe((req) => req);
+
 
     console.log("Adding item:", { itemReq });
     return req;

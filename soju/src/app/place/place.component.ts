@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Contact, Item, Place } from "../models";
 import { StoreService } from "../store.service";
 import { FormControl } from "@angular/forms";
@@ -14,7 +14,10 @@ import { ActivatedRoute } from "@angular/router";
         >
           {{ this.place?.name }}
         </h1>
-        <button (click)="placeModal.showModal()" class="btn ml-auto btn-outline btn-accent btn-sm">
+        <button
+          (click)="placeModal.showModal()"
+          class="btn btn-accent btn-outline btn-sm ml-auto"
+        >
           ✏
         </button>
       </div>
@@ -35,7 +38,12 @@ import { ActivatedRoute } from "@angular/router";
               >
                 ✕
               </button>
-              <button (click)="this.storeService.editPlace(this.place, this.placeName.value)" class="btn btn-success btn-outline">
+              <button
+                (click)="
+                  this.storeService.editPlace(this.place, this.placeName.value)
+                "
+                class="btn btn-success btn-outline"
+              >
                 Save
               </button>
             </form>
@@ -53,17 +61,14 @@ import { ActivatedRoute } from "@angular/router";
       <!-- Pricing Tab -->
       <div *ngIf="pricing">
         <app-pricing
-          *ngFor="let item of this.getItems(); let i = index"
+          *ngFor="let item of this.items; let i = index"
           [item]="item"
           [place]="this.place"
           [contacts]="this.place?.contacts"
           [index]="i"
         />
         <div class="flex flex-row">
-          <button
-            (click)="this.place && this.storeService.addItem()"
-            class="btn"
-          >
+          <button (click)="this.storeService.addItem(place?.id)" class="btn">
             Add Item
           </button>
         </div>
@@ -151,9 +156,11 @@ import { ActivatedRoute } from "@angular/router";
   `,
   styles: [],
 })
-export class PlaceComponent {
+export class PlaceComponent implements OnInit {
   @Input() place: Place | undefined;
   @Input() index: number = 0;
+
+  items: Item[] = [];
 
   placeName = new FormControl("");
 
@@ -164,13 +171,16 @@ export class PlaceComponent {
   assignment: boolean = false;
   contacts: boolean = false;
 
-  constructor(public storeService: StoreService, private route: ActivatedRoute) {}
-
-  getItems() {
-    const items: Item[] = [];
-
-    this.storeService.getItems(this.route.snapshot.paramMap.get('id'))?.subscribe((itemsReq: Item[]) => itemsReq = items);
-    return items;
+  constructor(
+    public storeService: StoreService,
+    private route: ActivatedRoute,
+  ) {}
+  ngOnInit(): void {
+    this.storeService.getItems(this.place?.id)?.subscribe((items: Item[]) => {
+      this.items = items;
+      console.log(items);
+    });
+    console.log(this.items);
   }
 
   setPricing() {

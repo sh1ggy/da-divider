@@ -59,4 +59,5 @@ export interface EditPlaceRequest extends BaseRequest {
 export interface NewItemRequest extends BaseRequest {
   name: string,
   price: number,
+  placeId: number,
 }
