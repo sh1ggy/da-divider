@@ -25,21 +25,6 @@ import { Contact, Night, Place } from "../models";
                 <code class="rounded-lg bg-gray-700 p-2">{{ night.id }}</code>
               </h1>
               <h2>{{ night.date }}</h2>
-              <div
-                *ngFor="let contact of night.contacts; let contactIndex = index"
-                class="flex flex-row"
-              >
-                <div
-                  (click)="
-                    night.contacts &&
-                      this.storeService.removeContact(nightIndex, contactIndex)
-                  "
-                  class="badge badge-primary hover:cursor-pointer hover:bg-error"
-                >
-                  {{ contact.name }}
-                </div>
-              </div>
-
               <div class="ml-auto flex">
                 <button
                   [routerLink]="['/night', night.id]"
@@ -56,15 +41,13 @@ import { Contact, Night, Place } from "../models";
                 </button>
               </div>
             </div>
-            <!-- UNSURE if this is the best approach -->
-            <!-- REF: https://chat.openai.com/share/21a60361-f8fd-4148-99cd-c7d19e63601a -->
-            <!-- *ngIf="night.contacts" -->
-            <!-- (change)="night.contacts = addContact(night.contacts)" -->
-            <div>
+
+            <!-- SELECT CONTACT -->
+            <div class="flex items-center justify-center">
               <select
                 #contactsList
                 [(ngModel)]="contact"
-                class="badge bg-slate-700"
+                class="badge badge-lg bg-slate-700"
               >
                 <option disabled selected>+</option>
                 <!-- REF: https://stackoverflow.com/questions/38585720/how-to-apply-multiple-template-bindings-on-one-element-in-angular -->
@@ -77,17 +60,44 @@ import { Contact, Night, Place } from "../models";
                   </option>
                 </ng-container>
               </select>
-              <button (click)="contact && this.storeService.addContactToNight(night, contact.id)" class="btn btn-outline btn-success btn-xs">Add</button>
+              <button
+                (click)="
+                  contact &&
+                    this.storeService.editNightContacts(night, contact.id, true)
+                "
+                class="btn btn-success btn-outline btn-xs"
+              >
+                Add
+              </button>
+            </div>
+
+            <div class="flex">
+              <div
+                *ngFor="
+                  let contact of night.contactIds;
+                  let contactIndex = index
+                "
+                (click)="
+                  this.storeService.editNightContacts(
+                    night,
+                    contactIndex,
+                    false
+                  )
+                "
+                class="badge badge-primary hover:cursor-pointer hover:bg-error"
+              >
+                {{ contact }}
+              </div>
             </div>
           </div>
         </div>
-        <button
-          (click)="this.storeService.addNight()"
-          class="btn btn-ghost bg-black"
-        >
-          Add night
-        </button>
       </div>
+      <button
+        (click)="this.storeService.addNight()"
+        class="btn btn-ghost bg-black"
+      >
+        Add night
+      </button>
     </div>
   `,
   styles: [],

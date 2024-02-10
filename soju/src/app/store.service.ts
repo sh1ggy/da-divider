@@ -222,9 +222,11 @@ export class StoreService {
     return req;
   }
 
-  addContactToNight(night: Night, contactId: number) {
+  editNightContacts(night: Night, contactId: number, isAdd: boolean) {
     const url = `${environment.apiUrl}/nights/${night.id}`;
-    night.contactIds?.push(contactId);
+    if (isAdd) night.contactIds?.push(contactId);
+    else night.contactIds?.splice(contactId, 1);
+
     const nightReq: EditNightRequest = {
       userCreatedId: this.currentUser,
       night: night,
@@ -385,15 +387,6 @@ export class StoreService {
     console.log(req);
     req.subscribe((res) => res);
     return req;
-  }
-
-  removeContact(nightIndex: number, contactIndex: number) {
-    if (this.placeholderNights[nightIndex].contacts?.length == 1) {
-      console.log("ERROR: Night needs to have at least one contact");
-      return false;
-    }
-    this.placeholderNights[nightIndex].contacts?.splice(contactIndex, 1);
-    return true;
   }
 
   removeGroupContact(contactId: number) {
