@@ -24,7 +24,6 @@ export interface Item {
 export interface Night {
   id: number;
   date: Date;
-  places: Place[];
   // TODO, remove the above and restructure model for Night. 
   placeIds?: number[];
   contacts?: Contact[];

@@ -92,10 +92,6 @@ export class PricingComponent {
       placeId: this.place.id,
     };
     this.storeService.editItem(this.newItem);
-
-    this.place.items[this.index] = this.newItem;
-
-    console.log("SAVED:", this.place);
     this.editing = false;
     return;
   }
