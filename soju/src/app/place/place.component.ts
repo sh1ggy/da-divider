@@ -20,6 +20,12 @@ import { ActivatedRoute } from "@angular/router";
         >
           ✏
         </button>
+        <button
+          (click)="this.storeService.deletePlace(place?.id)"
+          class="btn btn-error btn-outline btn-sm"
+        >
+          🗑️
+        </button>
       </div>
       <dialog id="placeModal" #placeModal class="modal">
         <div class="modal-box flex flex-col">

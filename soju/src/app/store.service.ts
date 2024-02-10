@@ -10,6 +10,7 @@ import {
   EditContactRequest,
   EditPlaceRequest,
   NewItemRequest,
+  EditItemRequest,
 } from "./models";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
@@ -252,12 +253,11 @@ export class StoreService {
       userCreatedId: this.currentUser,
       place: place,
     };
-    console.log(JSON.stringify(placeReq));
 
     const req = this.http.put<Place>(url, JSON.stringify(placeReq), {
       headers: this.headers,
     });
-    console.log(place);
+
     req.subscribe((res) => res);
     return req;
   }
@@ -291,6 +291,27 @@ export class StoreService {
 
     console.log("Adding item:", { itemReq });
     
+    return req;
+  }
+
+  editItem(item: Item) {
+    console.log("Editing item!");
+
+    const url = `${environment.apiUrl}/items/${item.id}`;
+
+    const itemReq: EditItemRequest = {
+      userCreatedId: this.currentUser,
+      item: item,
+    };
+    console.log(JSON.stringify(itemReq));
+
+    const req = this.http.put<Item>(url, JSON.stringify(itemReq), {
+      headers: this.headers,
+    });
+
+    console.log(req);
+    
+    req.subscribe((res) => res);
     return req;
   }
 

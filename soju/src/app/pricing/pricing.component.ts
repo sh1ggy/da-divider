@@ -37,7 +37,7 @@ import { StoreService } from "../store.service";
             step="0.01"
             class="input input-bordered"
           />
-        </label>
+      </label>
         <div class="flex">
           <button
             (mousedown)="saveItem()"
@@ -81,15 +81,20 @@ export class PricingComponent {
       console.log("NO CHANGES");
       return;
     }
+
     this.newItem = {
-      id: this.storeService.placeholderItems.length + 1,
+      id: this.item.id,
       name: this.itemName.value ? this.itemName.value : this.item.name,
       quantity: this.itemQuantity.value
         ? this.itemQuantity.value
         : this.item.quantity,
       price: this.itemPrice.value ? this.itemPrice.value : this.item.price,
+      placeId: this.place.id,
     };
+    this.storeService.editItem(this.newItem);
+
     this.place.items[this.index] = this.newItem;
+
     console.log("SAVED:", this.place);
     this.editing = false;
     return;

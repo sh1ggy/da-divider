@@ -17,6 +17,7 @@ export interface Item {
   name: string | null;
   quantity?: number | null;
   price: number | null;
+  placeId?: number;
   contacts?: Contact[];
 }
 
@@ -60,4 +61,8 @@ export interface NewItemRequest extends BaseRequest {
   name: string,
   price: number,
   placeId: number,
+}
+
+export interface EditItemRequest extends BaseRequest {
+  item: Item,
 }
