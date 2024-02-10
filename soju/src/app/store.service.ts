@@ -273,25 +273,32 @@ export class StoreService {
 
   addItem(placeId: number | undefined): Observable<Item> | undefined {
     if (placeId === undefined) return undefined;
+    
     console.log("Adding item!");
-
+    
     const url = `${environment.apiUrl}/items`;
-
     const itemReq: NewItemRequest = {
       userCreatedId: this.currentUser,
       name: "",
       price: 0,
       placeId: placeId,
     };
-    console.log(JSON.stringify(itemReq))
-
     const req = this.http.post<Item>(url, JSON.stringify(itemReq), {
       headers: this.headers,
     });
+    
     req.subscribe((req) => req);
 
-
     console.log("Adding item:", { itemReq });
+    
+    return req;
+  }
+
+  deleteItem(itemId: number) {
+    const url = `${environment.apiUrl}/items/${itemId}`;
+    const req = this.http.delete<Item>(url);
+    req.subscribe();
+    console.log("Deleting item:", itemId);
     return req;
   }
 

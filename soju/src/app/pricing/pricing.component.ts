@@ -48,7 +48,7 @@ import { StoreService } from "../store.service";
             Save
           </button>
           <button
-            (mousedown)="deleteItem()"
+            (mousedown)="this.storeService.deleteItem(item.id)"
             *ngIf="editing"
             class="btn w-1/2 text-red-500"
           >
@@ -92,11 +92,6 @@ export class PricingComponent {
     this.place.items[this.index] = this.newItem;
     console.log("SAVED:", this.place);
     this.editing = false;
-    return;
-  }
-
-  deleteItem() {
-    this.place?.items.splice(this.index, 1);
     return;
   }
 

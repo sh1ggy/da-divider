@@ -202,11 +202,6 @@ export class PlaceComponent implements OnInit {
     this.chosenContact = undefined;
   }
 
-  // deletePlace(i: number) {
-  //   this.storeService.placeholderNights.splice(1, i)
-  //   return;
-  // }
-
   checkContact(contact: Contact) {
     var flag: boolean = false;
     if (!this.place || !this.place.contacts) {
