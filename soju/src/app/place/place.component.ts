@@ -2,6 +2,7 @@ import { Component, Input } from "@angular/core";
 import { Contact, Item, Place } from "../models";
 import { StoreService } from "../store.service";
 import { FormControl } from "@angular/forms";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-place",
@@ -52,7 +53,7 @@ import { FormControl } from "@angular/forms";
       <!-- Pricing Tab -->
       <div *ngIf="pricing">
         <app-pricing
-          *ngFor="let item of this.place?.items; let i = index"
+          *ngFor="let item of this.getItems(); let i = index"
           [item]="item"
           [place]="this.place"
           [contacts]="this.place?.contacts"
@@ -60,7 +61,7 @@ import { FormControl } from "@angular/forms";
         />
         <div class="flex flex-row">
           <button
-            (click)="this.place && this.storeService.addItem(this.place.items)"
+            (click)="this.place && this.storeService.addItem()"
             class="btn"
           >
             Add Item
@@ -163,7 +164,14 @@ export class PlaceComponent {
   assignment: boolean = false;
   contacts: boolean = false;
 
-  constructor(public storeService: StoreService) {}
+  constructor(public storeService: StoreService, private route: ActivatedRoute) {}
+
+  getItems() {
+    const items: Item[] = [];
+
+    this.storeService.getItems(this.route.snapshot.paramMap.get('id'))?.subscribe((itemsReq: Item[]) => itemsReq = items);
+    return items;
+  }
 
   setPricing() {
     this.pricing = true;

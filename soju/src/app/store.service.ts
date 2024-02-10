@@ -9,6 +9,7 @@ import {
   NewContactRequest,
   EditContactRequest,
   EditPlaceRequest,
+  NewItemRequest,
 } from "./models";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
@@ -142,6 +143,12 @@ export class StoreService {
     return this.http.get<Contact[]>(url);
   }
 
+  getItems(placeId: string | null) {
+    if (placeId === null) return;
+    const url = `${environment.apiUrl}/items/${placeId}`;
+    return this.http.get<Item[]>(url);
+  }
+
   get chosenNight(): Night {
     return this._chosenNight;
   }
@@ -234,7 +241,7 @@ export class StoreService {
     return req;
   }
 
-  editPlace(place: Place | undefined, name: string | null){
+  editPlace(place: Place | undefined, name: string | null) {
     if (place === undefined || name === null) return;
     console.log("Editing place!");
 
@@ -250,7 +257,7 @@ export class StoreService {
     const req = this.http.put<Place>(url, JSON.stringify(placeReq), {
       headers: this.headers,
     });
-    console.log(place)
+    console.log(place);
     req.subscribe((res) => res);
     return req;
   }
@@ -264,12 +271,24 @@ export class StoreService {
     return req;
   }
 
-  addItem(items: Item[]) {
-    if (!items) return;
+  addItem() {
     console.log("Adding item!");
 
-    items.push({ id: this.placeholderItems.length + 1, name: "", price: 0 });
-    return;
+    const url = `${environment.apiUrl}/items`;
+
+    const itemReq: NewItemRequest = {
+      userCreatedId: this.currentUser,
+      name: "",
+      price: 0,
+    };
+
+    const req = this.http.post<Item>(url, JSON.stringify(itemReq), {
+      headers: this.headers,
+    });
+    req.subscribe((req) => req);
+
+    console.log("Adding item:", { itemReq });
+    return req;
   }
 
   addContact(

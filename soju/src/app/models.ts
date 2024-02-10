@@ -55,3 +55,8 @@ export interface EditContactRequest extends BaseRequest {
 export interface EditPlaceRequest extends BaseRequest {
   place: Place,
 }
+
+export interface NewItemRequest extends BaseRequest {
+  name: string,
+  price: number,
+}
