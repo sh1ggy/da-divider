@@ -26,6 +26,7 @@ export interface Night {
   date: Date;
   // TODO, remove the above and restructure model for Night. 
   placeIds?: number[];
+  contactIds?: number[];
   contacts?: Contact[];
 }
 
@@ -64,4 +65,8 @@ export interface NewItemRequest extends BaseRequest {
 
 export interface EditItemRequest extends BaseRequest {
   item: Item,
+}
+
+export interface EditNightRequest extends BaseRequest {
+  night: Night,
 }

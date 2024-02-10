@@ -29,6 +29,7 @@ public class NightService : INightService
 
   public Night? EditNight(EditNightRequest editNightRequest)
   {
+    editNightRequest.Night.Date = DateTime.SpecifyKind(editNightRequest.Night.Date, DateTimeKind.Utc);
     Night? night = _repository.EditNight(editNightRequest.Night);
     return night;
   }

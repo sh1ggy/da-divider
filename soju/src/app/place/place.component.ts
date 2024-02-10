@@ -116,7 +116,7 @@ import { ActivatedRoute } from "@angular/router";
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of this.place?.items; let i = index">
+              <tr *ngFor="let item of this.items; let i = index">
                 <td>{{ item?.name }}</td>
                 <td>{{ item?.quantity ? item?.quantity : 1 }}</td>
                 <td>

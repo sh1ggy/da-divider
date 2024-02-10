@@ -6,4 +6,7 @@ namespace Divider.Models;
 public class Night : BaseEntity
 {
   public required DateTime Date { get; set; }
+  
+  [ForeignKey("ContactIds")]
+  public List<int> ContactIds { get; set; } = [];  
 }

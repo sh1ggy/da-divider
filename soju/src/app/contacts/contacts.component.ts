@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { StoreService } from "../store.service";
 import { Contact } from "../models";
@@ -87,8 +87,8 @@ import { Contact } from "../models";
   `,
   styles: [],
 })
-export class ContactsComponent implements OnInit {
-  contacts: Contact[] | undefined;
+export class ContactsComponent {
+  @Input() contacts: Contact[] | undefined;
   contactName = new FormControl("");
   contactEmail = new FormControl("");
   contactPhone = new FormControl("");
@@ -96,12 +96,6 @@ export class ContactsComponent implements OnInit {
   index: number = 0;
 
   constructor(public storeService: StoreService) {}
-  ngOnInit(): void {
-    this.storeService.getContacts().subscribe((contacts: Contact[]) => {
-      this.contacts = contacts;
-      return contacts;
-    });
-  }
 
   // TODO REFAC this editing logic cos it's kinda garbage and works with the index and editing flag
   // -- which is not ideal

@@ -11,8 +11,9 @@ import {
   EditPlaceRequest,
   NewItemRequest,
   EditItemRequest,
+  EditNightRequest,
 } from "./models";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment.development";
 import { Observable } from "rxjs";
 
@@ -144,6 +145,12 @@ export class StoreService {
     return this.http.get<Contact[]>(url);
   }
 
+  getContactsByNight(contactIds: number[]) {
+    const url = `${environment.apiUrl}/contacts`;
+    const contactJSON = new HttpParams({fromObject: {'contactIds[]': contactIds}});
+    return this.http.get<Contact[]>(url, {params: contactJSON});
+  }
+
   getItems(placeId: number | undefined) {
     if (placeId === undefined) return;
     const url = `${environment.apiUrl}/items/${placeId}`;
@@ -215,6 +222,21 @@ export class StoreService {
     return req;
   }
 
+  addContactToNight(night: Night, contactId: number) {
+    const url = `${environment.apiUrl}/nights/${night.id}`;
+    night.contactIds?.push(contactId);
+    const nightReq: EditNightRequest = {
+      userCreatedId: this.currentUser,
+      night: night,
+    }
+    console.log(JSON.stringify(nightReq))
+    const req = this.http.put<Night>(url, JSON.stringify(nightReq), {headers: this.headers});
+
+    req.subscribe((res) => res);
+    return req;
+  }
+
+
   deleteNight(nightId: number) {
     const url = `${environment.apiUrl}/nights/${nightId}`;
     const req = this.http.delete<Night>(url);
@@ -273,9 +295,9 @@ export class StoreService {
 
   addItem(placeId: number | undefined): Observable<Item> | undefined {
     if (placeId === undefined) return undefined;
-    
+
     console.log("Adding item!");
-    
+
     const url = `${environment.apiUrl}/items`;
     const itemReq: NewItemRequest = {
       userCreatedId: this.currentUser,
@@ -286,11 +308,11 @@ export class StoreService {
     const req = this.http.post<Item>(url, JSON.stringify(itemReq), {
       headers: this.headers,
     });
-    
+
     req.subscribe((req) => req);
 
     console.log("Adding item:", { itemReq });
-    
+
     return req;
   }
 
@@ -310,7 +332,7 @@ export class StoreService {
     });
 
     console.log(req);
-    
+
     req.subscribe((res) => res);
     return req;
   }

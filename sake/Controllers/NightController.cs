@@ -24,8 +24,9 @@ public class NightController: ControllerBase
       var nights = _nights.GetNights();
       return Ok(nights);
     }
-    catch
+    catch (Exception e)
     {
+      Console.WriteLine(e.Message);
       return BadRequest();
     }
   }
