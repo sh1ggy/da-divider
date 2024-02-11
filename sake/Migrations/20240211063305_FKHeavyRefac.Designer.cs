@@ -3,6 +3,7 @@ using System;
 using Divider.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TodoApi.Migrations
 {
     [DbContext(typeof(DividersContext))]
-    partial class DividersContextModelSnapshot : ModelSnapshot
+    [Migration("20240211063305_FKHeavyRefac")]
+    partial class FKHeavyRefac
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,36 @@ namespace TodoApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ContactNight", b =>
+                {
+                    b.Property<int>("ContactsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NightsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ContactsId", "NightsId");
+
+                    b.HasIndex("NightsId");
+
+                    b.ToTable("ContactNight");
+                });
+
+            modelBuilder.Entity("ContactPlace", b =>
+                {
+                    b.Property<int>("ContactsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlacesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ContactsId", "PlacesId");
+
+                    b.HasIndex("PlacesId");
+
+                    b.ToTable("ContactPlace");
+                });
 
             modelBuilder.Entity("Divider.Models.Contact", b =>
                 {
@@ -40,17 +73,7 @@ namespace TodoApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("NightId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("PlaceId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("NightId");
-
-                    b.HasIndex("PlaceId");
 
                     b.ToTable("Contacts");
                 });
@@ -122,15 +145,34 @@ namespace TodoApi.Migrations
                     b.ToTable("Places");
                 });
 
-            modelBuilder.Entity("Divider.Models.Contact", b =>
+            modelBuilder.Entity("ContactNight", b =>
                 {
+                    b.HasOne("Divider.Models.Contact", null)
+                        .WithMany()
+                        .HasForeignKey("ContactsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Divider.Models.Night", null)
-                        .WithMany("Contacts")
-                        .HasForeignKey("NightId");
+                        .WithMany()
+                        .HasForeignKey("NightsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ContactPlace", b =>
+                {
+                    b.HasOne("Divider.Models.Contact", null)
+                        .WithMany()
+                        .HasForeignKey("ContactsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Divider.Models.Place", null)
-                        .WithMany("Contacts")
-                        .HasForeignKey("PlaceId");
+                        .WithMany()
+                        .HasForeignKey("PlacesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Divider.Models.Place", b =>
@@ -146,14 +188,7 @@ namespace TodoApi.Migrations
 
             modelBuilder.Entity("Divider.Models.Night", b =>
                 {
-                    b.Navigation("Contacts");
-
                     b.Navigation("Places");
-                });
-
-            modelBuilder.Entity("Divider.Models.Place", b =>
-                {
-                    b.Navigation("Contacts");
                 });
 #pragma warning restore 612, 618
         }

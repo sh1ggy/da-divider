@@ -26,7 +26,7 @@ import { ActivatedRoute } from "@angular/router";
       >
         Add Place
       </button>
-      <button class="btn">Submit</button>
+      <!-- <button class="btn">Submit</button> -->
     </div>
     <div></div>
   `,

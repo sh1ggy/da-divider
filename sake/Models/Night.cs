@@ -1,12 +1,16 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Divider.Models;
 
 public class Night : BaseEntity
 {
   public required DateTime Date { get; set; }
-  
-  [ForeignKey("ContactIds")]
-  public List<int> ContactIds { get; set; } = [];  
+
+  // One night to many places
+  [JsonIgnore]
+  public ICollection<Place> Places { get; } = [];
+
+  // Many nights to many contacts
+  [JsonIgnore]
+  public List<Contact> Contacts { get; } = [];
 }

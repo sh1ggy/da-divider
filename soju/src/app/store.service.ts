@@ -83,34 +83,34 @@ export class StoreService {
       ],
     },
   ];
-  private _placeholderPlaces: Place[] = [
-    {
-      id: 1,
-      name: "Place 1",
-      items: this._placeholderItems1,
-      contacts: this._night1PlaceholderContacts,
-    },
-    {
-      id: 2,
-      name: "Place 2",
-      items: this._placeholderItems2,
-      contacts: this._night2PlaceholderContacts,
-    },
-  ];
-  private _placeholderPlaces2: Place[] = [
-    {
-      id: 3,
-      name: "Place 3",
-      items: this._placeholderItems2,
-      contacts: this._night2PlaceholderContacts,
-    },
-    {
-      id: 4,
-      name: "Place 4",
-      items: this._placeholderItems1,
-      contacts: this._night1PlaceholderContacts,
-    },
-  ];
+  // private _placeholderPlaces: Place[] = [
+  //   {
+  //     id: 1,
+  //     name: "Place 1",
+  //     items: this._placeholderItems1,
+  //     contacts: this._night1PlaceholderContacts,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Place 2",
+  //     items: this._placeholderItems2,
+  //     contacts: this._night2PlaceholderContacts,
+  //   },
+  // ];
+  // private _placeholderPlaces2: Place[] = [
+  //   {
+  //     id: 3,
+  //     name: "Place 3",
+  //     items: this._placeholderItems2,
+  //     contacts: this._night2PlaceholderContacts,
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Place 4",
+  //     items: this._placeholderItems1,
+  //     contacts: this._night1PlaceholderContacts,
+  //   },
+  // ];
   // private _placeholderNights: Night[] = [
   //   { id: 1, places: this._placeholderPlaces, date: new Date(Date.now()), contacts: this._night1PlaceholderContacts},
   //   { id: 2, places: this._placeholderPlaces2, date: new Date(Date.now()), contacts: this._night2PlaceholderContacts},
@@ -147,8 +147,10 @@ export class StoreService {
 
   getContactsByNight(contactIds: number[]) {
     const url = `${environment.apiUrl}/contacts`;
-    const contactJSON = new HttpParams({fromObject: {'contactIds[]': contactIds}});
-    return this.http.get<Contact[]>(url, {params: contactJSON});
+    const contactJSON = new HttpParams({
+      fromObject: { "contactIds[]": contactIds },
+    });
+    return this.http.get<Contact[]>(url, { params: contactJSON });
   }
 
   getItems(placeId: number | undefined) {
@@ -179,9 +181,9 @@ export class StoreService {
     return this._placeholderNights;
   }
 
-  get placeholderPlaces(): Place[] {
-    return this._placeholderPlaces;
-  }
+  // get placeholderPlaces(): Place[] {
+  //   return this._placeholderPlaces;
+  // }
 
   get placeholderItems(): Item[] {
     return this._placeholderItems1;
@@ -222,22 +224,26 @@ export class StoreService {
     return req;
   }
 
-  editNightContacts(night: Night, contactId: number, isAdd: boolean) {
+  editNightContacts(night: Night, contact: Contact, isAdd: boolean) {
     const url = `${environment.apiUrl}/nights/${night.id}`;
-    if (isAdd) night.contactIds?.push(contactId);
-    else night.contactIds?.splice(contactId, 1);
+    if (isAdd) night.contacts.push(contact);
+    else {
+      const cIndex = night.contacts.findIndex((nContact: Contact) => nContact == contact)
+      night.contacts.splice(cIndex, 1);
+    }
 
     const nightReq: EditNightRequest = {
       userCreatedId: this.currentUser,
       night: night,
-    }
-    console.log(JSON.stringify(nightReq))
-    const req = this.http.put<Night>(url, JSON.stringify(nightReq), {headers: this.headers});
+    };
+    console.log(JSON.stringify(nightReq));
+    const req = this.http.put<Night>(url, JSON.stringify(nightReq), {
+      headers: this.headers,
+    });
 
     req.subscribe((res) => res);
     return req;
   }
-
 
   deleteNight(nightId: number) {
     const url = `${environment.apiUrl}/nights/${nightId}`;
@@ -266,17 +272,20 @@ export class StoreService {
     return req;
   }
 
-  editPlace(place: Place | undefined, name: string | null) {
+  editPlace(place: Place | undefined, name: string | null, night: Night) {
     if (place === undefined || name === null) return;
     console.log("Editing place!");
 
     const url = `${environment.apiUrl}/places/${place.id}`;
 
     place.name = name;
+    place.night = night;
     const placeReq: EditPlaceRequest = {
       userCreatedId: this.currentUser,
       place: place,
     };
+    console.log({place})
+    console.log(JSON.stringify(placeReq))
 
     const req = this.http.put<Place>(url, JSON.stringify(placeReq), {
       headers: this.headers,

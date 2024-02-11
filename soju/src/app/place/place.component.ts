@@ -46,7 +46,7 @@ import { ActivatedRoute } from "@angular/router";
               </button>
               <button
                 (click)="
-                  this.storeService.editPlace(this.place, this.placeName.value)
+                  this.storeService.editPlace(this.place, this.placeName.value, this.storeService.chosenNight)
                 "
                 class="btn btn-success btn-outline"
               >
@@ -58,11 +58,11 @@ import { ActivatedRoute } from "@angular/router";
       </dialog>
 
       <div role="tablist" class="tabs-boxed tabs flex justify-center">
-        <button (click)="setPricing()" role="tab" class="tab">Pricing</button>
-        <button (click)="setAssignment()" role="tab" class="tab">
+        <button (click)="setContacts()" role="tab" ngClass="tab {{this.contacts && 'tab-active'}}">Contacts</button>
+        <button (click)="setPricing()" role="tab" ngClass="tab {{this.pricing && 'tab-active'}}">Pricing</button>
+        <button (click)="setAssignment()" role="tab" ngClass="tab {{this.assignment && 'tab-active'}}">
           Assignment
         </button>
-        <button (click)="setContacts()" role="tab" class="tab">Contacts</button>
       </div>
       <!-- Pricing Tab -->
       <div *ngIf="pricing">
@@ -173,20 +173,19 @@ export class PlaceComponent implements OnInit {
   chosenContact: Contact | undefined = undefined;
   total: number = 0;
 
-  pricing: boolean = true;
+  pricing: boolean = false;
   assignment: boolean = false;
-  contacts: boolean = false;
+  contacts: boolean = true;
 
   constructor(
     public storeService: StoreService,
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
   ) {}
   ngOnInit(): void {
     this.storeService.getItems(this.place?.id)?.subscribe((items: Item[]) => {
-      this.items = items;
-      console.log(items);
+      this.items = items;  
     });
-    console.log(this.items);
+    console.log(this.storeService.chosenNight)
   }
 
   setPricing() {

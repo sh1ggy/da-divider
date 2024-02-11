@@ -9,7 +9,8 @@ export interface Place {
   id?: number;
   name: string | null;
   items: Item[];
-  contacts?: Contact[];
+  contacts: Contact[];
+  night: Night,
 }
 
 export interface Item {
@@ -25,9 +26,9 @@ export interface Night {
   id: number;
   date: Date;
   // TODO, remove the above and restructure model for Night. 
-  placeIds?: number[];
-  contactIds?: number[];
-  contacts?: Contact[];
+  places: Place[];
+  // contactIds?: number[];
+  contacts: Contact[];
 }
 
 interface BaseRequest {
