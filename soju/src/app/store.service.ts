@@ -83,41 +83,6 @@ export class StoreService {
       ],
     },
   ];
-  // private _placeholderPlaces: Place[] = [
-  //   {
-  //     id: 1,
-  //     name: "Place 1",
-  //     items: this._placeholderItems1,
-  //     contacts: this._night1PlaceholderContacts,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Place 2",
-  //     items: this._placeholderItems2,
-  //     contacts: this._night2PlaceholderContacts,
-  //   },
-  // ];
-  // private _placeholderPlaces2: Place[] = [
-  //   {
-  //     id: 3,
-  //     name: "Place 3",
-  //     items: this._placeholderItems2,
-  //     contacts: this._night2PlaceholderContacts,
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Place 4",
-  //     items: this._placeholderItems1,
-  //     contacts: this._night1PlaceholderContacts,
-  //   },
-  // ];
-  // private _placeholderNights: Night[] = [
-  //   { id: 1, places: this._placeholderPlaces, date: new Date(Date.now()), contacts: this._night1PlaceholderContacts},
-  //   { id: 2, places: this._placeholderPlaces2, date: new Date(Date.now()), contacts: this._night2PlaceholderContacts},
-  // ]
-  private _placeholderNights: Night[] = [];
-
-  private _chosenNight: Night = this._placeholderNights[0];
 
   private headers = new HttpHeaders()
     .set("Accept", "application/json")
@@ -159,15 +124,6 @@ export class StoreService {
     return this.http.get<Item[]>(url);
   }
 
-  get chosenNight(): Night {
-    return this._chosenNight;
-  }
-  set chosenNight(chosenNight: Night) {
-    this._chosenNight = chosenNight;
-    console.log(this._chosenNight);
-    return;
-  }
-
   get placeholderContacts(): Contact[] {
     return this._placeholderContacts;
   }
@@ -176,14 +132,6 @@ export class StoreService {
     console.log(this._placeholderContacts);
     return;
   }
-
-  get placeholderNights(): Night[] {
-    return this._placeholderNights;
-  }
-
-  // get placeholderPlaces(): Place[] {
-  //   return this._placeholderPlaces;
-  // }
 
   get placeholderItems(): Item[] {
     return this._placeholderItems1;

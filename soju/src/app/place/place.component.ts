@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { Contact, Item, Place } from "../models";
+import { Contact, Item, Night, Place } from "../models";
 import { StoreService } from "../store.service";
 import { FormControl } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
@@ -46,7 +46,11 @@ import { ActivatedRoute } from "@angular/router";
               </button>
               <button
                 (click)="
-                  this.storeService.editPlace(this.place, this.placeName.value, this.storeService.chosenNight)
+                  this.storeService.editPlace(
+                    this.place,
+                    this.placeName.value,
+                    this.chosenNight
+                  )
                 "
                 class="btn btn-success btn-outline"
               >
@@ -58,9 +62,25 @@ import { ActivatedRoute } from "@angular/router";
       </dialog>
 
       <div role="tablist" class="tabs-boxed tabs flex justify-center">
-        <button (click)="setContacts()" role="tab" ngClass="tab {{this.contacts && 'tab-active'}}">Contacts</button>
-        <button (click)="setPricing()" role="tab" ngClass="tab {{this.pricing && 'tab-active'}}">Pricing</button>
-        <button (click)="setAssignment()" role="tab" ngClass="tab {{this.assignment && 'tab-active'}}">
+        <button
+          (click)="setContacts()"
+          role="tab"
+          ngClass="tab {{ this.contacts && 'tab-active' }}"
+        >
+          Contacts
+        </button>
+        <button
+          (click)="setPricing()"
+          role="tab"
+          ngClass="tab {{ this.pricing && 'tab-active' }}"
+        >
+          Pricing
+        </button>
+        <button
+          (click)="setAssignment()"
+          role="tab"
+          ngClass="tab {{ this.assignment && 'tab-active' }}"
+        >
           Assignment
         </button>
       </div>
@@ -83,7 +103,7 @@ import { ActivatedRoute } from "@angular/router";
       <div *ngIf="contacts" class="form-control flex flex-col gap-3">
         <!-- Change this from this.place.contacts to this.storeService.night -->
         <label
-          *ngFor="let contact of this.storeService.chosenNight.contacts"
+          *ngFor="let contact of this.chosenNight.contacts"
           class="transition-color label w-full cursor-pointer rounded-lg duration-500 hover:bg-secondary"
         >
           <span class="label-text w-1/2">{{ contact.name }}</span>
@@ -171,6 +191,7 @@ export class PlaceComponent implements OnInit {
   placeName = new FormControl("");
 
   chosenContact: Contact | undefined = undefined;
+  chosenNight!: Night;
   total: number = 0;
 
   pricing: boolean = false;
@@ -183,9 +204,14 @@ export class PlaceComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.storeService.getItems(this.place?.id)?.subscribe((items: Item[]) => {
-      this.items = items;  
+      this.items = items;
     });
-    console.log(this.storeService.chosenNight)
+    const nightId: string | null = this.route.snapshot.paramMap.get("id");
+    if (!nightId) return;
+    this.storeService.getNight(nightId).subscribe((res: Night) => {
+      this.chosenNight = res;
+    });
+    console.log(this.chosenNight);
   }
 
   setPricing() {

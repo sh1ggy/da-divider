@@ -28,7 +28,6 @@ import { Contact, Night, Place } from "../models";
               <div class="ml-auto flex">
                 <button
                   [routerLink]="['/night', night.id]"
-                  (click)="this.storeService.chosenNight = night"
                   class="btn btn-accent btn-outline btn-sm relative right-0 top-0 hover:bg-slate-700"
                 >
                   ✏️
