@@ -40,21 +40,27 @@ public class NightService : INightService
     return nights;
   }
 
-  public NightDTO GetNightById(int nightId) 
+  public NightDTO GetNightById(int nightId)
   {
     NightDTO night = _repository.GetNightById(nightId);
     return night;
   }
 
-    public IEnumerable<Contact> GetNightContacts(int nightId)
-    {
-      IEnumerable<Contact> contacts = _repository.GetNightContacts(nightId);
-      return contacts;
-    }
+  public IEnumerable<Contact> GetNightContacts(int nightId)
+  {
+    IEnumerable<Contact> contacts = _repository.GetNightContacts(nightId);
+    return contacts;
+  }
 
-    public IEnumerable<Place> GetNightPlaces(int nightId)
-    {
-      IEnumerable<Place> places = _repository.GetNightPlaces(nightId);
-      return places;
-    }
+  public IEnumerable<Place> GetNightPlaces(int nightId)
+  {
+    IEnumerable<Place> places = _repository.GetNightPlaces(nightId);
+    return places;
+  }
+
+  public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId)
+  {
+    IEnumerable<Contact> contacts = _repository.AssignContactToNight(nightId, contactId);
+    return contacts;
+  }
 }

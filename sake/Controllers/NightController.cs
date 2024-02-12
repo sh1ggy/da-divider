@@ -7,7 +7,7 @@ namespace Divider.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class NightController: ControllerBase
+public class NightController : ControllerBase
 {
   private INightService _nights;
   public NightController(INightService nights)
@@ -33,14 +33,14 @@ public class NightController: ControllerBase
 
   [HttpGet]
   [Route("/nights/{nightId}")]
-  public ActionResult<NightDTO> GetNightById(int nightId) 
+  public ActionResult<NightDTO> GetNightById(int nightId)
   {
     try
     {
       var night = _nights.GetNightById(nightId);
       return Ok(night);
     }
-    catch 
+    catch
     {
       return BadRequest();
     }
@@ -117,5 +117,21 @@ public class NightController: ControllerBase
     Night? night = _nights.EditNight(editNightRequest);
     if (night == null) return BadRequest();
     return Ok(night);
+  }
+
+  [HttpPatch]
+  [Route("/nights/{nightId}/contact/{contactId}")]
+  public ActionResult<IEnumerable<Contact>> AssignContactToNight(int nightId, int contactId)
+  {
+    try
+    {
+      IEnumerable<Contact> contacts = _nights.AssignContactToNight(nightId, contactId);
+      return Ok(contacts);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine(e);
+      return BadRequest();
+    }
   }
 }

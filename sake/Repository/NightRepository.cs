@@ -1,6 +1,7 @@
 using System.Reflection.Metadata.Ecma335;
 using Divider.ApiModels;
 using Divider.Models;
+using Divider.Service;
 using Microsoft.EntityFrameworkCore;
 
 namespace Divider.Repository;
@@ -15,7 +16,7 @@ public class NightRepository : INightRepository
   }
   public void CreateNight(Night night)
   {
-    
+
     _unitOfWork.Context.Nights.Add(night);
     _unitOfWork.Context.SaveChanges();
     return;
@@ -73,17 +74,36 @@ public class NightRepository : INightRepository
 
   public IEnumerable<Contact> GetNightContacts(int nightId)
   {
-    Night night = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId);
+    IEnumerable<Night> nights = _unitOfWork.Context.Nights.Include(n => n.Contacts).ToList();
+    Night night = nights.FirstOrDefault(n => n.Id == nightId);
     IEnumerable<Contact> contacts = night.Contacts;
-    Console.WriteLine(night.Id);
-    Console.WriteLine(night.Contacts.FirstOrDefault());
-    Console.WriteLine(contacts.FirstOrDefault());
     return contacts;
   }
 
   public IEnumerable<Place> GetNightPlaces(int nightId)
   {
-    IEnumerable<Place> places = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId).Places;
+    IEnumerable<Night> nights = _unitOfWork.Context.Nights.Include(n => n.Places).ToList();
+    Night night = nights.FirstOrDefault(n => n.Id == nightId);
+    IEnumerable<Place> places = night.Places;
     return places;
+  }
+
+  public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId)
+  {
+    Night night = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId);
+    Contact contact = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contactId);
+
+    Night newNight = new()
+    {
+      Id = night.Id,
+      Date = night.Date,
+    };
+    newNight.Contacts.Add(contact);
+    night = newNight;
+    
+    _unitOfWork.Context.Nights.Update(night);
+    _unitOfWork.Context.SaveChanges();
+
+    return night.Contacts;
   }
 }
