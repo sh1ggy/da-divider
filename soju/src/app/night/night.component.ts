@@ -41,7 +41,7 @@ export class NightComponent implements OnInit {
   ngOnInit(): void {
     const nightId: string | null = this.route.snapshot.paramMap.get('id');
     if (nightId == null) return;
-    this.storeService.getNight(nightId).subscribe((night: Night) => this.night = night);
+    this.storeService.getNight(nightId).subscribe((night: Night) => {this.night = night});
     this.storeService.getPlacesByNight(nightId).subscribe((places: Place[]) => this.places = places)
   }
 

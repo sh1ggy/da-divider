@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+using Divider.ApiModels;
 using Divider.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,7 @@ public class NightRepository : INightRepository
   }
   public void CreateNight(Night night)
   {
+    
     _unitOfWork.Context.Nights.Add(night);
     _unitOfWork.Context.SaveChanges();
     return;
@@ -41,15 +44,46 @@ public class NightRepository : INightRepository
     return res;
   }
 
-  public IEnumerable<Night> GetNights()
+  public IEnumerable<NightDTO> GetNights()
   {
     IEnumerable<Night> nights = _unitOfWork.Context.Nights.ToList();
-    return nights;
+    IEnumerable<NightDTO> nightsDTO = [];
+    foreach (Night night in nights)
+    {
+      NightDTO nightDTO = new()
+      {
+        Id = night.Id,
+        Date = night.Date,
+      };
+      nightsDTO = nightsDTO.Append(nightDTO);
+    }
+    return nightsDTO;
   }
 
-  public Night GetNightById(int nightId)
+  public NightDTO GetNightById(int nightId)
   {
     Night night = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId);
-    return night;
+    NightDTO nightDTO = new()
+    {
+      Id = night.Id,
+      Date = night.Date,
+    };
+    return nightDTO;
+  }
+
+  public IEnumerable<Contact> GetNightContacts(int nightId)
+  {
+    Night night = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId);
+    IEnumerable<Contact> contacts = night.Contacts;
+    Console.WriteLine(night.Id);
+    Console.WriteLine(night.Contacts.FirstOrDefault());
+    Console.WriteLine(contacts.FirstOrDefault());
+    return contacts;
+  }
+
+  public IEnumerable<Place> GetNightPlaces(int nightId)
+  {
+    IEnumerable<Place> places = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId).Places;
+    return places;
   }
 }

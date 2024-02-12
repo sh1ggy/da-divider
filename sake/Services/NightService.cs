@@ -34,15 +34,27 @@ public class NightService : INightService
     return night;
   }
 
-  public IEnumerable<Night> GetNights()
+  public IEnumerable<NightDTO> GetNights()
   {
-    IEnumerable<Night> nights = _repository.GetNights();
+    IEnumerable<NightDTO> nights = _repository.GetNights();
     return nights;
   }
 
-  public Night GetNightById(int nightId) 
+  public NightDTO GetNightById(int nightId) 
   {
-    Night night = _repository.GetNightById(nightId);
+    NightDTO night = _repository.GetNightById(nightId);
     return night;
   }
+
+    public IEnumerable<Contact> GetNightContacts(int nightId)
+    {
+      IEnumerable<Contact> contacts = _repository.GetNightContacts(nightId);
+      return contacts;
+    }
+
+    public IEnumerable<Place> GetNightPlaces(int nightId)
+    {
+      IEnumerable<Place> places = _repository.GetNightPlaces(nightId);
+      return places;
+    }
 }

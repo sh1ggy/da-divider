@@ -1,3 +1,4 @@
+using Divider.ApiModels;
 using Divider.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,11 +42,22 @@ public class PlaceRepository : IPlaceRepository
     return null;
   }
 
-  public IEnumerable<Place> GetPlaces(int nightId)
+  public IEnumerable<PlaceDTO> GetPlaces(int nightId)
   {
     List<Place> places = _unitOfWork.Context.Places
       .Where(p => p.NightId == nightId)
       .ToList();
-    return places;
+    IEnumerable<PlaceDTO> placesDTO = [];
+    foreach (Place place in places)
+    {
+      PlaceDTO placeDTO = new()
+      {
+        Id = place.Id,
+        Name = place.Name,
+        NightId = place.NightId,
+      };
+      placesDTO = placesDTO.Append(placeDTO);
+    }
+    return placesDTO;
   }
 }

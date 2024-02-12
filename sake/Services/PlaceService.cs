@@ -33,9 +33,9 @@ public class PlaceService : IPlaceService
         return _repository.EditPlace(editRequest.Place);
     }
 
-    public IEnumerable<Place> GetPlaces(int nightId)
+    public IEnumerable<PlaceDTO> GetPlaces(int nightId)
     {
-        IEnumerable<Place> places = _repository.GetPlaces(nightId);
+        IEnumerable<PlaceDTO> places = _repository.GetPlaces(nightId);
         return places;
     }
 }

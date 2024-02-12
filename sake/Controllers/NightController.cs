@@ -17,7 +17,7 @@ public class NightController: ControllerBase
 
   [HttpGet]
   [Route("/nights")]
-  public ActionResult<IEnumerable<Night>> GetNights()
+  public ActionResult<IEnumerable<NightDTO>> GetNights()
   {
     try
     {
@@ -33,7 +33,7 @@ public class NightController: ControllerBase
 
   [HttpGet]
   [Route("/nights/{nightId}")]
-  public ActionResult<Night> GetNightById(int nightId) 
+  public ActionResult<NightDTO> GetNightById(int nightId) 
   {
     try
     {
@@ -44,6 +44,37 @@ public class NightController: ControllerBase
     {
       return BadRequest();
     }
+  }
+
+  [HttpGet]
+  [Route("/nights/{nightId}/contacts")]
+  public ActionResult<Contact> GetNightContacts(int nightId)
+  {
+    try
+    {
+      var contacts = _nights.GetNightContacts(nightId);
+      return Ok(contacts);
+    }
+    catch
+    {
+      return BadRequest();
+    }
+  }
+
+  [HttpGet]
+  [Route("/nights/{nightId}/places")]
+  public ActionResult<Place> GetNightPlaces(int nightId)
+  {
+    try
+    {
+      var places = _nights.GetNightPlaces(nightId);
+      return Ok(places);
+    }
+    catch
+    {
+      return BadRequest();
+    }
+
   }
 
   [HttpPost]

@@ -11,6 +11,5 @@ public class Place : BaseEntity
   public Night Night { get; set; } = null!; // Reference navigation to principal
 
   // Many places to many contacts
-  [JsonIgnore]
   public List<Contact> Contacts { get; } = [];
 }

@@ -49,7 +49,7 @@ import { ActivatedRoute } from "@angular/router";
                   this.storeService.editPlace(
                     this.place,
                     this.placeName.value,
-                    this.chosenNight
+                    this?.chosenNight
                   )
                 "
                 class="btn btn-success btn-outline"
@@ -103,7 +103,7 @@ import { ActivatedRoute } from "@angular/router";
       <div *ngIf="contacts" class="form-control flex flex-col gap-3">
         <!-- Change this from this.place.contacts to this.storeService.night -->
         <label
-          *ngFor="let contact of this.chosenNight.contacts"
+          *ngFor="let contact of this.chosenNight?.contacts"
           class="transition-color label w-full cursor-pointer rounded-lg duration-500 hover:bg-secondary"
         >
           <span class="label-text w-1/2">{{ contact.name }}</span>
@@ -191,7 +191,8 @@ export class PlaceComponent implements OnInit {
   placeName = new FormControl("");
 
   chosenContact: Contact | undefined = undefined;
-  chosenNight!: Night;
+  chosenNight: Night | undefined = undefined;
+  chosenNightContacts: Contact[] | undefined = undefined;
   total: number = 0;
 
   pricing: boolean = false;
@@ -210,8 +211,12 @@ export class PlaceComponent implements OnInit {
     if (!nightId) return;
     this.storeService.getNight(nightId).subscribe((res: Night) => {
       this.chosenNight = res;
+      console.log(this.chosenNight);
     });
-    console.log(this.chosenNight);
+    this.storeService.getContactsByNight(nightId)?.subscribe((res: Contact[]) => {
+      console.log(res);
+      if (this.chosenNight) this.chosenNight.contacts = res
+    });
   }
 
   setPricing() {

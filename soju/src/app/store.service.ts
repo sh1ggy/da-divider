@@ -110,12 +110,9 @@ export class StoreService {
     return this.http.get<Contact[]>(url);
   }
 
-  getContactsByNight(contactIds: number[]) {
-    const url = `${environment.apiUrl}/contacts`;
-    const contactJSON = new HttpParams({
-      fromObject: { "contactIds[]": contactIds },
-    });
-    return this.http.get<Contact[]>(url, { params: contactJSON });
+  getContactsByNight(nightId: string) {
+    const url = `${environment.apiUrl}/nights/${nightId}/contacts`;
+    return this.http.get<Contact[]>(url);
   }
 
   getItems(placeId: number | undefined) {
@@ -220,8 +217,8 @@ export class StoreService {
     return req;
   }
 
-  editPlace(place: Place | undefined, name: string | null, night: Night) {
-    if (place === undefined || name === null) return;
+  editPlace(place: Place | undefined, name: string | null, night: Night | undefined) {
+    if (place === undefined || name === null || night === undefined) return;
     console.log("Editing place!");
 
     const url = `${environment.apiUrl}/places/${place.id}`;

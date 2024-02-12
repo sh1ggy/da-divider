@@ -17,7 +17,7 @@ public class PlaceController : ControllerBase
 
   [HttpGet]
   [Route("/places/{nightId}")]
-  public ActionResult<IEnumerable<Place>> GetPlaces(int nightId)
+  public ActionResult<IEnumerable<PlaceDTO>> GetPlaces(int nightId)
   {
     try
     {
