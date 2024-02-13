@@ -114,6 +114,10 @@ export class StoreService {
     const url = `${environment.apiUrl}/nights/${nightId}/contacts`;
     return this.http.get<Contact[]>(url);
   }
+  getContactsByPlace(placeId: string) {
+    const url = `${environment.apiUrl}/places/${placeId}/contacts`;
+    return this.http.get<Contact[]>(url);
+  }
 
   getItems(placeId: number | undefined) {
     if (placeId === undefined) return;
@@ -169,24 +173,28 @@ export class StoreService {
     return req;
   }
 
-  editNightContacts(night: Night, contact: Contact, isAdd: boolean) {
-    const url = `${environment.apiUrl}/nights/${night.id}`;
-    if (isAdd) night.contacts.push(contact);
-    else {
-      const cIndex = night.contacts.findIndex((nContact: Contact) => nContact == contact)
-      night.contacts.splice(cIndex, 1);
-    }
+  assignContactToNight(night: Night, contact: Contact, unassign?: boolean) {
+    const url = `${environment.apiUrl}/nights/${night.id}/contacts/${contact.id}${unassign ? "?unassign=true" : ""}`;
+    console.log(url);
+    let params = new HttpParams();
+    params = params.append("unassign", unassign ? "true" : "false");
+    const req = this.http.patch<Contact>(url, {params : params});
+    req.subscribe((res) => console.log(res));
+    console.log(req);
+    return req;
+  }
 
-    const nightReq: EditNightRequest = {
-      userCreatedId: this.currentUser,
-      night: night,
-    };
-    console.log(JSON.stringify(nightReq));
-    const req = this.http.put<Night>(url, JSON.stringify(nightReq), {
-      headers: this.headers,
-    });
-
-    req.subscribe((res) => res);
+  assignContactToPlace(
+    place: Place | undefined,
+    contact: Contact,
+    unassign?: boolean,
+  ) {
+    if (place === undefined) return;
+    const url = `${environment.apiUrl}/places/${place.id}/contacts/${contact.id}${unassign ? "?unassign=true" : ""}`;
+    console.log(url);
+    const req = this.http.patch<Contact>(url, {});
+    req.subscribe((res) => console.log(res));
+    console.log(req);
     return req;
   }
 
@@ -217,7 +225,11 @@ export class StoreService {
     return req;
   }
 
-  editPlace(place: Place | undefined, name: string | null, night: Night | undefined) {
+  editPlace(
+    place: Place | undefined,
+    name: string | null,
+    night: Night | undefined,
+  ) {
     if (place === undefined || name === null || night === undefined) return;
     console.log("Editing place!");
 
@@ -229,8 +241,8 @@ export class StoreService {
       userCreatedId: this.currentUser,
       place: place,
     };
-    console.log({place})
-    console.log(JSON.stringify(placeReq))
+    console.log({ place });
+    console.log(JSON.stringify(placeReq));
 
     const req = this.http.put<Place>(url, JSON.stringify(placeReq), {
       headers: this.headers,

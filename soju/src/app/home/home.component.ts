@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { StoreService } from "../store.service";
 import { Contact, Night, Place } from "../models";
 
@@ -49,20 +49,16 @@ import { Contact, Night, Place } from "../models";
                 class="badge badge-lg bg-slate-700"
               >
                 <option disabled selected>+</option>
-                <!-- REF: https://stackoverflow.com/questions/38585720/how-to-apply-multiple-template-bindings-on-one-element-in-angular -->
                 <ng-container *ngFor="let contact of this.contacts">
-                  <!-- *ngIf="!checkContact(contact, getNightContacts(night))" -->
-                  <!-- *ngIf="checkContact(contact.id)" -->
                   <option [ngValue]="contact">
                     {{ contact.name }}
                   </option>
                 </ng-container>
               </select>
-              <!-- *ngIf="checkContact(contact?.id)" -->
               <button
                 (click)="
                   contact &&
-                    this.storeService.editNightContacts(night, contact, true)
+                    this.storeService.assignContactToNight(night, contact)
                 "
                 class="btn btn-success btn-outline btn-xs"
               >
@@ -72,16 +68,16 @@ import { Contact, Night, Place } from "../models";
 
             <div class="flex flex-wrap">
               <div
-                *ngFor="
-                  let contact of night.contacts;
+                *ngFor="let contact of night.contacts"
+                (click)="
+                  contact &&
+                    this.storeService.assignContactToNight(night, contact, true)
                 "
-                (click)="editNightContacts(night, contact, false)"
                 class="badge badge-primary hover:cursor-pointer hover:bg-error"
               >
                 {{ contact.name }}
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -105,6 +101,15 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.storeService.getNights().subscribe((nights: Night[]) => {
       this.nights = nights;
+
+      this.nights.forEach((night: Night) => {
+        this.storeService
+          .getContactsByNight(night.id.toString())
+          ?.subscribe((res: Contact[]) => {
+            night.contacts = res;
+            console.log(night.contacts);
+          });
+      });
       return nights;
     });
     this.storeService.getContacts().subscribe((contacts: Contact[]) => {
@@ -112,17 +117,6 @@ export class HomeComponent implements OnInit {
       return contacts;
     });
   }
-
-  editNightContacts(night: Night, contact: Contact, isAdd: boolean) {
-    this.storeService.editNightContacts(night, contact, isAdd);
-  }
-
-  // getNightContacts(night: Night): Contact[] | undefined {
-  //   const req = this.storeService.getContactsByNight(night);
-  //   let contacts: Contact[] = [];
-  //   req.subscribe((contactsByNight: Contact[]) => (contacts = contactsByNight));
-  //   return contacts;
-  // }
 
   addContact(nightContacts: Contact[]) {
     if (!this.contact) return;
@@ -145,9 +139,12 @@ export class HomeComponent implements OnInit {
   //   return flag;
   // }
 
-  // checkContact(contactId: number | undefined): boolean {
-  //   if (!this.contacts || !contactId) return false;
-  //   const contactIds = this.contacts.map((contact: Contact) => contact.id);
-  //   return contactIds.includes(contactId);
-  // }
+  checkContact(contact: Contact | undefined, night: Night) {
+    if (contact === undefined) return;
+    const res: Night | undefined = this.nights.find(
+      (val: Night) => night.id == val.id,
+    );
+    if (res === undefined) return false;
+    return res.contacts.includes(contact);
+  }
 }

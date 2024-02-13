@@ -74,7 +74,7 @@ public class NightRepository : INightRepository
 
   public IEnumerable<Contact> GetNightContacts(int nightId)
   {
-    IEnumerable<Night> nights = _unitOfWork.Context.Nights.Include(n => n.Contacts).ToList();
+    IEnumerable<Night> nights = _unitOfWork.Context.Nights.Include(n => n.Contacts);
     Night night = nights.FirstOrDefault(n => n.Id == nightId);
     IEnumerable<Contact> contacts = night.Contacts;
     return contacts;
@@ -82,13 +82,13 @@ public class NightRepository : INightRepository
 
   public IEnumerable<Place> GetNightPlaces(int nightId)
   {
-    IEnumerable<Night> nights = _unitOfWork.Context.Nights.Include(n => n.Places).ToList();
+    IEnumerable<Night> nights = _unitOfWork.Context.Nights.Include(n => n.Places);
     Night night = nights.FirstOrDefault(n => n.Id == nightId);
     IEnumerable<Place> places = night.Places;
     return places;
   }
 
-  public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId)
+  public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId, bool unassign)
   {
     Night night = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId);
     Contact contact = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contactId);
@@ -98,12 +98,18 @@ public class NightRepository : INightRepository
       Id = night.Id,
       Date = night.Date,
     };
-    newNight.Contacts.Add(contact);
-    night = newNight;
-    
-    _unitOfWork.Context.Nights.Update(night);
+    if (unassign == true)
+    {
+      newNight.Contacts.Remove(contact);
+    }
+    else
+    {
+      newNight.Contacts.Add(contact);
+    }
+
+    _unitOfWork.Context.Nights.Update(newNight);
     _unitOfWork.Context.SaveChanges();
 
-    return night.Contacts;
+    return newNight.Contacts;
   }
 }

@@ -30,6 +30,21 @@ public class PlaceController : ControllerBase
     }
   }
 
+  [HttpGet]
+  [Route("/places/{placeId}/contacts")]
+  public ActionResult<Contact> GetPlaceContacts(int placeId)
+  {
+    try
+    {
+      var contacts = _places.GetPlaceContacts(placeId);
+      return Ok(contacts);
+    }
+    catch
+    {
+      return BadRequest();
+    }
+  }
+
   [HttpPost]
   [ActionName(nameof(Place))]
   [Route("/places")]
@@ -70,5 +85,21 @@ public class PlaceController : ControllerBase
     Place? place = _places.EditPlace(editPlaceRequest, placeId);
     if (place == null) return BadRequest();
     return Ok(place);
+  }
+
+  [HttpPatch]
+  [Route("/places/{placeId}/contacts/{contactId}")]
+  public ActionResult<IEnumerable<Contact>> AssignContactToPlace(int placeId, int contactId, bool unassign)
+  {
+    try
+    {
+      IEnumerable<Contact> contacts = _places.AssignContactToPlace(placeId, contactId, unassign);
+      return Ok(contacts);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine(e);
+      return BadRequest();
+    }
   }
 }

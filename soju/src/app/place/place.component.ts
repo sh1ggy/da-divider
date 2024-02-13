@@ -9,6 +9,11 @@ import { ActivatedRoute } from "@angular/router";
   template: `
     <div class="flex flex-col gap-4">
       <div class="flex items-center">
+        <h1>
+          <code class="mr-3 rounded-lg bg-slate-800 p-2">{{
+            this.place?.id
+          }}</code>
+        </h1>
         <h1
           class="text-center text-xl font-bold text-green-700 hover:cursor-pointer"
         >
@@ -61,6 +66,7 @@ import { ActivatedRoute } from "@angular/router";
         </div>
       </dialog>
 
+      <!-- TABS -->
       <div role="tablist" class="tabs-boxed tabs flex justify-center">
         <button
           (click)="setContacts()"
@@ -109,8 +115,8 @@ import { ActivatedRoute } from "@angular/router";
           <span class="label-text w-1/2">{{ contact.name }}</span>
           <input
             type="checkbox"
-            (change)="addContact(contact)"
-            [checked]="checkContact(contact)"
+            ngModel (ngModelChange)="handleAssignContact(contact, $event)"
+            [defaultChecked]="checkPlaceContact(contact)"
             class="checkbox"
           />
         </label>
@@ -211,12 +217,24 @@ export class PlaceComponent implements OnInit {
     if (!nightId) return;
     this.storeService.getNight(nightId).subscribe((res: Night) => {
       this.chosenNight = res;
-      console.log(this.chosenNight);
     });
-    this.storeService.getContactsByNight(nightId)?.subscribe((res: Contact[]) => {
-      console.log(res);
-      if (this.chosenNight) this.chosenNight.contacts = res
-    });
+    this.storeService
+      .getContactsByNight(nightId)
+      ?.subscribe((res: Contact[]) => {
+        if (this.chosenNight) this.chosenNight.contacts = res;
+      });
+    if (this.place !== undefined) {
+      let placeContacts: Contact[] = [];
+      this.storeService
+        .getContactsByPlace(this.place.id.toString())
+        .subscribe((res: Contact[]) => {
+          if (this.place) {
+            this.place.contacts = res;
+            // console.log(this.place.contacts)
+          }
+        });
+      this.place.contacts = placeContacts;
+    }
   }
 
   setPricing() {
@@ -238,19 +256,15 @@ export class PlaceComponent implements OnInit {
     this.chosenContact = undefined;
   }
 
-  checkContact(contact: Contact) {
-    var flag: boolean = false;
-    if (!this.place || !this.place.contacts) {
-      console.log("swag");
-      return;
-    }
-    // Check if the chosen night's contact is equal to the currently allocated place's contact
-    this.place.contacts.forEach((placeContact) => {
-      if (contact.name == placeContact.name) {
-        flag = true;
-      }
-    });
-    return flag;
+  handleAssignContact(contact: Contact, event: boolean) {
+    console.log(event);
+    this.storeService.assignContactToPlace(this.place, contact, !event);
+  }
+
+  checkPlaceContact(contact: Contact) {
+    if (this.place === undefined) return;
+    // console.log(this.place.contacts);
+    return this.place.contacts.includes(contact);
   }
 
   setContact(event: Event) {

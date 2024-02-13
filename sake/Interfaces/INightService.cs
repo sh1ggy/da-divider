@@ -12,5 +12,5 @@ public interface INightService
   public Night CreateNight(CreateNightRequest createNightRequest);
   public Night? DeleteNight(int nightId);
   public Night? EditNight(EditNightRequest editNightRequest);
-  public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId);
+  public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId, bool unassign);
 }

@@ -6,7 +6,7 @@ export interface Contact {
 }
 
 export interface Place {
-  id?: number;
+  id: number;
   name: string | null;
   items: Item[];
   contacts: Contact[];

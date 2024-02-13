@@ -120,12 +120,12 @@ public class NightController : ControllerBase
   }
 
   [HttpPatch]
-  [Route("/nights/{nightId}/contact/{contactId}")]
-  public ActionResult<IEnumerable<Contact>> AssignContactToNight(int nightId, int contactId)
+  [Route("/nights/{nightId}/contacts/{contactId}")]
+  public ActionResult<IEnumerable<Contact>> AssignContactToNight(int nightId, int contactId, bool unassign)
   {
     try
     {
-      IEnumerable<Contact> contacts = _nights.AssignContactToNight(nightId, contactId);
+      IEnumerable<Contact> contacts = _nights.AssignContactToNight(nightId, contactId, unassign);
       return Ok(contacts);
     }
     catch (Exception e)

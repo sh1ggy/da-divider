@@ -10,6 +10,12 @@ public class PlaceService : IPlaceService
     {
         _repository = repository;
     }
+
+    public IEnumerable<Contact> AssignContactToPlace(int placeId, int contactId, bool unassign)
+    {
+        return _repository.AssignContactToPlace(placeId, contactId, unassign);
+    }
+
     public Place CreatePlace(CreatePlaceRequest creationRequest)
     {
         Place place = new Place
@@ -31,6 +37,11 @@ public class PlaceService : IPlaceService
     {
         if (editRequest == null) return null;
         return _repository.EditPlace(editRequest.Place);
+    }
+
+    public IEnumerable<Contact> GetPlaceContacts(int placeId)
+    {
+        return _repository.GetPlaceContacts(placeId);
     }
 
     public IEnumerable<PlaceDTO> GetPlaces(int nightId)

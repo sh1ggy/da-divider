@@ -58,9 +58,9 @@ public class NightService : INightService
     return places;
   }
 
-  public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId)
+  public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId, bool unassign)
   {
-    IEnumerable<Contact> contacts = _repository.AssignContactToNight(nightId, contactId);
+    IEnumerable<Contact> contacts = _repository.AssignContactToNight(nightId, contactId, unassign);
     return contacts;
   }
 }
