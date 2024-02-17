@@ -56,7 +56,8 @@ public class PlaceRepository : IPlaceRepository
   public Place? EditPlaceName(Place place)
   {
     Place placeToEdit = _unitOfWork.Context.Places.FirstOrDefault(p => p.Id == place.Id);
-    if (placeToEdit == null) {
+    if (placeToEdit == null)
+    {
       throw new ArgumentException("No place found");
     }
     placeToEdit.Name = place.Name;
@@ -75,6 +76,7 @@ public class PlaceRepository : IPlaceRepository
   public IEnumerable<PlaceDTO> GetPlaces(int nightId)
   {
     List<Place> places = _unitOfWork.Context.Places
+      .Include(p => p.Contacts)
       .Where(p => p.NightId == nightId)
       .ToList();
     IEnumerable<PlaceDTO> placesDTO = [];
@@ -85,7 +87,13 @@ public class PlaceRepository : IPlaceRepository
         Id = place.Id,
         Name = place.Name,
         NightId = place.NightId,
+        Contacts = place.Contacts,
       };
+      foreach (Contact contact in place.Contacts){
+        Console.WriteLine(contact.Id);
+      }
+
+
       placesDTO = placesDTO.Append(placeDTO);
     }
     return placesDTO;

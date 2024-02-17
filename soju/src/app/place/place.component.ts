@@ -170,11 +170,11 @@ import { ActivatedRoute } from "@angular/router";
                     ngModel
                     (ngModelChange)="handleAssignContactToItem(item, $event)"
                     (change)="setTotal(item, $event)"
-                    [disabled]="!chosenContact"
                     [checked]="checkItemContact(item, this.chosenContact)"
                     type="checkbox"
                     className="checkbox"
                   />
+                  <!-- [disabled]="!chosenContact" -->
                 </td>
               </tr>
             </tbody>
@@ -210,6 +210,7 @@ export class PlaceComponent implements OnInit {
     public storeService: StoreService,
     public route: ActivatedRoute,
   ) {}
+
   ngOnInit(): void {
     this.storeService.getItems(this.place?.id)?.subscribe((items: Item[]) => {
       this.items = items;
@@ -231,7 +232,6 @@ export class PlaceComponent implements OnInit {
         .subscribe((res: Contact[]) => {
           if (this.place) {
             this.place.contacts = res;
-            // console.log(this.place.contacts)
           }
         });
       this.place.contacts = placeContacts;

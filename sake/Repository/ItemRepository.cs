@@ -21,6 +21,7 @@ public class ItemRepository : IItemRepository
   public IEnumerable<Item> GetItemsByPlace(int placeId)
   {
     List<Item> items = _unitOfWork.Context.Items
+        .Include(i => i.Contacts)
         .Where(i => i.PlaceId == placeId)
         .ToList();
     return items;
