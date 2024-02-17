@@ -45,17 +45,17 @@ export class TotalComponent {
   @Input() place: Place | undefined;
   constructor(public storeService: StoreService) {}
   calculateTotal(contact: Contact) {
-    if (!this.place) return;
-    let total = 0;
-    this.place.items.forEach((item: Item) => {
-      item.contacts?.forEach((itemContact: Contact) => {
-        if (contact == itemContact && item.price) {
-          var calcPrice = this.storeService.getSplitPrice(item);
-          if (calcPrice) total += calcPrice;
-        }
-      });
-    });
-    console.log(total);
-    return total;
+    // if (!this.place) return;
+    // let total = 0;
+    // this.place.items.forEach((item: Item) => {
+    //   item.contacts?.forEach((itemContact: Contact) => {
+    //     if (contact == itemContact && item.price) {
+    //       var calcPrice = this.storeService.getSplitPrice(item);
+    //       if (calcPrice) total += calcPrice;
+    //     }
+    //   });
+    // });
+    // console.log(total);
+    // return total;
   }
 }

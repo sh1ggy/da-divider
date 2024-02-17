@@ -13,7 +13,7 @@ public class ItemService : IItemService
   }
   public Item CreateItem(CreateItemRequest creationRequest)
   {
-    
+
     Item item = new Item
     {
       Name = creationRequest.Name,
@@ -40,6 +40,15 @@ public class ItemService : IItemService
   {
     if (editItemRequest.item.Id != itemId) return null;
     // TODO: implement proper created/edited at
-    return _repository.EditItem(editItemRequest.item); 
+    return _repository.EditItem(editItemRequest.item);
+  }
+
+  public IEnumerable<Contact> AssignContactToItem(int itemId, int contactId, bool unassign)
+  {
+    if (unassign)
+    {
+      return _repository.UnassignContactToItem(itemId, contactId, unassign);
+    }
+    return _repository.AssignContactToItem(itemId, contactId);
   }
 }

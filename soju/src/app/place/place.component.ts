@@ -106,7 +106,10 @@ import { ActivatedRoute } from "@angular/router";
         </div>
       </div>
       <!-- Contact Assignment Tab, maybe move this to placeEditModal -->
-      <div *ngIf="contacts" class="form-control flex flex-col gap-3">
+      <div
+        *ngIf="contacts"
+        class="form-control flex flex-col gap-3"
+      >
         <!-- Change this from this.place.contacts to this.storeService.night -->
         <label
           *ngFor="let contact of this.chosenNight?.contacts"
@@ -116,8 +119,8 @@ import { ActivatedRoute } from "@angular/router";
           <input
             type="checkbox"
             ngModel
-            (ngModelChange)="handleAssignContacToPlace(contact, $event)"
-            [defaultChecked]="checkPlaceContact(contact)"
+            (ngModelChange)="handleAssignContactToPlace(contact, $event)"
+            [checked]="checkPlaceContact(contact)"
             class="checkbox"
           />
         </label>
@@ -259,20 +262,21 @@ export class PlaceComponent implements OnInit {
     this.chosenContact = undefined;
   }
 
-  handleAssignContacToPlace(contact: Contact, event: boolean) {
-    console.log(event);
+  handleAssignContactToPlace(contact: Contact, event: boolean) {
     this.storeService.assignContactToPlace(this.place, contact, !event);
   }
 
   handleAssignContactToItem(item: Item, event: boolean) {
-    console.log(this.chosenContact);
-    console.log(event);
+    if (this.chosenContact === undefined) return;
+    this.storeService.assignContactToItem(this.chosenContact, item, event);
   }
 
   checkPlaceContact(contact: Contact) {
     if (this.place === undefined) return;
-    // console.log(this.place.contacts);
-    return this.place.contacts.includes(contact);
+    if (this.place.contacts.some((c) => c.id === contact.id)) {
+      return true;
+    }
+    return false
   }
 
   setContact(event: Event) {
@@ -336,11 +340,5 @@ export class PlaceComponent implements OnInit {
       );
       item.contacts?.splice(contactIndex, 1);
     }
-  }
-
-  addContact(contact: Contact) {
-    if (!this.place || !contact) return;
-    this.place?.contacts?.push(contact);
-    console.log(this.place.contacts);
   }
 }

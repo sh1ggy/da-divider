@@ -191,10 +191,8 @@ export class StoreService {
   ) {
     if (place === undefined) return;
     const url = `${environment.apiUrl}/places/${place.id}/contacts/${contact.id}${unassign ? "?unassign=true" : ""}`;
-    console.log(url);
     const req = this.http.patch<Contact>(url, {});
     req.subscribe((res) => console.log(res));
-    console.log(req);
     return req;
   }
 
@@ -302,6 +300,14 @@ export class StoreService {
     console.log(req);
 
     req.subscribe((res) => res);
+    return req;
+  }
+
+  assignContactToItem(contact: Contact, item: Item, unassign: boolean) {
+    if (item === undefined) return;
+    const url = `${environment.apiUrl}/items/${item.id}/contacts/${contact.id}${unassign ? "?unassign=true" : ""}`;
+    const req = this.http.patch<Contact>(url, {});
+  req.subscribe((res) => console.log(res));
     return req;
   }
 

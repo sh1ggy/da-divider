@@ -79,10 +79,10 @@ public class PlaceController : ControllerBase
 
   [HttpPut]
   [Route("/places/{placeId}")]
-  public ActionResult<Place> EditPlace(EditPlaceRequest editPlaceRequest, int placeId)
+  public ActionResult<Place> EditPlaceName(EditPlaceRequest editPlaceRequest, int placeId)
   {
     if (editPlaceRequest == null || placeId == 0) return BadRequest();
-    Place? place = _places.EditPlace(editPlaceRequest, placeId);
+    Place? place = _places.EditPlaceName(editPlaceRequest, placeId);
     if (place == null) return BadRequest();
     return Ok(place);
   }

@@ -13,7 +13,11 @@ public class PlaceService : IPlaceService
 
     public IEnumerable<Contact> AssignContactToPlace(int placeId, int contactId, bool unassign)
     {
-        return _repository.AssignContactToPlace(placeId, contactId, unassign);
+        if (unassign)
+        {
+            return _repository.UnassignContactToPlace(placeId, contactId);
+        }
+        return _repository.AssignContactToPlace(placeId, contactId);
     }
 
     public Place CreatePlace(CreatePlaceRequest creationRequest)
@@ -33,10 +37,10 @@ public class PlaceService : IPlaceService
         return _repository.DeletePlace(placeId);
     }
 
-    public Place? EditPlace(EditPlaceRequest editRequest, int placeId)
+    public Place? EditPlaceName(EditPlaceRequest editRequest, int placeId)
     {
         if (editRequest == null) return null;
-        return _repository.EditPlace(editRequest.Place);
+        return _repository.EditPlaceName(editRequest.Place);
     }
 
     public IEnumerable<Contact> GetPlaceContacts(int placeId)

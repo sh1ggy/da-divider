@@ -7,10 +7,8 @@ public class Item : BaseEntity
   public string Name { get; set; } = string.Empty;
   public int? Quantity { get; set; }
   public float Price { get; set; }
-
-  [ForeignKey("ContactId")]
-  public int ContactId { get; set; }
-  
   [ForeignKey("PlaceId")]
   public int PlaceId { get; set; }
+  public ICollection<Contact> Contacts { get; set; } = [];
+
 }

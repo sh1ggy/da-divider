@@ -9,4 +9,5 @@ public interface IItemService
   public Item CreateItem(CreateItemRequest creationRequest);
   public Item? DeleteItem(int itemId);
   public Item? EditItem(EditItemRequest editRequest, int itemId);
+  public IEnumerable<Contact> AssignContactToItem(int itemId, int contactId, bool unassign);
 }

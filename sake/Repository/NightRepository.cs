@@ -91,9 +91,9 @@ public class NightRepository : INightRepository
   public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId, bool unassign)
   {
     Night night = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId);
-    Contact contact = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contactId);
+    Contact contactToAdd = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contactId);
 
-    night.Contacts.Add(contact);
+    night.Contacts.Add(contactToAdd);
     _unitOfWork.Context.SaveChanges();
     return night.Contacts;
   }

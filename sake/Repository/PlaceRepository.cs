@@ -11,32 +11,29 @@ public class PlaceRepository : IPlaceRepository
   {
     _unitOfWork = unitOfWork;
     _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
+    // _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking; //default to no tracking.
   }
 
-  public IEnumerable<Contact> AssignContactToPlace(int placeId, int contactId, bool unassign)
+  public IEnumerable<Contact> AssignContactToPlace(int placeId, int contactId)
   {
-    Place place = _unitOfWork.Context.Places.FirstOrDefault(p => p.Id == placeId);
-    Contact contact = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contactId);
+    Place place = _unitOfWork.Context.Places.Include(p => p.Contacts).FirstOrDefault(p => p.Id == placeId);
+    Contact contactToAdd = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contactId);
 
-    Place newPlace = new()
-    {
-      Id = place.Id,
-      Name = place.Name,
-      NightId = place.NightId,
-    };
-    if (unassign == true)
-    {
-      newPlace.Contacts.Remove(contact);
-    }
-    else
-    {
-      newPlace.Contacts.Add(contact);
-    }
-
-    _unitOfWork.Context.Places.Update(newPlace);
+    place.Contacts.Add(contactToAdd);
     _unitOfWork.Context.SaveChanges();
 
-    return newPlace.Contacts;
+    return place.Contacts;
+  }
+
+  public IEnumerable<Contact> UnassignContactToPlace(int placeId, int contactId)
+  {
+    Place place = _unitOfWork.Context.Places.Include(p => p.Contacts).FirstOrDefault(p => p.Id == placeId);
+    Contact contactToRemove = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contactId);
+
+    place.Contacts.Remove(contactToRemove);
+    _unitOfWork.Context.SaveChanges();
+
+    return place.Contacts;
   }
 
   public void CreatePlace(Place place)
@@ -56,17 +53,15 @@ public class PlaceRepository : IPlaceRepository
     return null;
   }
 
-  public Place? EditPlace(Place place)
+  public Place? EditPlaceName(Place place)
   {
-    Place? res = _unitOfWork.Context.Places.FirstOrDefault(p => p.Id == place.Id);
-    if (res != null)
-    {
-      res = place;
-      _unitOfWork.Context.Places.Update(res);
-      _unitOfWork.Context.SaveChanges();
-      return res;
+    Place placeToEdit = _unitOfWork.Context.Places.FirstOrDefault(p => p.Id == place.Id);
+    if (placeToEdit == null) {
+      throw new ArgumentException("No place found");
     }
-    return null;
+    placeToEdit.Name = place.Name;
+    _unitOfWork.Context.SaveChanges();
+    return place;
   }
 
   public IEnumerable<Contact> GetPlaceContacts(int placeId)

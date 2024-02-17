@@ -3,6 +3,7 @@ using System;
 using Divider.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TodoApi.Migrations
 {
     [DbContext(typeof(DividersContext))]
-    partial class DividersContextModelSnapshot : ModelSnapshot
+    [Migration("20240217025935_ContactIgnore")]
+    partial class ContactIgnore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace TodoApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ContactItem", b =>
-                {
-                    b.Property<int>("ContactsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ItemsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ContactsId", "ItemsId");
-
-                    b.HasIndex("ItemsId");
-
-                    b.ToTable("ContactItem");
-                });
 
             modelBuilder.Entity("ContactNight", b =>
                 {
@@ -98,6 +86,9 @@ namespace TodoApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ContactId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -152,21 +143,6 @@ namespace TodoApi.Migrations
                     b.HasIndex("NightId");
 
                     b.ToTable("Places");
-                });
-
-            modelBuilder.Entity("ContactItem", b =>
-                {
-                    b.HasOne("Divider.Models.Contact", null)
-                        .WithMany()
-                        .HasForeignKey("ContactsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Divider.Models.Item", null)
-                        .WithMany()
-                        .HasForeignKey("ItemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ContactNight", b =>

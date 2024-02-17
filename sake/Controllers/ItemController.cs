@@ -65,5 +65,21 @@ public class ItemController : ControllerBase
 		if (res == null) return BadRequest();
 		return Ok();
 	}
+
+	[HttpPatch]
+	[Route("items/{itemId}/contact/{contactId}")]
+	public ActionResult<IEnumerable<Contact>> AssignContactToItem(int itemId, int contactId, bool unassign)
+	{
+		try 
+		{
+			IEnumerable<Contact> contacts = _items.AssignContactToItem(itemId, contactId, unassign);
+			return Ok(contacts);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			return BadRequest();
+		}
+	}
 }
 
