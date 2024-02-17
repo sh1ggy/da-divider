@@ -106,10 +106,7 @@ import { ActivatedRoute } from "@angular/router";
         </div>
       </div>
       <!-- Contact Assignment Tab, maybe move this to placeEditModal -->
-      <div
-        *ngIf="contacts"
-        class="form-control flex flex-col gap-3"
-      >
+      <div *ngIf="contacts" class="form-control flex flex-col gap-3">
         <!-- Change this from this.place.contacts to this.storeService.night -->
         <label
           *ngFor="let contact of this.chosenNight?.contacts"
@@ -174,9 +171,7 @@ import { ActivatedRoute } from "@angular/router";
                     (ngModelChange)="handleAssignContactToItem(item, $event)"
                     (change)="setTotal(item, $event)"
                     [disabled]="!chosenContact"
-                    [checked]="
-                      chosenContact && item.contacts?.includes(chosenContact)
-                    "
+                    [checked]="checkItemContact(item, this.chosenContact)"
                     type="checkbox"
                     className="checkbox"
                   />
@@ -268,7 +263,7 @@ export class PlaceComponent implements OnInit {
 
   handleAssignContactToItem(item: Item, event: boolean) {
     if (this.chosenContact === undefined) return;
-    this.storeService.assignContactToItem(this.chosenContact, item, event);
+    this.storeService.assignContactToItem(this.chosenContact, item, !event);
   }
 
   checkPlaceContact(contact: Contact) {
@@ -276,7 +271,15 @@ export class PlaceComponent implements OnInit {
     if (this.place.contacts.some((c) => c.id === contact.id)) {
       return true;
     }
-    return false
+    return false;
+  }
+
+  checkItemContact(item: Item, contact: Contact | undefined) {
+    if (item.contacts === undefined || contact === undefined) return;
+    if (item.contacts.some((c) => c.id === contact.id)) {
+      return true;
+    }
+    return false;
   }
 
   setContact(event: Event) {

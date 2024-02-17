@@ -11,6 +11,7 @@ import { HomeComponent } from "./home/home.component";
 import { ContactsComponent } from "./contacts/contacts.component";
 import { TotalComponent } from "./total/total.component";
 import { HttpClientModule } from "@angular/common/http";
+import { NightSmComponent } from './nightsm/nightsm.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { HttpClientModule } from "@angular/common/http";
     HomeComponent,
     ContactsComponent,
     TotalComponent,
+    NightSmComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, HttpClientModule],
   providers: [],

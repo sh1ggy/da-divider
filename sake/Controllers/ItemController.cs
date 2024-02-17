@@ -67,7 +67,7 @@ public class ItemController : ControllerBase
 	}
 
 	[HttpPatch]
-	[Route("items/{itemId}/contact/{contactId}")]
+	[Route("/items/{itemId}/contacts/{contactId}")]
 	public ActionResult<IEnumerable<Contact>> AssignContactToItem(int itemId, int contactId, bool unassign)
 	{
 		try 

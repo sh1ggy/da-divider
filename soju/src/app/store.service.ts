@@ -306,8 +306,9 @@ export class StoreService {
   assignContactToItem(contact: Contact, item: Item, unassign: boolean) {
     if (item === undefined) return;
     const url = `${environment.apiUrl}/items/${item.id}/contacts/${contact.id}${unassign ? "?unassign=true" : ""}`;
+    console.log(url);
     const req = this.http.patch<Contact>(url, {});
-  req.subscribe((res) => console.log(res));
+    req.subscribe((res) => console.log(res));
     return req;
   }
 

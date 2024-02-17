@@ -47,7 +47,7 @@ public class ItemService : IItemService
   {
     if (unassign)
     {
-      return _repository.UnassignContactToItem(itemId, contactId, unassign);
+      return _repository.UnassignContactToItem(itemId, contactId);
     }
     return _repository.AssignContactToItem(itemId, contactId);
   }
