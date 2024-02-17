@@ -9,7 +9,7 @@ public class ItemRepository : IItemRepository
   public ItemRepository(IUnitOfWork unitOfWork)
   {
     _unitOfWork = unitOfWork;
-    _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking; //default to no tracking.
+    _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
   }
   public void CreateItem(Item item)
   {

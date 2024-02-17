@@ -10,7 +10,7 @@ public class PlaceRepository : IPlaceRepository
   public PlaceRepository(IUnitOfWork unitOfWork)
   {
     _unitOfWork = unitOfWork;
-    _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking; //default to no tracking.\
+    _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
   }
 
   public IEnumerable<Contact> AssignContactToPlace(int placeId, int contactId, bool unassign)
