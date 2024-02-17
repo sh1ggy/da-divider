@@ -93,16 +93,9 @@ public class NightRepository : INightRepository
     Night night = _unitOfWork.Context.Nights.FirstOrDefault(n => n.Id == nightId);
     Contact contact = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contactId);
 
-    Night newNight = new()
-    {
-      Id = night.Id,
-      Date = night.Date,
-    };
-
-    newNight.Contacts.Add(contact);
-    _unitOfWork.Context.Nights.Update(newNight);
+    night.Contacts.Add(contact);
     _unitOfWork.Context.SaveChanges();
-    return newNight.Contacts;
+    return night.Contacts;
   }
 
   public IEnumerable<Contact> UnassignContactToNight(int nightId, int contactId, bool unassign)
