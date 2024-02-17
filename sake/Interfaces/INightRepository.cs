@@ -13,4 +13,5 @@ public interface INightRepository
   public Night? DeleteNight(int nightId);
   public Night? EditNight(Night night);
   public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId, bool unassign);
+  public IEnumerable<Contact> UnassignContactToNight(int nightId, int contactId, bool unassign);
 }

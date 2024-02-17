@@ -12,7 +12,7 @@ public class NightRepository : INightRepository
   public NightRepository(IUnitOfWork unitOfWork)
   {
     _unitOfWork = unitOfWork;
-    _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking; //default to no tracking.\
+    _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
   }
   public void CreateNight(Night night)
   {
@@ -98,18 +98,37 @@ public class NightRepository : INightRepository
       Id = night.Id,
       Date = night.Date,
     };
-    if (unassign == true)
-    {
-      newNight.Contacts.Remove(contact);
-    }
-    else
-    {
-      newNight.Contacts.Add(contact);
-    }
 
+    newNight.Contacts.Add(contact);
     _unitOfWork.Context.Nights.Update(newNight);
     _unitOfWork.Context.SaveChanges();
-
     return newNight.Contacts;
   }
+
+  public IEnumerable<Contact> UnassignContactToNight(int nightId, int contactId, bool unassign)
+  {
+    Night night = _unitOfWork.Context.Nights.Include(n => n.Contacts).FirstOrDefault(n => n.Id == nightId);
+    if (night == null)
+    {
+      throw new ArgumentException("Night not found");
+    }
+    Console.WriteLine($"NIGHT_ID: {night.Id} CONTACTS: {night.Contacts.Count()}");
+
+    Contact contactToRemove = night.Contacts.FirstOrDefault(c => c.Id == contactId);
+    if (contactToRemove == null)
+    {
+      throw new ArgumentException("Contact not found");
+    }
+    Console.WriteLine($"CONTACT_ID: {contactToRemove.Id} NAME: {contactToRemove.Name}");
+
+    bool removal = night.Contacts.Remove(contactToRemove);
+    Console.WriteLine(removal);
+    
+    int changesSaved = _unitOfWork.Context.SaveChanges();
+    Console.WriteLine($"Number of changes saved: {changesSaved}");
+
+
+    return night.Contacts;
+  }
 }
+

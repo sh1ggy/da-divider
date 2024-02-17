@@ -60,7 +60,14 @@ public class NightService : INightService
 
   public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId, bool unassign)
   {
-    IEnumerable<Contact> contacts = _repository.AssignContactToNight(nightId, contactId, unassign);
+    IEnumerable<Contact> contacts;
+    if (unassign == true)
+    {
+      Console.WriteLine("Unassigning");
+      contacts = _repository.UnassignContactToNight(nightId, contactId, unassign);
+      return contacts;
+    }
+    contacts = _repository.AssignContactToNight(nightId, contactId, unassign);
     return contacts;
   }
 }

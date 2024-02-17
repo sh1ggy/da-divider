@@ -115,7 +115,8 @@ import { ActivatedRoute } from "@angular/router";
           <span class="label-text w-1/2">{{ contact.name }}</span>
           <input
             type="checkbox"
-            ngModel (ngModelChange)="handleAssignContact(contact, $event)"
+            ngModel
+            (ngModelChange)="handleAssignContacToPlace(contact, $event)"
             [defaultChecked]="checkPlaceContact(contact)"
             class="checkbox"
           />
@@ -166,6 +167,8 @@ import { ActivatedRoute } from "@angular/router";
                 </td>
                 <td>
                   <input
+                    ngModel
+                    (ngModelChange)="handleAssignContactToItem(item, $event)"
                     (change)="setTotal(item, $event)"
                     [disabled]="!chosenContact"
                     [checked]="
@@ -256,9 +259,14 @@ export class PlaceComponent implements OnInit {
     this.chosenContact = undefined;
   }
 
-  handleAssignContact(contact: Contact, event: boolean) {
+  handleAssignContacToPlace(contact: Contact, event: boolean) {
     console.log(event);
     this.storeService.assignContactToPlace(this.place, contact, !event);
+  }
+
+  handleAssignContactToItem(item: Item, event: boolean) {
+    console.log(this.chosenContact);
+    console.log(event);
   }
 
   checkPlaceContact(contact: Contact) {

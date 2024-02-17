@@ -126,19 +126,6 @@ export class HomeComponent implements OnInit {
     return nightContacts;
   }
 
-  // Checks contact passed in against the contacts passed in
-  // RETURN: true if contact in list and false if contact not in list
-  // checkContact(contact: Contact, nightContacts: Contact[] | undefined) {
-  //   if (nightContacts === undefined) return undefined;
-  //   var flag: boolean = false;
-  //   nightContacts.forEach((nightContact) => {
-  //     if (contact.name == nightContact.name) {
-  //       flag = true;
-  //     }
-  //   });
-  //   return flag;
-  // }
-
   checkContact(contact: Contact | undefined, night: Night) {
     if (contact === undefined) return;
     const res: Night | undefined = this.nights.find(

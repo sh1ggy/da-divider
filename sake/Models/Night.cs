@@ -10,5 +10,5 @@ public class Night : BaseEntity
   public ICollection<Place> Places { get; set; } = [];
 
   // Many nights to many contacts
-  public List<Contact> Contacts { get; set; } = [];
+  public ICollection<Contact> Contacts { get; set; } = [];
 }
