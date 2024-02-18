@@ -16,7 +16,6 @@ public class NightRepository : INightRepository
   }
   public void CreateNight(Night night)
   {
-
     _unitOfWork.Context.Nights.Add(night);
     _unitOfWork.Context.SaveChanges();
     return;

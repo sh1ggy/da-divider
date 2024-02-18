@@ -10,7 +10,6 @@ public class ItemRepository : IItemRepository
   {
     _unitOfWork = unitOfWork;
     _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking; //default to no tracking.
-    // _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
   }
   public void CreateItem(Item item)
   {
@@ -69,7 +68,7 @@ public class ItemRepository : IItemRepository
   public IEnumerable<Contact> UnassignContactToItem(int itemId, int contactId)
   {
     _unitOfWork.Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
-
+    
     Item item = _unitOfWork.Context.Items.Include(i => i.Contacts).FirstOrDefault(i => i.Id == itemId);
     Contact contactToRemove = _unitOfWork.Context.Contacts.FirstOrDefault(c => c.Id == contactId);
 

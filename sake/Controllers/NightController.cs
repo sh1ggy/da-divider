@@ -74,7 +74,6 @@ public class NightController : ControllerBase
     {
       return BadRequest();
     }
-
   }
 
   [HttpPost]

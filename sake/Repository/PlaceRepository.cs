@@ -93,7 +93,6 @@ public class PlaceRepository : IPlaceRepository
         Console.WriteLine(contact.Id);
       }
 
-
       placesDTO = placesDTO.Append(placeDTO);
     }
     return placesDTO;

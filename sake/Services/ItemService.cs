@@ -13,7 +13,6 @@ public class ItemService : IItemService
   }
   public Item CreateItem(CreateItemRequest creationRequest)
   {
-
     Item item = new Item
     {
       Name = creationRequest.Name,

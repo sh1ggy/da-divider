@@ -10,5 +10,4 @@ public class Item : BaseEntity
   [ForeignKey("PlaceId")]
   public int PlaceId { get; set; }
   public ICollection<Contact> Contacts { get; set; } = [];
-
 }
