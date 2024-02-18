@@ -8,7 +8,7 @@ import { ActivatedRoute } from '@angular/router';
   selector: 'app-assignment',
   template: `
     <button (click)="this.location.back()" class="btn w-full">Back to {{this.place?.name}}</button>
-    <div class="justify-content flex flex-col gap-3 rounded-lg bg-slate-800 p-3">
+    <div class="justify-content flex flex-col gap-3 rounded-lg bg-slate-900 p-3">
       <select (change)="setContact($event)" class="select select-bordered">
         <option disabled selected>Pick contact</option>
         <option *ngFor="let contact of this.place?.contacts">

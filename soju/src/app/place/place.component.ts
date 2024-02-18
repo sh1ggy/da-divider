@@ -66,40 +66,9 @@ import { ActivatedRoute } from "@angular/router";
         </div>
       </dialog>
 
-      <!-- TABS -->
-      <div role="tablist" class="tabs-boxed tabs flex justify-center">
-        <button
-          (click)="setContacts()"
-          role="tab"
-          ngClass="tab {{ this.contacts && 'tab-active' }}"
-        >
-          Contacts
-        </button>
-        <button
-          (click)="setPricing()"
-          role="tab"
-          ngClass="tab {{ this.pricing && 'tab-active' }}"
-        >
-          Pricing
-        </button>
-      </div>
-      <!-- Pricing Tab -->
-      <div *ngIf="pricing">
-        <app-pricing
-          *ngFor="let item of this.items; let i = index"
-          [item]="item"
-          [place]="this.place"
-          [contacts]="this.place?.contacts"
-          [index]="i"
-        />
-        <div class="flex flex-row">
-          <button (click)="this.storeService.addItem(place?.id)" class="btn">
-            Add Item
-          </button>
-        </div>
-      </div>
       <!-- Contact Assignment Tab, maybe move this to placeEditModal -->
-      <div *ngIf="contacts" class="form-control flex flex-col gap-3">
+      <div class="form-control flex flex-col gap-3">
+        <h2 class="font-bold italic text-slate-500">Choose Contacts 🗣️</h2>
         <!-- Change this from this.place.contacts to this.storeService.night -->
         <label
           *ngFor="let contact of this.chosenNight?.contacts"
@@ -115,7 +84,8 @@ import { ActivatedRoute } from "@angular/router";
           />
         </label>
       </div>
-      <button [routerLink]="['/place', place?.id, 'assignment']" class="btn">ASSIGNMENT</button>
+      <button [routerLink]="['/place', place?.id, 'assignment']" class="btn">Item Opt-In 👤</button>
+      <button [routerLink]="['/place', place?.id, 'items']" class="btn">Item Set-up & Pricing 🤑</button>
     </div>
   `,
   styles: [],
@@ -132,9 +102,6 @@ export class PlaceComponent implements OnInit {
   chosenNight: Night | undefined = undefined;
   chosenNightContacts: Contact[] | undefined = undefined;
   total: number = 0;
-
-  pricing: boolean = false;
-  contacts: boolean = true;
 
   constructor(
     public storeService: StoreService,
@@ -166,16 +133,6 @@ export class PlaceComponent implements OnInit {
         });
       this.place.contacts = placeContacts;
     }
-  }
-
-  setPricing() {
-    this.pricing = true;
-    this.contacts = false;
-  }
-
-  setContacts() {
-    this.contacts = true;
-    this.pricing = false;
   }
 
   handleAssignContactToPlace(contact: Contact, event: boolean) {
