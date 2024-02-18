@@ -5,6 +5,7 @@ namespace Divider.Service;
 
 public interface IPlaceService
 {
+  public Place GetPlaceById(int placeId);
   public IEnumerable<PlaceDTO> GetPlaces(int nightId);
   public IEnumerable<Contact> AssignContactToPlace(int placeId, int contactId, bool unassign);
   public IEnumerable<Contact> GetPlaceContacts(int placeId);

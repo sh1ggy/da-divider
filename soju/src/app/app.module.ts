@@ -12,6 +12,7 @@ import { ContactsComponent } from "./contacts/contacts.component";
 import { TotalComponent } from "./total/total.component";
 import { HttpClientModule } from "@angular/common/http";
 import { NightSmComponent } from './nightsm/nightsm.component';
+import { AssignmentComponent } from "./place/assignment.component";
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { NightSmComponent } from './nightsm/nightsm.component';
     ContactsComponent,
     TotalComponent,
     NightSmComponent,
+    AssignmentComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule, HttpClientModule],
   providers: [],

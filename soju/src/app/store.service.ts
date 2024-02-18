@@ -100,8 +100,13 @@ export class StoreService {
     return this.http.get<Night>(url);
   }
 
+  getPlace(placeId: string) {
+    const url = `${environment.apiUrl}/place/${placeId}`;
+    return this.http.get<Place>(url);
+  }
+
   getPlacesByNight(nightId: string) {
-    const url = `${environment.apiUrl}/places/${nightId}`;
+    const url = `${environment.apiUrl}/nights/${nightId}/places`;
     return this.http.get<Place[]>(url);
   }
 

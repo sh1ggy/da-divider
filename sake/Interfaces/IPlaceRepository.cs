@@ -3,6 +3,7 @@ using Divider.Models;
 
 public interface IPlaceRepository
 {
+  public Place GetPlaceById(int placeId);
   public IEnumerable<PlaceDTO> GetPlaces(int nightId);
   public IEnumerable<Contact> AssignContactToPlace(int placeId, int contactId);
   public IEnumerable<Contact> UnassignContactToPlace(int placeId, int contactId);
