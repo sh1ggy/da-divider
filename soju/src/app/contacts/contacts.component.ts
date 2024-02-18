@@ -1,90 +1,94 @@
-import { Component } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { StoreService } from "../store.service";
+import { Contact } from "../models";
 
 @Component({
   selector: "app-contacts",
   template: `
-    <div class="flex flex-col">
-      <h1 class="mt-12 text-center text-2xl font-bold">Contacts</h1>
+    <h1 class="text-center text-2xl font-bold">Contacts</h1>
+    <div
+      *ngFor="let contact of this.contacts; let i = index"
+      class="my-1 flex items-center p-3"
+    >
       <div
-        *ngFor="
-          let contact of this.storeService.placeholderContacts;
-          let i = index
-        "
-        class="flex items-center"
+        class="flex w-full items-center gap-3 rounded-lg bg-slate-800 p-2 shadow-md"
       >
-        <p class="w-1/2">{{ contact.name }}</p>
-        <button
-          (click)="contactModal.showModal()"
-          (click)="
-            setEditContact(contact.name, contact.email, contact.mobile, i)
-          "
-          class="btn w-1/2"
-        >
-          Edit
-        </button>
-      </div>
-      <button
-        class="btn"
-        (click)="clearContact()"
-        onclick="contactModal.showModal()"
-      >
-        Add Contact
-      </button>
-      <dialog
-        #contactModal
-        id="contactModal"
-        (cancel)="clearContact()"
-        class="modal"
-      >
-        <div class="modal-box flex flex-col">
-          <h3 class="text-lg font-bold">Contact Form</h3>
-          <span class="label-text">Contact Name</span>
-          <input
-            type="text"
-            [formControl]="contactName"
-            class="input input-bordered"
-          />
-          <span class="label-text">Contact Email</span>
-          <input
-            type="text"
-            [formControl]="contactEmail"
-            class="input input-bordered"
-          />
-          <span class="label-text">Contact Phone</span>
-          <input
-            type="text"
-            [formControl]="contactPhone"
-            class="input input-bordered"
-          />
-          <div class="modal-action">
-            <form method="dialog">
-              <button
-                (click)="clearContact()"
-                class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-              >
-                ✕
-              </button>
-              <div class="flex items-center justify-center">
-                <button
-                  *ngIf="editContact"
-                  (click)="this.storeService.removeGroupContact(this.index)"
-                  class="btn btn-error w-1/2"
-                >
-                  Delete
-                </button>
-                <button (click)="onSubmit()" class="btn">Submit</button>
-              </div>
-            </form>
-          </div>
+        <code class="rounded-lg bg-gray-700 p-2">{{ contact.id }}</code>
+        <p class="w-1/2">
+          <strong>{{ contact.name }}</strong
+          >: #{{ contact.mobile }}, {{ contact.email }}
+        </p>
+        <div class="ml-auto flex">
+          <button
+            (click)="contactModal.showModal()"
+            (click)="
+              setEditContact(contact.name, contact.email, contact.mobile, contact.id)
+            "
+            class="btn btn-accent btn-outline btn-sm"
+          >
+            ✏
+          </button>
+          <button
+            (click)="this.storeService.removeGroupContact(contact.id)"
+            class="btn btn-error btn-outline btn-sm"
+          >
+            🗑️
+          </button>
         </div>
-      </dialog>
+      </div>
     </div>
+    <button
+      class="btn btn-ghost bg-black"
+      (click)="clearContact()"
+      onclick="contactModal.showModal()"
+    >
+      Add Contact
+    </button>
+    <dialog
+      #contactModal
+      id="contactModal"
+      (cancel)="clearContact()"
+      class="modal"
+    >
+      <div class="modal-box flex flex-col">
+        <h3 class="text-lg font-bold">Contact Form</h3>
+        <span class="label-text">Contact Name</span>
+        <input
+          type="text"
+          [formControl]="contactName"
+          class="input input-bordered"
+        />
+        <span class="label-text">Contact Phone</span>
+        <input
+          type="text"
+          [formControl]="contactPhone"
+          class="input input-bordered"
+        />
+        <span class="label-text">Contact Email</span>
+        <input
+          type="text"
+          [formControl]="contactEmail"
+          class="input input-bordered"
+        />
+        <div class="modal-action">
+          <form method="dialog">
+            <button
+              (click)="clearContact()"
+              class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+            >
+              ✕
+            </button>
+            <button (click)="onSubmit()" class="btn">Submit</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
   `,
   styles: [],
 })
 export class ContactsComponent {
+  @Input() contacts: Contact[] | undefined;
   contactName = new FormControl("");
   contactEmail = new FormControl("");
   contactPhone = new FormControl("");
@@ -115,12 +119,13 @@ export class ContactsComponent {
       return;
     }
     if (this.editContact) {
-      this.storeService.editContact(
-        this.contactName.value,
-        this.contactEmail.value,
-        this.contactPhone.value,
-        this.index,
-      );
+      const contact: Contact = {
+        id: this.index,
+        name: this.contactName.value,
+        email: this.contactEmail.value,
+        mobile: this.contactPhone.value,
+      };
+      this.storeService.editContact(contact);
       this.editContact = false;
       return;
     }

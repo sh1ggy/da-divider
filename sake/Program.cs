@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Divider.Models;
 using Divider.Repository;
 using Divider.Service;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +23,13 @@ builder.Services.AddScoped<INightService, NightService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+
+builder.Services.AddControllersWithViews()
+                .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 // builder.Services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
 builder.Services.AddDbContext<DividersContext>(
-        options => 
+        options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     );
 builder.Services.AddEndpointsApiExplorer();

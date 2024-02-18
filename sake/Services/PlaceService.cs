@@ -10,6 +10,16 @@ public class PlaceService : IPlaceService
     {
         _repository = repository;
     }
+
+    public IEnumerable<Contact> AssignContactToPlace(int placeId, int contactId, bool unassign)
+    {
+        if (unassign)
+        {
+            return _repository.UnassignContactToPlace(placeId, contactId);
+        }
+        return _repository.AssignContactToPlace(placeId, contactId);
+    }
+
     public Place CreatePlace(CreatePlaceRequest creationRequest)
     {
         Place place = new Place
@@ -27,15 +37,20 @@ public class PlaceService : IPlaceService
         return _repository.DeletePlace(placeId);
     }
 
-    public Place? EditPlace(EditPlaceRequest editRequest, int placeId)
+    public Place? EditPlaceName(EditPlaceRequest editRequest, int placeId)
     {
         if (editRequest == null) return null;
-        return _repository.EditPlace(editRequest.Place);
+        return _repository.EditPlaceName(editRequest.Place);
     }
 
-    public IEnumerable<Place> GetPlaces(int nightId)
+    public IEnumerable<Contact> GetPlaceContacts(int placeId)
     {
-        IEnumerable<Place> places = _repository.GetPlaces(nightId);
+        return _repository.GetPlaceContacts(placeId);
+    }
+
+    public IEnumerable<PlaceDTO> GetPlaces(int nightId)
+    {
+        IEnumerable<PlaceDTO> places = _repository.GetPlaces(nightId);
         return places;
     }
 }

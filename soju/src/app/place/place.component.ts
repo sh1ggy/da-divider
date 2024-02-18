@@ -1,25 +1,40 @@
-import { Component, Input } from "@angular/core";
-import { Contact, Item, Place } from "../models";
+import { Component, Input, OnInit } from "@angular/core";
+import { Contact, Item, Night, Place } from "../models";
 import { StoreService } from "../store.service";
 import { FormControl } from "@angular/forms";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-place",
   template: `
     <div class="flex flex-col gap-4">
       <div class="flex items-center">
+        <h1>
+          <code class="mr-3 rounded-lg bg-slate-800 p-2">{{
+            this.place?.id
+          }}</code>
+        </h1>
         <h1
           class="text-center text-xl font-bold text-green-700 hover:cursor-pointer"
         >
           {{ this.place?.name }}
         </h1>
-        <button (click)="placeModal.showModal()" class="btn ml-auto">
-          Edit Place
+        <button
+          (click)="placeModal.showModal()"
+          class="btn btn-accent btn-outline btn-sm ml-auto"
+        >
+          ✏
+        </button>
+        <button
+          (click)="this.storeService.deletePlace(place?.id)"
+          class="btn btn-error btn-outline btn-sm"
+        >
+          🗑️
         </button>
       </div>
       <dialog id="placeModal" #placeModal class="modal">
         <div class="modal-box flex flex-col">
-          <h3 class="text-lg font-bold">Contact Form</h3>
+          <h3 class="text-lg font-bold">Place Form</h3>
           <span class="label-text">Place Name</span>
           <input
             type="text"
@@ -34,43 +49,58 @@ import { FormControl } from "@angular/forms";
               >
                 ✕
               </button>
-              <div class="flex items-center justify-center">
-                <button
-                  (click)="this.deletePlace(index)"
-                  class="btn btn-error w-1/2"
-                >
-                  Delete
-                </button>
-                <button (click)="this.savePlace(this.place!)" class="btn w-1/2">
-                  Save
-                </button>
-              </div>
+              <button
+                (click)="
+                  this.storeService.editPlace(
+                    this.place,
+                    this.placeName.value,
+                    this?.chosenNight
+                  )
+                "
+                class="btn btn-success btn-outline"
+              >
+                Save
+              </button>
             </form>
           </div>
         </div>
       </dialog>
 
+      <!-- TABS -->
       <div role="tablist" class="tabs-boxed tabs flex justify-center">
-        <button (click)="setPricing()" role="tab" class="tab">Pricing</button>
-        <button (click)="setAssignment()" role="tab" class="tab">
+        <button
+          (click)="setContacts()"
+          role="tab"
+          ngClass="tab {{ this.contacts && 'tab-active' }}"
+        >
+          Contacts
+        </button>
+        <button
+          (click)="setPricing()"
+          role="tab"
+          ngClass="tab {{ this.pricing && 'tab-active' }}"
+        >
+          Pricing
+        </button>
+        <button
+          (click)="setAssignment()"
+          role="tab"
+          ngClass="tab {{ this.assignment && 'tab-active' }}"
+        >
           Assignment
         </button>
-        <button (click)="setContacts()" role="tab" class="tab">Contacts</button>
       </div>
       <!-- Pricing Tab -->
       <div *ngIf="pricing">
         <app-pricing
-          *ngFor="let item of this.place?.items; let i = index"
+          *ngFor="let item of this.items; let i = index"
           [item]="item"
           [place]="this.place"
           [contacts]="this.place?.contacts"
           [index]="i"
         />
         <div class="flex flex-row">
-          <button
-            (click)="this.place && this.storeService.addItem(this.place.items)"
-            class="btn"
-          >
+          <button (click)="this.storeService.addItem(place?.id)" class="btn">
             Add Item
           </button>
         </div>
@@ -79,14 +109,15 @@ import { FormControl } from "@angular/forms";
       <div *ngIf="contacts" class="form-control flex flex-col gap-3">
         <!-- Change this from this.place.contacts to this.storeService.night -->
         <label
-          *ngFor="let contact of this.storeService.chosenNight.contacts"
+          *ngFor="let contact of this.chosenNight?.contacts"
           class="transition-color label w-full cursor-pointer rounded-lg duration-500 hover:bg-secondary"
         >
           <span class="label-text w-1/2">{{ contact.name }}</span>
           <input
             type="checkbox"
-            (change)="addContact(contact)"
-            [checked]="checkContact(contact)"
+            ngModel
+            (ngModelChange)="handleAssignContactToPlace(contact, $event)"
+            [checked]="checkPlaceContact(contact)"
             class="checkbox"
           />
         </label>
@@ -112,7 +143,7 @@ import { FormControl } from "@angular/forms";
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of this.place?.items; let i = index">
+              <tr *ngFor="let item of this.items; let i = index">
                 <td>{{ item?.name }}</td>
                 <td>{{ item?.quantity ? item?.quantity : 1 }}</td>
                 <td>
@@ -136,14 +167,14 @@ import { FormControl } from "@angular/forms";
                 </td>
                 <td>
                   <input
+                    ngModel
+                    (ngModelChange)="handleAssignContactToItem(item, $event)"
                     (change)="setTotal(item, $event)"
-                    [disabled]="!chosenContact"
-                    [checked]="
-                      chosenContact && item.contacts?.includes(chosenContact)
-                    "
+                    [checked]="checkItemContact(item, this.chosenContact)"
                     type="checkbox"
                     className="checkbox"
                   />
+                  <!-- [disabled]="!chosenContact" -->
                 </td>
               </tr>
             </tbody>
@@ -158,20 +189,54 @@ import { FormControl } from "@angular/forms";
   `,
   styles: [],
 })
-export class PlaceComponent {
+export class PlaceComponent implements OnInit {
   @Input() place: Place | undefined;
   @Input() index: number = 0;
 
-  placeName = new FormControl(undefined);
+  items: Item[] = [];
+
+  placeName = new FormControl("");
 
   chosenContact: Contact | undefined = undefined;
+  chosenNight: Night | undefined = undefined;
+  chosenNightContacts: Contact[] | undefined = undefined;
   total: number = 0;
 
-  pricing: boolean = true;
+  pricing: boolean = false;
   assignment: boolean = false;
-  contacts: boolean = false;
+  contacts: boolean = true;
 
-  constructor(public storeService: StoreService) {}
+  constructor(
+    public storeService: StoreService,
+    public route: ActivatedRoute,
+  ) {}
+
+  ngOnInit(): void {
+    this.storeService.getItems(this.place?.id)?.subscribe((items: Item[]) => {
+      this.items = items;
+    });
+    const nightId: string | null = this.route.snapshot.paramMap.get("id");
+    if (!nightId) return;
+    this.storeService.getNight(nightId).subscribe((res: Night) => {
+      this.chosenNight = res;
+    });
+    this.storeService
+      .getContactsByNight(nightId)
+      ?.subscribe((res: Contact[]) => {
+        if (this.chosenNight) this.chosenNight.contacts = res;
+      });
+    if (this.place !== undefined) {
+      let placeContacts: Contact[] = [];
+      this.storeService
+        .getContactsByPlace(this.place.id.toString())
+        .subscribe((res: Contact[]) => {
+          if (this.place) {
+            this.place.contacts = res;
+          }
+        });
+      this.place.contacts = placeContacts;
+    }
+  }
 
   setPricing() {
     this.pricing = true;
@@ -192,36 +257,29 @@ export class PlaceComponent {
     this.chosenContact = undefined;
   }
 
-  // Logic for modal
-  savePlace(place: Place) {
-    if (!this.placeName.value) {
-      console.log("NO CHANGES");
-      return;
-    }
-
-    place.name = this.placeName.value;
-    console.log("SAVED", place);
-    return;
+  handleAssignContactToPlace(contact: Contact, event: boolean) {
+    this.storeService.assignContactToPlace(this.place, contact, !event);
   }
 
-  deletePlace(i: number) {
-    this.storeService.chosenNight.places.splice(i, 1);
-    return;
+  handleAssignContactToItem(item: Item, event: boolean) {
+    if (this.chosenContact === undefined) return;
+    this.storeService.assignContactToItem(this.chosenContact, item, !event);
   }
 
-  checkContact(contact: Contact) {
-    var flag: boolean = false;
-    if (!this.place || !this.place.contacts) {
-      console.log("swag");
-      return;
+  checkPlaceContact(contact: Contact) {
+    if (this.place === undefined) return;
+    if (this.place.contacts.some((c) => c.id === contact.id)) {
+      return true;
     }
-    // Check if the chosen night's contact is equal to the currently allocated place's contact
-    this.place.contacts.forEach((placeContact) => {
-      if (contact.name == placeContact.name) {
-        flag = true;
-      }
-    });
-    return flag;
+    return false;
+  }
+
+  checkItemContact(item: Item, contact: Contact | undefined) {
+    if (item.contacts === undefined || contact === undefined) return;
+    if (item.contacts.some((c) => c.id === contact.id)) {
+      return true;
+    }
+    return false;
   }
 
   setContact(event: Event) {
@@ -285,11 +343,5 @@ export class PlaceComponent {
       );
       item.contacts?.splice(contactIndex, 1);
     }
-  }
-
-  addContact(contact: Contact) {
-    if (!this.place || !contact) return;
-    this.place?.contacts?.push(contact);
-    console.log(this.place.contacts);
   }
 }

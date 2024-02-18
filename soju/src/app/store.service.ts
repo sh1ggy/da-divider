@@ -1,5 +1,21 @@
 import { Injectable } from "@angular/core";
-import { Contact, Item, Night, Place } from "./models";
+import {
+  Contact,
+  Item,
+  Night,
+  Place,
+  NewPlaceRequest,
+  NewNightRequest,
+  NewContactRequest,
+  EditContactRequest,
+  EditPlaceRequest,
+  NewItemRequest,
+  EditItemRequest,
+  EditNightRequest,
+} from "./models";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { environment } from "src/environments/environment.development";
+import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -67,48 +83,46 @@ export class StoreService {
       ],
     },
   ];
-  private _placeholderPlaces: Place[] = [
-    {
-      id: 1,
-      name: "Place 1",
-      items: this._placeholderItems1,
-      contacts: this._night1PlaceholderContacts,
-    },
-    {
-      id: 2,
-      name: "Place 2",
-      items: this._placeholderItems2,
-      contacts: this._night2PlaceholderContacts,
-    },
-  ];
-  private _placeholderPlaces2: Place[] = [
-    {
-      id: 3,
-      name: "Place 3",
-      items: this._placeholderItems2,
-      contacts: this._night2PlaceholderContacts,
-    },
-    {
-      id: 4,
-      name: "Place 4",
-      items: this._placeholderItems1,
-      contacts: this._night1PlaceholderContacts,
-    },
-  ];
-  // private _placeholderNights: Night[] = [
-  //   { id: 1, places: this._placeholderPlaces, date: new Date(Date.now()), contacts: this._night1PlaceholderContacts},
-  //   { id: 2, places: this._placeholderPlaces2, date: new Date(Date.now()), contacts: this._night2PlaceholderContacts},
-  // ]
-  private _placeholderNights: Night[] = [];
 
-  private _chosenNight: Night = this._placeholderNights[0];
-  get chosenNight(): Night {
-    return this._chosenNight;
+  private headers = new HttpHeaders()
+    .set("Accept", "application/json")
+    .set("Content-Type", "application/json");
+
+  private currentUser = 2147483647;
+
+  getNights() {
+    const url = `${environment.apiUrl}/nights`;
+    return this.http.get<Night[]>(url);
   }
-  set chosenNight(chosenNight: Night) {
-    this._chosenNight = chosenNight;
-    console.log(this._chosenNight);
-    return;
+
+  getNight(nightId: string) {
+    const url = `${environment.apiUrl}/nights/${nightId}`;
+    return this.http.get<Night>(url);
+  }
+
+  getPlacesByNight(nightId: string) {
+    const url = `${environment.apiUrl}/places/${nightId}`;
+    return this.http.get<Place[]>(url);
+  }
+
+  getContacts() {
+    const url = `${environment.apiUrl}/contacts`;
+    return this.http.get<Contact[]>(url);
+  }
+
+  getContactsByNight(nightId: string) {
+    const url = `${environment.apiUrl}/nights/${nightId}/contacts`;
+    return this.http.get<Contact[]>(url);
+  }
+  getContactsByPlace(placeId: string) {
+    const url = `${environment.apiUrl}/places/${placeId}/contacts`;
+    return this.http.get<Contact[]>(url);
+  }
+
+  getItems(placeId: number | undefined) {
+    if (placeId === undefined) return;
+    const url = `${environment.apiUrl}/items/${placeId}`;
+    return this.http.get<Item[]>(url);
   }
 
   get placeholderContacts(): Contact[] {
@@ -118,14 +132,6 @@ export class StoreService {
     this._placeholderContacts = newContacts;
     console.log(this._placeholderContacts);
     return;
-  }
-
-  get placeholderNights(): Night[] {
-    return this._placeholderNights;
-  }
-
-  get placeholderPlaces(): Place[] {
-    return this._placeholderPlaces;
   }
 
   get placeholderItems(): Item[] {
@@ -148,81 +154,222 @@ export class StoreService {
     return item.price * item.quantity;
   }
 
-  addNight() {
+  addNight(): Observable<Night> | undefined {
     console.log("Adding night!");
 
-    this.placeholderNights.push({
-      id: this._placeholderNights.length + 1,
-      date: new Date(Date.now()),
-      places: [],
-      contacts: [],
+    const url = `${environment.apiUrl}/nights`;
+
+    const nightReq: NewNightRequest = {
+      userCreatedId: this.currentUser,
+      date: new Date().toISOString(),
+    };
+
+    const req = this.http.post<Night>(url, JSON.stringify(nightReq), {
+      headers: this.headers,
     });
-    console.log(this.placeholderNights);
+    req.subscribe((res) => res);
+
+    console.log("Adding night:", { nightReq });
+    return req;
   }
 
-  addPlace(night: Night) {
-    console.log("Adding place!");
-
-    night.places.push({
-      id: this.placeholderNights.length + 1,
-      name: `Place ${this.chosenNight.places.length + 1}`,
-      items: [{ id: this.placeholderItems.length + 1, name: "", price: 0 }],
-      contacts: [],
-    });
-
-    console.log(night.places);
-    return;
+  assignContactToNight(night: Night, contact: Contact, unassign?: boolean) {
+    const url = `${environment.apiUrl}/nights/${night.id}/contacts/${contact.id}${unassign ? "?unassign=true" : ""}`;
+    console.log(url);
+    let params = new HttpParams();
+    params = params.append("unassign", unassign ? "true" : "false");
+    const req = this.http.patch<Contact>(url, {params : params});
+    req.subscribe((res) => console.log(res));
+    console.log(req);
+    return req;
   }
 
-  addItem(items: Item[]) {
-    if (!items) return;
+  assignContactToPlace(
+    place: Place | undefined,
+    contact: Contact,
+    unassign?: boolean,
+  ) {
+    if (place === undefined) return;
+    const url = `${environment.apiUrl}/places/${place.id}/contacts/${contact.id}${unassign ? "?unassign=true" : ""}`;
+    const req = this.http.patch<Contact>(url, {});
+    req.subscribe((res) => console.log(res));
+    return req;
+  }
+
+  deleteNight(nightId: number) {
+    const url = `${environment.apiUrl}/nights/${nightId}`;
+    const req = this.http.delete<Night>(url);
+    req.subscribe();
+    console.log("Deleting night:", nightId);
+    return req;
+  }
+
+  addPlace(night: Night | undefined): Observable<Place> | undefined {
+    if (night === undefined) return;
+    const url = `${environment.apiUrl}/places`;
+
+    const placeReq: NewPlaceRequest = {
+      userCreatedId: this.currentUser,
+      name: `Place X`,
+      nightId: night.id,
+    };
+
+    const req = this.http.post<Place>(url, JSON.stringify(placeReq), {
+      headers: this.headers,
+    });
+    req.subscribe((res) => res);
+
+    console.log("Adding place:", { placeReq });
+    return req;
+  }
+
+  editPlace(
+    place: Place | undefined,
+    name: string | null,
+    night: Night | undefined,
+  ) {
+    if (place === undefined || name === null || night === undefined) return;
+    console.log("Editing place!");
+
+    const url = `${environment.apiUrl}/places/${place.id}`;
+
+    place.name = name;
+    place.night = night;
+    const placeReq: EditPlaceRequest = {
+      userCreatedId: this.currentUser,
+      place: place,
+    };
+    console.log({ place });
+    console.log(JSON.stringify(placeReq));
+
+    const req = this.http.put<Place>(url, JSON.stringify(placeReq), {
+      headers: this.headers,
+    });
+
+    req.subscribe((res) => res);
+    return req;
+  }
+
+  deletePlace(placeId: number | undefined) {
+    if (placeId === undefined) return undefined;
+    const url = `${environment.apiUrl}/places/${placeId}`;
+    const req = this.http.delete<Place>(url);
+    req.subscribe();
+    console.log("Deleting place:", placeId);
+    return req;
+  }
+
+  addItem(placeId: number | undefined): Observable<Item> | undefined {
+    if (placeId === undefined) return undefined;
+
     console.log("Adding item!");
 
-    items.push({ id: this.placeholderItems.length + 1, name: "", price: 0 });
-    return;
+    const url = `${environment.apiUrl}/items`;
+    const itemReq: NewItemRequest = {
+      userCreatedId: this.currentUser,
+      name: "",
+      price: 0,
+      placeId: placeId,
+    };
+    const req = this.http.post<Item>(url, JSON.stringify(itemReq), {
+      headers: this.headers,
+    });
+
+    req.subscribe((req) => req);
+
+    console.log("Adding item:", { itemReq });
+
+    return req;
   }
 
-  addContact(name: string, email: string, mobile: string) {
+  editItem(item: Item) {
+    console.log("Editing item!");
+
+    const url = `${environment.apiUrl}/items/${item.id}`;
+
+    const itemReq: EditItemRequest = {
+      userCreatedId: this.currentUser,
+      item: item,
+    };
+    console.log(JSON.stringify(itemReq));
+
+    const req = this.http.put<Item>(url, JSON.stringify(itemReq), {
+      headers: this.headers,
+    });
+
+    console.log(req);
+
+    req.subscribe((res) => res);
+    return req;
+  }
+
+  assignContactToItem(contact: Contact, item: Item, unassign: boolean) {
+    if (item === undefined) return;
+    const url = `${environment.apiUrl}/items/${item.id}/contacts/${contact.id}${unassign ? "?unassign=true" : ""}`;
+    console.log(url);
+    const req = this.http.patch<Contact>(url, {});
+    req.subscribe((res) => console.log(res));
+    return req;
+  }
+
+  deleteItem(itemId: number) {
+    const url = `${environment.apiUrl}/items/${itemId}`;
+    const req = this.http.delete<Item>(url);
+    req.subscribe();
+    console.log("Deleting item:", itemId);
+    return req;
+  }
+
+  addContact(
+    name: string,
+    email: string,
+    mobile: string,
+  ): Observable<Contact> | undefined {
     console.log("Adding contact!");
 
-    this.placeholderContacts.push({
-      id: this.placeholderContacts.length + 1,
-      name: name,
-      email: email,
-      mobile: mobile,
-    });
-    return;
-  }
+    const url = `${environment.apiUrl}/contacts`;
 
-  editContact(name: string, email: string, mobile: string, index: number) {
-    console.log("Editing contact!");
-
-    this.placeholderContacts[index] = {
-      id: this.placeholderContacts.length + 1,
+    const contactReq: NewContactRequest = {
+      userCreatedId: this.currentUser,
       name: name,
       email: email,
       mobile: mobile,
     };
-    return;
+
+    const req = this.http.post<Contact>(url, JSON.stringify(contactReq), {
+      headers: this.headers,
+    });
+    req.subscribe((res) => res);
+    return req;
   }
 
-  removeContact(nightIndex: number, contactIndex: number) {
-    if (this.placeholderNights[nightIndex].contacts?.length == 1) {
-      console.log("ERROR: Night needs to have at least one contact");
-      return false;
-    }
-    this.placeholderNights[nightIndex].contacts?.splice(contactIndex, 1);
-    return true;
+  editContact(contact: Contact) {
+    console.log("Editing contact!");
+
+    const url = `${environment.apiUrl}/contacts/${contact.id}`;
+
+    const contactReq: EditContactRequest = {
+      userCreatedId: this.currentUser,
+      contact: contact,
+    };
+    console.log(JSON.stringify(contactReq));
+
+    const req = this.http.put<Contact>(url, JSON.stringify(contactReq), {
+      headers: this.headers,
+    });
+    console.log(req);
+    req.subscribe((res) => res);
+    return req;
   }
 
-  removeGroupContact(contactIndex: number) {
+  removeGroupContact(contactId: number) {
     // TODO: also invoke remove contact from night because you need to delete instances
     // of this contact everywhere
-    if (this.placeholderContacts.length == 1) {
-      console.log("ERROR: Night needs to have at least one contact");
-      return false;
-    }
-    this.placeholderContacts.splice(contactIndex, 1);
+    if (contactId === undefined) return undefined;
+    const url = `${environment.apiUrl}/contacts/${contactId}`;
+    const req = this.http.delete<Contact>(url);
+    req.subscribe();
+    console.log("Deleting contact:", contactId);
     return true;
   }
 
@@ -239,5 +386,5 @@ export class StoreService {
     return total;
   }
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 }

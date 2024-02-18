@@ -16,3 +16,11 @@ public class EditPlaceRequest : BaseRequest
 {
   public required Place Place { get; set; }
 }
+
+public class PlaceDTO : BaseEntity
+{
+  public string Name { get; set; } = string.Empty;
+  // Many places to one night
+  public int NightId { get; set; } // FK property
+  public IEnumerable<Contact> Contacts {get;set;} = [];
+}

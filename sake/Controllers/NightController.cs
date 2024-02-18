@@ -7,7 +7,7 @@ namespace Divider.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class NightController: ControllerBase
+public class NightController : ControllerBase
 {
   private INightService _nights;
   public NightController(INightService nights)
@@ -17,12 +17,58 @@ public class NightController: ControllerBase
 
   [HttpGet]
   [Route("/nights")]
-  public ActionResult<IEnumerable<Night>> GetNights()
+  public ActionResult<IEnumerable<NightDTO>> GetNights()
   {
     try
     {
       var nights = _nights.GetNights();
       return Ok(nights);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine(e.Message);
+      return BadRequest();
+    }
+  }
+
+  [HttpGet]
+  [Route("/nights/{nightId}")]
+  public ActionResult<NightDTO> GetNightById(int nightId)
+  {
+    try
+    {
+      var night = _nights.GetNightById(nightId);
+      return Ok(night);
+    }
+    catch
+    {
+      return BadRequest();
+    }
+  }
+
+  [HttpGet]
+  [Route("/nights/{nightId}/contacts")]
+  public ActionResult<Contact> GetNightContacts(int nightId)
+  {
+    try
+    {
+      var contacts = _nights.GetNightContacts(nightId);
+      return Ok(contacts);
+    }
+    catch
+    {
+      return BadRequest();
+    }
+  }
+
+  [HttpGet]
+  [Route("/nights/{nightId}/places")]
+  public ActionResult<Place> GetNightPlaces(int nightId)
+  {
+    try
+    {
+      var places = _nights.GetNightPlaces(nightId);
+      return Ok(places);
     }
     catch
     {
@@ -70,5 +116,21 @@ public class NightController: ControllerBase
     Night? night = _nights.EditNight(editNightRequest);
     if (night == null) return BadRequest();
     return Ok(night);
+  }
+
+  [HttpPatch]
+  [Route("/nights/{nightId}/contacts/{contactId}")]
+  public ActionResult<IEnumerable<Contact>> AssignContactToNight(int nightId, int contactId, bool unassign)
+  {
+    try
+    {
+      IEnumerable<Contact> contacts = _nights.AssignContactToNight(nightId, contactId, unassign);
+      return Ok(contacts);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine(e);
+      return BadRequest();
+    }
   }
 }

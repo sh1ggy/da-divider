@@ -29,13 +29,45 @@ public class NightService : INightService
 
   public Night? EditNight(EditNightRequest editNightRequest)
   {
+    editNightRequest.Night.Date = DateTime.SpecifyKind(editNightRequest.Night.Date, DateTimeKind.Utc);
     Night? night = _repository.EditNight(editNightRequest.Night);
     return night;
   }
 
-  public IEnumerable<Night> GetNights()
+  public IEnumerable<NightDTO> GetNights()
   {
-    IEnumerable<Night> nights = _repository.GetNights();
+    IEnumerable<NightDTO> nights = _repository.GetNights();
     return nights;
+  }
+
+  public NightDTO GetNightById(int nightId)
+  {
+    NightDTO night = _repository.GetNightById(nightId);
+    return night;
+  }
+
+  public IEnumerable<Contact> GetNightContacts(int nightId)
+  {
+    IEnumerable<Contact> contacts = _repository.GetNightContacts(nightId);
+    return contacts;
+  }
+
+  public IEnumerable<Place> GetNightPlaces(int nightId)
+  {
+    IEnumerable<Place> places = _repository.GetNightPlaces(nightId);
+    return places;
+  }
+
+  public IEnumerable<Contact> AssignContactToNight(int nightId, int contactId, bool unassign)
+  {
+    IEnumerable<Contact> contacts;
+    if (unassign == true)
+    {
+      Console.WriteLine("Unassigning");
+      contacts = _repository.UnassignContactToNight(nightId, contactId, unassign);
+      return contacts;
+    }
+    contacts = _repository.AssignContactToNight(nightId, contactId, unassign);
+    return contacts;
   }
 }
