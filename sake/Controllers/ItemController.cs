@@ -36,8 +36,15 @@ public class ItemController : ControllerBase
 	public ActionResult<Item> CreateItem(CreateItemRequest createItemRequest)
 	{
 		if (createItemRequest == null) return BadRequest();
-		_items.CreateItem(createItemRequest);
-		return CreatedAtRoute(nameof(CreateItem), new { name = createItemRequest.Name }, createItemRequest);
+		try
+		{
+			_items.CreateItem(createItemRequest);
+			return Ok();
+		}
+		catch
+		{
+			return BadRequest();
+		}
 	}
 
 	[HttpDelete]
@@ -57,6 +64,22 @@ public class ItemController : ControllerBase
 		var res = _items.EditItem(editItemRequest, itemId);
 		if (res == null) return BadRequest();
 		return Ok();
+	}
+
+	[HttpPatch]
+	[Route("/items/{itemId}/contacts/{contactId}")]
+	public ActionResult<IEnumerable<Contact>> AssignContactToItem(int itemId, int contactId, bool unassign)
+	{
+		try 
+		{
+			IEnumerable<Contact> contacts = _items.AssignContactToItem(itemId, contactId, unassign);
+			return Ok(contacts);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			return BadRequest();
+		}
 	}
 }
 

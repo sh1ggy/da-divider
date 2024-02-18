@@ -26,5 +26,4 @@ public class DividersContext : DbContext
     public DbSet<Night> Nights { get; set; }
     public DbSet<Place> Places { get; set; }
     public DbSet<Item> Items { get; set; }
-
 }
