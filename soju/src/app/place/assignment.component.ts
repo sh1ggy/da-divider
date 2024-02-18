@@ -94,7 +94,6 @@ export class AssignmentComponent implements OnInit {
     });
     this.storeService.getItems(parseInt(placeId))?.subscribe((items: Item[]) => {
       this.items = items;
-      console.log(items)
     });
     if (this.place !== undefined) {
       let placeContacts: Contact[] = [];

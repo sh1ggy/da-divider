@@ -46,7 +46,6 @@ export class HomeComponent implements OnInit {
           .getContactsByNight(night.id.toString())
           ?.subscribe((res: Contact[]) => {
             night.contacts = res;
-            console.log(night.contacts);
           });
       });
       return nights;
