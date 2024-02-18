@@ -86,6 +86,7 @@ import { ActivatedRoute } from "@angular/router";
       </div>
       <button [routerLink]="['/place', place?.id, 'assignment']" class="btn">Item Opt-In 👤</button>
       <button [routerLink]="['/place', place?.id, 'items']" class="btn">Item Set-up & Pricing 🤑</button>
+      <app-total [place]="this.place" [items]="this.items"/>
     </div>
   `,
   styles: [],

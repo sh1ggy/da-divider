@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-assignment',
   template: `
-    <button (click)="this.location.back()" class="btn w-full">Back to {{this.place?.name}}</button>
+    <button (click)="this.location.back()" class="btn w-full">← Back to {{this.place?.name}}</button>
     <div class="justify-content flex flex-col gap-3 rounded-lg bg-slate-900 p-3">
       <select (change)="setContact($event)" class="select select-bordered">
         <option disabled selected>Pick contact</option>
@@ -33,10 +33,10 @@ import { ActivatedRoute } from '@angular/router';
               <td>{{ item?.quantity ? item?.quantity : 1 }}</td>
               <td>
                 {{
-                  (item?.quantity
+                  "$" + (item?.quantity
                     ? this.storeService.calcQuantPrice(item)
-                    : item.price
-                  ) | number: "1.2-2"
+                    : item.price?.toFixed(2)
+                  )
                 }}
               </td>
               <td>
@@ -54,20 +54,20 @@ import { ActivatedRoute } from '@angular/router';
                 <input
                   ngModel
                   (ngModelChange)="handleAssignContactToItem(item, $event)"
-                  (change)="setTotal(item, $event)"
+                  [disabled]="!chosenContact"
                   [checked]="checkItemContact(item, this.chosenContact)"
                   type="checkbox"
                   className="checkbox"
                 />
-                <!-- [disabled]="!chosenContact" -->
+                <!-- (change)="setTotal(item, $event)" -->
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p *ngIf="chosenContact" class="text-center text-sm font-bold">
+      <!-- <p *ngIf="chosenContact" class="text-center text-sm font-bold">
         Total: {{ this.total | number: "1.2-2" }}
-      </p>
+      </p> -->
     </div>
   `,
   styles: [
@@ -94,6 +94,7 @@ export class AssignmentComponent implements OnInit {
     });
     this.storeService.getItems(parseInt(placeId))?.subscribe((items: Item[]) => {
       this.items = items;
+      console.log(items)
     });
     if (this.place !== undefined) {
       let placeContacts: Contact[] = [];
@@ -127,6 +128,17 @@ export class AssignmentComponent implements OnInit {
 
   handleAssignContactToItem(item: Item, event: boolean) {
     if (this.chosenContact === undefined) return;
+    if (event) {
+      item.contacts?.push(this.chosenContact);
+    }
+    else {
+      this.items.some((res: Item, i: number) => {
+        if (res.id === item.id) {
+          item.contacts?.splice(i, 1);
+        }
+      }) 
+    }
+    
     this.storeService.assignContactToItem(this.chosenContact, item, !event);
   }
 

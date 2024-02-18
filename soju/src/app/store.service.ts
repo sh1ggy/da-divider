@@ -156,7 +156,7 @@ export class StoreService {
 
   calcQuantPrice(item: Item) {
     if (item.quantity == null || item.price == null) return item.price;
-    return item.price * item.quantity;
+    return `${(item.price * item.quantity).toFixed(2)} (${item.quantity}x$${item.price.toFixed(2)})`;
   }
 
   addNight(): Observable<Night> | undefined {

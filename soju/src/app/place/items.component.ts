@@ -7,7 +7,7 @@ import { Location } from '@angular/common';
 @Component({
   selector: 'app-items',
   template: `
-    <button (click)="this.location.back()" class="btn w-full">Back to {{this.place?.name}}</button>
+    <button (click)="this.location.back()" class="btn w-full">← Back to {{this.place?.name}}</button>
     <div class="rounded-lg bg-slate-900 p-3">
       <app-pricing
         *ngFor="let item of this.items; let i = index"
@@ -16,11 +16,9 @@ import { Location } from '@angular/common';
         [contacts]="this.place?.contacts"
         [index]="i"
       />
-      <div class="flex flex-row">
-        <button (click)="this.storeService.addItem(place?.id)" class="btn">
-          Add Item
-        </button>
-      </div>
+      <button (click)="this.storeService.addItem(place?.id)" class="btn w-full">
+        + Add Item
+      </button>
     </div>
   `,
   styles: [
