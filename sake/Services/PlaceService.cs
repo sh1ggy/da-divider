@@ -43,6 +43,11 @@ public class PlaceService : IPlaceService
         return _repository.EditPlaceName(editRequest.Place);
     }
 
+    public Place GetPlaceById(int placeId)
+    {
+        return _repository.GetPlaceById(placeId);
+    }
+
     public IEnumerable<Contact> GetPlaceContacts(int placeId)
     {
         return _repository.GetPlaceContacts(placeId);

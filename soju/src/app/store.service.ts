@@ -100,8 +100,13 @@ export class StoreService {
     return this.http.get<Night>(url);
   }
 
+  getPlace(placeId: string) {
+    const url = `${environment.apiUrl}/place/${placeId}`;
+    return this.http.get<Place>(url);
+  }
+
   getPlacesByNight(nightId: string) {
-    const url = `${environment.apiUrl}/places/${nightId}`;
+    const url = `${environment.apiUrl}/nights/${nightId}/places`;
     return this.http.get<Place[]>(url);
   }
 
@@ -151,7 +156,7 @@ export class StoreService {
 
   calcQuantPrice(item: Item) {
     if (item.quantity == null || item.price == null) return item.price;
-    return item.price * item.quantity;
+    return `${(item.price * item.quantity).toFixed(2)} (${item.quantity}x$${item.price.toFixed(2)})`;
   }
 
   addNight(): Observable<Night> | undefined {

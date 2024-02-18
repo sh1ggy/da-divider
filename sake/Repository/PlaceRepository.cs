@@ -89,12 +89,18 @@ public class PlaceRepository : IPlaceRepository
         NightId = place.NightId,
         Contacts = place.Contacts,
       };
-      foreach (Contact contact in place.Contacts){
+      foreach (Contact contact in place.Contacts)
+      {
         Console.WriteLine(contact.Id);
       }
 
       placesDTO = placesDTO.Append(placeDTO);
     }
     return placesDTO;
+  }
+
+  public Place GetPlaceById(int placeId)
+  {
+    return _unitOfWork.Context.Places.Include(p => p.Contacts).FirstOrDefault(p => p.Id == placeId);
   }
 }

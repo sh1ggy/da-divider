@@ -16,12 +16,12 @@ public class PlaceController : ControllerBase
   }
 
   [HttpGet]
-  [Route("/places/{nightId}")]
-  public ActionResult<IEnumerable<PlaceDTO>> GetPlaces(int nightId)
+  [Route("/place/{placeId}")]
+  public ActionResult<IEnumerable<PlaceDTO>> GetPlaceById(int placeId)
   {
     try
     {
-      var places = _places.GetPlaces(nightId);
+      var places = _places.GetPlaceById(placeId);
       return Ok(places);
     }
     catch
@@ -29,6 +29,21 @@ public class PlaceController : ControllerBase
       return BadRequest();
     }
   }
+
+  // [HttpGet]
+  // [Route("/places/{nightId}")]
+  // public ActionResult<IEnumerable<PlaceDTO>> GetPlaces(int nightId)
+  // {
+  //   try
+  //   {
+  //     var places = _places.GetPlaces(nightId);
+  //     return Ok(places);
+  //   }
+  //   catch
+  //   {
+  //     return BadRequest();
+  //   }
+  // }
 
   [HttpGet]
   [Route("/places/{placeId}/contacts")]
