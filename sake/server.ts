@@ -7,6 +7,9 @@ import { Db } from "mongodb";
 import { connectToDatabase } from "./db/connection";
 import { Server, createServer } from "http";
 import { contactsRouter } from "./routes/contacts";
+import { placesRouter } from "./routes/places";
+import { groupsRouter } from "./routes/groups";
+
 
 const app: Express = express();
 const http: Server = createServer(app);
@@ -18,6 +21,8 @@ app.use(cors());
 app.use(express.json());
 // app.use("/test", test);
 app.use("/contacts", contactsRouter);
+app.use("/places", placesRouter);
+app.use("/groups", groupsRouter);
 
 async function main() {
   db = (await connectToDatabase()).db;

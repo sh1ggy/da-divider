@@ -6,15 +6,15 @@ import { Contact } from "../models/Contact";
 const contactsCollectionName = "contacts";
 const contactsRouter = express.Router();
 
-// GET - all contacts
+// GET - all Contacts
 contactsRouter.get("/", async (_, res) => {
   const collection = db.collection(contactsCollectionName);
   const contacts = await collection.find({}).toArray();
-  if (contacts.length === 0) res.send(404);
+  if (contacts.length === 0) res.sendStatus(404);
   res.send(contacts).status(200);
 });
 
-// GET - contact by ID
+// GET - Contact by ID
 contactsRouter.get("/:id", async (req, res) => {
   const collection = db.collection(contactsCollectionName);
   const { id } = req.params;
@@ -23,6 +23,8 @@ contactsRouter.get("/:id", async (req, res) => {
   res.send(contact).status(200);
 });
 
+
+// POST - add new Contact
 contactsRouter.post("/", async (req, res) => {
   const collection = db.collection(contactsCollectionName);
   let contactToAdd: Contact = req.body as Contact;
@@ -30,6 +32,7 @@ contactsRouter.post("/", async (req, res) => {
   res.send(contactToAdd).status(200);
 });
 
+// PUT - edit Contact
 contactsRouter.put("/:id", async (req, res) => {
   const collection = db.collection(contactsCollectionName);
   const { id } = req.params;
