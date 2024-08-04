@@ -1,47 +1,70 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { db } from "../server";
-import { ObjectId } from "mongodb";
+import { ObjectId, PushOperator, UpdateResult } from "mongodb";
 import { Contact } from "../models/Contact";
+import { Group } from "../models/Group";
 
 const contactsCollectionName = "contacts";
+const groupsCollectionName = "groups";
 const contactsRouter = express.Router();
 
-// GET - all Contacts
-contactsRouter.get("/", async (_, res) => {
-  const collection = db.collection(contactsCollectionName);
-  const contacts = await collection.find({}).toArray();
-  if (contacts.length === 0) res.sendStatus(404);
+// GET - all Contacts for group
+contactsRouter.get("/:id", async (req: Request, res: Response) => {
+  const collection = db.collection(groupsCollectionName);
+  const { id } = req.params;
+  const query = { _id: new ObjectId(id) };
+  const group: Group | undefined = (await collection.findOne(query)) as Group;
+  if (!group) {
+    res.sendStatus(404);
+    return;
+  }
+  const contacts: Contact[] = group.contacts;
+  if (contacts.length === 0) {
+    res.sendStatus(404);
+    return;
+  }
   res.send(contacts).status(200);
 });
 
-// GET - Contact by ID
-contactsRouter.get("/:id", async (req, res) => {
-  const collection = db.collection(contactsCollectionName);
+// POST - add new Contact to Group
+contactsRouter.post("/:id", async (req, res) => {
   const { id } = req.params;
-  const query = { _id: new ObjectId(id) };
-  const contact = await collection.findOne(query);
-  res.send(contact).status(200);
-});
-
-
-// POST - add new Contact
-contactsRouter.post("/", async (req, res) => {
-  const collection = db.collection(contactsCollectionName);
+  const collection = db.collection(groupsCollectionName);
   let contactToAdd: Contact = req.body as Contact;
-  await collection.insertOne(contactToAdd);
-  res.send(contactToAdd).status(200);
+  const mongoRes = await collection.updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $push: {
+        contacts: contactToAdd,
+      } as unknown as PushOperator<{ contacts: Contact[] }>,
+    }
+  );
+  if (mongoRes.modifiedCount > 0) {
+    res.send(contactToAdd).status(200);
+    return;
+  }
+  res.sendStatus(500);
 });
 
-// PUT - edit Contact
+// POST - add new Contact to Group
 contactsRouter.put("/:id", async (req, res) => {
-  const collection = db.collection(contactsCollectionName);
   const { id } = req.params;
-  const contactToUpdate: Contact = req.body as Contact;
-  await collection.updateOne(
+  const collection = db.collection(groupsCollectionName);
+  let contactToUpdate: Contact = req.body as Contact;
+  const currentContacts = (await collection.findOne({_id: new ObjectId(id)})) as Group; 
+  const mongoRes = await collection.updateOne(
     { _id: new ObjectId(id) },
-    { $set: contactToUpdate }
+    {
+      $set: {
+        contacts: currentContacts,
+      } as unknown as PushOperator<{ contacts: Contact[] }>,
+    }
   );
-  res.send(contactToUpdate).status(200);
+  if (mongoRes.modifiedCount > 0) {
+    res.send(contactToUpdate).status(200);
+    return;
+  }
+  res.sendStatus(500);
 });
 
 export { contactsRouter };
