@@ -3,3 +3,8 @@ export interface Contact {
   email: string;
   mobile: string;
 }
+
+export interface ContactUpdateRequest {
+  email: string;
+  newContact: Contact;
+}

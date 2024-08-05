@@ -1,10 +1,9 @@
 import express, { Request, Response } from "express";
 import { db } from "../server";
-import { ObjectId, PushOperator, UpdateResult } from "mongodb";
-import { Contact } from "../models/Contact";
+import { ObjectId, PushOperator } from "mongodb";
+import { Contact, ContactUpdateRequest } from "../models/Contact";
 import { Group } from "../models/Group";
 
-const contactsCollectionName = "contacts";
 const groupsCollectionName = "groups";
 const contactsRouter = express.Router();
 
@@ -50,18 +49,32 @@ contactsRouter.post("/:id", async (req, res) => {
 contactsRouter.put("/:id", async (req, res) => {
   const { id } = req.params;
   const collection = db.collection(groupsCollectionName);
-  let contactToUpdate: Contact = req.body as Contact;
-  const currentContacts = (await collection.findOne({_id: new ObjectId(id)})) as Group; 
+  let contactReq: ContactUpdateRequest = req.body as ContactUpdateRequest;
+  
+  // Locate group & contact to update
+  const group = (await collection.findOne({
+    _id: new ObjectId(id),
+  })) as Group;
+  if (!group) {
+    res.sendStatus(404);
+    return;
+  }
+  const contactToUpdateIndex = group.contacts.findIndex(
+    (contact: Contact) => contact.email === contactReq.email
+  );
+
+  // Perform transaction
   const mongoRes = await collection.updateOne(
     { _id: new ObjectId(id) },
     {
       $set: {
-        contacts: currentContacts,
-      } as unknown as PushOperator<{ contacts: Contact[] }>,
+        [`contacts.${contactToUpdateIndex}`]: contactReq.newContact,
+      },
     }
   );
+
   if (mongoRes.modifiedCount > 0) {
-    res.send(contactToUpdate).status(200);
+    res.send(contactReq.newContact).status(200);
     return;
   }
   res.sendStatus(500);
