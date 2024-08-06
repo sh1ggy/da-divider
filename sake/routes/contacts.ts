@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { db } from "../server";
 import { ObjectId, PushOperator } from "mongodb";
-import { Contact, ContactUpdateRequest } from "../models/Contact";
+import { Contact } from "../models/Contact";
 import { Group } from "../models/Group";
 
 const groupsCollectionName = "groups";
@@ -30,11 +30,13 @@ contactsRouter.post("/:id", async (req, res) => {
   const { id } = req.params;
   const collection = db.collection(groupsCollectionName);
   let contactToAdd: Contact = req.body as Contact;
+
+  // Updating Group with new Contact
   const mongoRes = await collection.updateOne(
     { _id: new ObjectId(id) },
     {
       $push: {
-        contacts: contactToAdd,
+        contacts: { id: new ObjectId(), ...contactToAdd },
       } as unknown as PushOperator<{ contacts: Contact[] }>,
     }
   );
@@ -45,36 +47,33 @@ contactsRouter.post("/:id", async (req, res) => {
   res.sendStatus(500);
 });
 
-// POST - add new Contact to Group
-contactsRouter.put("/:id", async (req, res) => {
-  const { id } = req.params;
+// PUT - edit existing Contact by Group ID and Contact ID
+contactsRouter.put("/:groupId/contact/:contactId", async (req, res) => {
+  const groupId = new ObjectId(req.params.groupId);
+  const contactId = new ObjectId(req.params.contactId);
   const collection = db.collection(groupsCollectionName);
-  let contactReq: ContactUpdateRequest = req.body as ContactUpdateRequest;
-  
-  // Locate group & contact to update
-  const group = (await collection.findOne({
-    _id: new ObjectId(id),
-  })) as Group;
-  if (!group) {
-    res.sendStatus(404);
-    return;
-  }
-  const contactToUpdateIndex = group.contacts.findIndex(
-    (contact: Contact) => contact.email === contactReq.email
-  );
+  let contactToUpdate: Contact = req.body as Contact;
+  contactToUpdate._id = contactId;
 
   // Perform transaction
   const mongoRes = await collection.updateOne(
-    { _id: new ObjectId(id) },
+    { _id: groupId },
     {
       $set: {
-        [`contacts.${contactToUpdateIndex}`]: contactReq.newContact,
+        "contacts.$[elem]": contactToUpdate,
       },
+    },
+    {
+      arrayFilters: [
+        {
+          "elem._id": contactId,
+        },
+      ],
     }
   );
 
-  if (mongoRes.modifiedCount > 0) {
-    res.send(contactReq.newContact).status(200);
+  if (mongoRes && mongoRes.modifiedCount > 0) {
+    res.send(contactToUpdate).status(200);
     return;
   }
   res.sendStatus(500);

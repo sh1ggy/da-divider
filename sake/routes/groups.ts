@@ -43,13 +43,17 @@ groupsRouter.post("/", async (req: Request, res: Response) => {
 // PUT - edit Group
 groupsRouter.put("/:id", async (req: Request, res: Response) => {
   const collection = db.collection(groupsCollectionName);
-  const { id } = req.params;
+  const id = new ObjectId(req.params.id);
   const groupToUpdate: Group = req.body as Group;
-  await collection.updateOne(
-    { _id: new ObjectId(id) },
-    { $set: groupToUpdate }
-  );
+  await collection.updateOne({ _id: id }, { $set: groupToUpdate });
   res.send(groupToUpdate).status(200);
+});
+
+groupsRouter.delete("/:id", async (req: Request, res: Response) => {
+  const collection = db.collection(groupsCollectionName);
+  const id = new ObjectId(req.params.id);
+  await collection.deleteOne({ _id: id });
+  res.sendStatus(200);
 });
 
 export { groupsRouter };
