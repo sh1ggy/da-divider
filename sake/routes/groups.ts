@@ -45,10 +45,18 @@ groupsRouter.put("/:id", async (req: Request, res: Response) => {
   const collection = db.collection(groupsCollectionName);
   const id = new ObjectId(req.params.id);
   const groupToUpdate: Group = req.body as Group;
-  await collection.updateOne({ _id: id }, { $set: groupToUpdate });
-  res.send(groupToUpdate).status(200);
+  const mongoRes = await collection.updateOne(
+    { _id: id },
+    { $set: groupToUpdate }
+  );
+  if (mongoRes.modifiedCount > 0) {
+    res.send(groupToUpdate).status(200);
+    return;
+  }
+  return res.sendStatus(500);
 });
 
+// DELETE - delete Group
 groupsRouter.delete("/:id", async (req: Request, res: Response) => {
   const collection = db.collection(groupsCollectionName);
   const id = new ObjectId(req.params.id);

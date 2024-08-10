@@ -101,8 +101,6 @@ contactsRouter.delete(
       contacts: Contact[];
     }>);
 
-    console.log(mongoRes);
-
     if (mongoRes && mongoRes.modifiedCount > 0) {
       res.send(contactId).status(200);
       return;
