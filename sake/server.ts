@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import express, { Express, Request, Response } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import test from "./routes/test";
 import { Db } from "mongodb";
@@ -10,15 +10,17 @@ import { contactsRouter } from "./routes/contacts";
 import { placesRouter } from "./routes/places";
 import { groupsRouter } from "./routes/groups";
 
-
 const app: Express = express();
 const http: Server = createServer(app);
 const port = process.env.PORT || 3000;
 
 export let db: Db;
 
+// -- Middleware
 app.use(cors());
 app.use(express.json());
+
+// --- Routes
 // app.use("/test", test);
 app.use("/contacts", contactsRouter);
 app.use("/places", placesRouter);

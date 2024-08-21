@@ -3,6 +3,11 @@ import { db } from "../server";
 import { ObjectId, PushOperator } from "mongodb";
 import { Contact } from "../models/Contact";
 import { Group } from "../models/Group";
+import {
+  createContactSchema,
+  updateContactSchema,
+} from "../schemas/contact.schema";
+import { validateSchema } from "../middlewares/validation.middleware";
 
 const groupsCollectionName = "groups";
 const contactsRouter = express.Router();
@@ -26,34 +31,39 @@ contactsRouter.get("/:id", async (req: Request, res: Response) => {
 });
 
 // POST - add new Contact to Group
-contactsRouter.post("/:id", async (req: Request, res: Response) => {
-  if (!req) {
-    res.sendStatus(400);
-    return;
-  }
-  const { id } = req.params;
-  const collection = db.collection(groupsCollectionName);
-  let contactToAdd: Contact = req.body as Contact;
-
-  // Updating Group with new Contact
-  const mongoRes = await collection.updateOne(
-    { _id: new ObjectId(id) },
-    {
-      $push: {
-        contacts: { id: new ObjectId(), ...contactToAdd },
-      } as unknown as PushOperator<{ contacts: Contact[] }>,
+contactsRouter.post(
+  "/:id",
+  validateSchema(createContactSchema),
+  async (req: Request, res: Response) => {
+    if (!req) {
+      res.sendStatus(400);
+      return;
     }
-  );
-  if (mongoRes.modifiedCount > 0) {
-    res.send(contactToAdd).status(200);
-    return;
+    const { id } = req.params;
+    const collection = db.collection(groupsCollectionName);
+    let contactToAdd: Contact = req.body as Contact;
+
+    // Updating Group with new Contact
+    const mongoRes = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $push: {
+          contacts: { id: new ObjectId(), ...contactToAdd },
+        } as unknown as PushOperator<{ contacts: Contact[] }>,
+      }
+    );
+    if (mongoRes.modifiedCount > 0) {
+      res.send(contactToAdd).status(200);
+      return;
+    }
+    res.sendStatus(500);
   }
-  res.sendStatus(500);
-});
+);
 
 // PUT - edit existing Contact by Group ID and Contact ID
 contactsRouter.put(
   "/:groupId/contact/:contactId",
+  validateSchema(updateContactSchema),
   async (req: Request, res: Response) => {
     if (!req) {
       res.sendStatus(400);
