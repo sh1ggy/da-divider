@@ -34,7 +34,7 @@ groupsRouter.get("/:id", async (req: Request, res: Response) => {
   res.send(group).status(200);
 });
 
-// POST - add new Group
+// POST - add new Group w validation
 groupsRouter.post("/", validateSchema(createGroupSchema), async (req: Request, res: Response) => {
   const collection = db.collection(groupsCollectionName);
   let groupToAdd: Group = req.body as Group;
@@ -42,7 +42,7 @@ groupsRouter.post("/", validateSchema(createGroupSchema), async (req: Request, r
   res.send(groupToAdd).status(200);
 });
 
-// PUT - edit Group
+// PUT - edit Group w validation
 groupsRouter.put("/:id", validateSchema(updateGroupSchema), async (req: Request, res: Response) => {
   const collection = db.collection(groupsCollectionName);
   const id = new ObjectId(req.params.id);

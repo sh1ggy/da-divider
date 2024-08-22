@@ -10,7 +10,7 @@ export const validateSchema =
 
     // handle non-compliant request body
     if (!success) {
-      return res.status(401).json({
+      return res.status(400).json({
         status: false,
         message: error.errors
           .map((t) => `${t.path[0] ?? ""}: ${t.message}`)
@@ -18,5 +18,6 @@ export const validateSchema =
       });
     }
 
+    // move on if successful. 
     next();
   };
