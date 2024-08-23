@@ -9,6 +9,7 @@ import { Server, createServer } from "http";
 import { contactsRouter } from "./routes/contacts";
 import { placesRouter } from "./routes/places";
 import { groupsRouter } from "./routes/groups";
+import { errorMiddleware } from "./middlewares/error.middleware";
 
 const app: Express = express();
 const http: Server = createServer(app);
@@ -25,6 +26,8 @@ app.use(express.json());
 app.use("/contacts", contactsRouter);
 app.use("/places", placesRouter);
 app.use("/groups", groupsRouter);
+
+app.use(errorMiddleware);
 
 async function main() {
   db = (await connectToDatabase()).db;

@@ -14,10 +14,8 @@ groupsRouter.get("/", async (_, res: Response) => {
   const groups: Group[] | undefined = (await collection
     .find({})
     .toArray()) as Group[];
-  if (!groups || groups.length === 0) {
-    res.sendStatus(404);
-    return;
-  }
+  if (!groups) return res.sendStatus(500);
+  if (groups.length === 0) return res.send(groups).status(404);
   res.send(groups).status(200);
 });
 
@@ -27,43 +25,51 @@ groupsRouter.get("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   const query = { _id: new ObjectId(id) };
   const group: Group | undefined = (await collection.findOne(query)) as Group;
-  if (!group) {
-    res.sendStatus(500);
-    return;
-  }
+  if (!group) return res.sendStatus(500); // err handling
   res.send(group).status(200);
 });
 
 // POST - add new Group w validation
-groupsRouter.post("/", validateSchema(createGroupSchema), async (req: Request, res: Response) => {
-  const collection = db.collection(groupsCollectionName);
-  let groupToAdd: Group = req.body as Group;
-  await collection.insertOne(groupToAdd);
-  res.send(groupToAdd).status(200);
-});
+groupsRouter.post(
+  "/",
+  validateSchema(createGroupSchema),
+  async (req: Request, res: Response) => {
+    const collection = db.collection(groupsCollectionName);
+    let groupToAdd: Group = req.body as Group;
+    const result = await collection.insertOne(groupToAdd);
+    if (!result) return res.sendStatus(500); // err handling
+    res.send(result).status(200);
+  }
+);
 
 // PUT - edit Group w validation
-groupsRouter.put("/:id", validateSchema(updateGroupSchema), async (req: Request, res: Response) => {
-  const collection = db.collection(groupsCollectionName);
-  const id = new ObjectId(req.params.id);
-  const groupToUpdate: Group = req.body as Group;
-  const mongoRes = await collection.updateOne(
-    { _id: id },
-    { $set: groupToUpdate }
-  );
-  if (mongoRes.modifiedCount > 0) {
-    res.send(groupToUpdate).status(200);
-    return;
+groupsRouter.put(
+  "/:id",
+  validateSchema(updateGroupSchema),
+  async (req: Request, res: Response) => {
+    const collection = db.collection(groupsCollectionName);
+    const id = new ObjectId(req.params.id);
+    const groupToUpdate: Group = req.body as Group;
+    const result = await collection.updateOne(
+      { _id: id },
+      { $set: groupToUpdate }
+    );
+    if (!result) return res.sendStatus(500); // err handling
+    if (result.modifiedCount <= 0) return res.sendStatus(304);
+    res.send(result).status(200);
   }
-  return res.sendStatus(500);
-});
+);
 
 // DELETE - delete Group
 groupsRouter.delete("/:id", async (req: Request, res: Response) => {
   const collection = db.collection(groupsCollectionName);
   const id = new ObjectId(req.params.id);
-  await collection.deleteOne({ _id: id });
-  res.sendStatus(200);
+  const result = await collection.deleteOne({ _id: id });
+  // Error handling & early returns
+  if (!result) return res.sendStatus(500);
+  if (result.deletedCount <= 0) return res.sendStatus(304);
+  // Return success & result
+  res.send(result).status(200);
 });
 
 export { groupsRouter };

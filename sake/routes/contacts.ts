@@ -17,16 +17,16 @@ contactsRouter.get("/:id", async (req: Request, res: Response) => {
   const collection = db.collection(groupsCollectionName);
   const { id } = req.params;
   const query = { _id: new ObjectId(id) };
+
+  // Find group
   const group: Group | undefined = (await collection.findOne(query)) as Group;
-  if (!group) {
-    res.sendStatus(404);
-    return;
-  }
+  if (!group) return res.sendStatus(404);
+
+  // Perform contact transaction
   const contacts: Contact[] = group.contacts;
-  if (contacts.length === 0) {
-    res.sendStatus(404);
-    return;
-  }
+  if (!contacts) return res.sendStatus(500);
+  if (contacts.length === 0) return res.send(group).status(404);
+
   res.send(contacts).status(200);
 });
 
@@ -44,7 +44,7 @@ contactsRouter.post(
     let contactToAdd: Contact = req.body as Contact;
 
     // Updating Group with new Contact
-    const mongoRes = await collection.updateOne(
+    const result = await collection.updateOne(
       { _id: new ObjectId(id) },
       {
         $push: {
@@ -52,11 +52,10 @@ contactsRouter.post(
         } as unknown as PushOperator<{ contacts: Contact[] }>,
       }
     );
-    if (mongoRes.modifiedCount > 0) {
-      res.send(contactToAdd).status(200);
-      return;
-    }
-    res.sendStatus(500);
+    if (!result) return res.sendStatus(500);
+    if (result.modifiedCount <= 0) return res.send(result).status(404);
+
+    res.send(result).status(200);
   }
 );
 
@@ -75,7 +74,7 @@ contactsRouter.put(
     let contactToUpdate: Contact = { _id: contactId, ...req.body } as Contact;
 
     // Perform transaction
-    const mongoRes = await collection.updateOne(
+    const result = await collection.updateOne(
       { _id: groupId },
       {
         $set: {
@@ -91,11 +90,10 @@ contactsRouter.put(
       }
     );
 
-    if (mongoRes && mongoRes.modifiedCount > 0) {
-      res.send(contactToUpdate).status(200);
-      return;
-    }
-    res.sendStatus(500);
+    if (!result) return res.sendStatus(500);
+    if (result.modifiedCount <= 0) return res.send(result).status(304); // no changes
+
+    res.send(result).status(200);
   }
 );
 
@@ -105,17 +103,16 @@ contactsRouter.delete(
     const groupId = new ObjectId(req.params.groupId);
     const contactId = new ObjectId(req.params.contactId);
     const collection = db.collection(groupsCollectionName);
-    const mongoRes = await collection.updateOne({ _id: groupId }, {
+    const result = await collection.updateOne({ _id: groupId }, {
       $pull: { contacts: { _id: contactId } },
     } as unknown as PushOperator<{
       contacts: Contact[];
     }>);
 
-    if (mongoRes && mongoRes.modifiedCount > 0) {
-      res.send(contactId).status(200);
-      return;
-    }
-    res.sendStatus(500);
+    if (!result) return res.sendStatus(500);
+    if (result.modifiedCount <= 0) res.send(result).send(304); // no changes
+
+    res.send(result).status(200);
   }
 );
 
