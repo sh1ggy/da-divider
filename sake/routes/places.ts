@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import { db } from "../server";
 import { ObjectId } from "mongodb";
 import { Place } from "../models/Place";
+import { validateSchema } from "../middlewares/validation.middleware";
+import { createPlaceSchema, updatePlaceSchema } from "../schemas/place.shema";
 
 const placesCollectionName = "places";
 const placesRouter = express.Router();
@@ -18,41 +20,48 @@ placesRouter.get("/", async (_, res: Response) => {
 });
 
 // POST - new Place
-placesRouter.post("/", async (req: Request, res: Response) => {
-  const collection = db.collection(placesCollectionName);
-  let placeToAdd: Place = req.body as Place;
-  placeToAdd.date = new Date();
+placesRouter.post(
+  "/",
+  validateSchema(createPlaceSchema),
+  async (req: Request, res: Response) => {
+    const collection = db.collection(placesCollectionName);
+    let placeToAdd: Place = req.body as Place;
+    placeToAdd.date = new Date();
 
-  await collection.insertOne(placeToAdd);
-  res.send(placeToAdd).status(200);
-});
+    await collection.insertOne(placeToAdd);
+    res.send(placeToAdd).status(200);
+  }
+);
 
 // PUT - edit Place
-placesRouter.put("/:id", async (req: Request, res: Response) => {
-  const collection = db.collection(placesCollectionName);
-  const id = new ObjectId(req.params.id);
-  const placeToUpdate = req.body as Place;
-  const mongoRes = await collection.updateOne(
-    { id: id },
-    { $set: placeToUpdate }
-  );
-  if (mongoRes && mongoRes.modifiedCount > 0) {
-    res.send(placeToUpdate).status(200);
-    return;
+placesRouter.put(
+  "/:id",
+  validateSchema(updatePlaceSchema),
+  async (req: Request, res: Response) => {
+    const collection = db.collection(placesCollectionName);
+    const id = new ObjectId(req.params.id);
+    const placeToUpdate = req.body as Place;
+    const mongoRes = await collection.updateOne(
+      { id: id },
+      { $set: placeToUpdate }
+    );
+    if (mongoRes && mongoRes.modifiedCount > 0) {
+      res.send(placeToUpdate).status(200);
+      return;
+    }
+    return res.sendStatus(500);
   }
-  return res.sendStatus(500);
-});
+);
 
 // DELETE - delete Place
 placesRouter.delete("/:id", async (req: Request, res: Response) => {
   const collection = db.collection(placesCollectionName);
   const id = new ObjectId(req.params.id);
-  const mongoRes = await collection.deleteOne({_id: id});
-  if (mongoRes && mongoRes.deletedCount > 0) {
-    res.send(id).status(200);
-    return;
-  }
-  res.sendStatus(500);
+  const result = await collection.deleteOne({ _id: id });
+
+  if (!result) return res.sendStatus(500);
+  if (result.deletedCount <= 0) res.send(result).status(304);
+  res.send(id).status(200);
 });
 
 export { placesRouter };
