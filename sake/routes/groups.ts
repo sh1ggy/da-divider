@@ -14,6 +14,7 @@ groupsRouter.get("/", async (_, res: Response) => {
   const groups: Group[] | undefined = (await collection
     .find({})
     .toArray()) as Group[];
+
   if (!groups) return res.sendStatus(500);
   if (groups.length === 0) return res.send(groups).status(404);
   res.send(groups).status(200);
@@ -25,6 +26,7 @@ groupsRouter.get("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   const query = { _id: new ObjectId(id) };
   const group: Group | undefined = (await collection.findOne(query)) as Group;
+
   if (!group) return res.sendStatus(500); // err handling
   res.send(group).status(200);
 });
@@ -37,6 +39,7 @@ groupsRouter.post(
     const collection = db.collection(groupsCollectionName);
     let groupToAdd: Group = req.body as Group;
     const result = await collection.insertOne(groupToAdd);
+
     if (!result) return res.sendStatus(500); // err handling
     res.send(result).status(200);
   }
@@ -54,6 +57,7 @@ groupsRouter.put(
       { _id: id },
       { $set: groupToUpdate }
     );
+
     if (!result) return res.sendStatus(500); // err handling
     if (result.modifiedCount <= 0) return res.sendStatus(304);
     res.send(result).status(200);
@@ -65,6 +69,7 @@ groupsRouter.delete("/:id", async (req: Request, res: Response) => {
   const collection = db.collection(groupsCollectionName);
   const id = new ObjectId(req.params.id);
   const result = await collection.deleteOne({ _id: id });
+  
   // Error handling & early returns
   if (!result) return res.sendStatus(500);
   if (result.deletedCount <= 0) return res.sendStatus(304);

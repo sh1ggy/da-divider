@@ -12,11 +12,11 @@ const placesRouter = express.Router();
 placesRouter.get("/", async (_, res: Response) => {
   const collection = db.collection(placesCollectionName);
   const places = await collection.find({}).toArray();
-  if (places.length === 0) {
-    res.sendStatus(404);
-    return;
-  }
-  res.send(places).status(200);
+
+  // Error handling & early returns
+  if (!places) return res.sendStatus(500);
+  if (places.length === 0) return res.sendStatus(404);
+  res.send(places).status(200); // Success
 });
 
 // POST - new Place
@@ -27,9 +27,11 @@ placesRouter.post(
     const collection = db.collection(placesCollectionName);
     let placeToAdd: Place = req.body as Place;
     placeToAdd.date = new Date();
+    const result = await collection.insertOne(placeToAdd);
 
-    await collection.insertOne(placeToAdd);
-    res.send(placeToAdd).status(200);
+    // Error handling & early returns
+    if (!result) return res.sendStatus(500);
+    res.send(placeToAdd).status(200); // Success
   }
 );
 
@@ -41,15 +43,15 @@ placesRouter.put(
     const collection = db.collection(placesCollectionName);
     const id = new ObjectId(req.params.id);
     const placeToUpdate = req.body as Place;
-    const mongoRes = await collection.updateOne(
+    const result = await collection.updateOne(
       { id: id },
       { $set: placeToUpdate }
     );
-    if (mongoRes && mongoRes.modifiedCount > 0) {
-      res.send(placeToUpdate).status(200);
-      return;
-    }
-    return res.sendStatus(500);
+
+    // Error handling & early returns
+    if (!result) return res.sendStatus(500);
+    if (result.modifiedCount <= 0) return res.sendStatus(304);
+    return res.sendStatus(200); // Success
   }
 );
 
@@ -59,9 +61,10 @@ placesRouter.delete("/:id", async (req: Request, res: Response) => {
   const id = new ObjectId(req.params.id);
   const result = await collection.deleteOne({ _id: id });
 
+  // Error handling & early returns
   if (!result) return res.sendStatus(500);
   if (result.deletedCount <= 0) res.send(result).status(304);
-  res.send(id).status(200);
+  res.send(id).status(200); // Success
 });
 
 export { placesRouter };
