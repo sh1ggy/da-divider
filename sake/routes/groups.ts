@@ -27,7 +27,7 @@ groupsRouter.get("/:id", async (req: Request, res: Response) => {
   const query = { _id: new ObjectId(id) };
   const group: Group | undefined = (await collection.findOne(query)) as Group;
 
-  if (!group) return res.sendStatus(500); // err handling
+  if (!group) return res.sendStatus(404); // err handling
   res.send(group).status(200);
 });
 

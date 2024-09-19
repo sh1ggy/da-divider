@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb";
 import { Place } from "../models/Place";
 import { validateSchema } from "../middlewares/validation.middleware";
 import { createPlaceSchema, updatePlaceSchema } from "../schemas/place.shema";
+import { Item } from "../models/Item";
 
 const placesCollectionName = "places";
 const placesRouter = express.Router();
@@ -17,6 +18,17 @@ placesRouter.get("/", async (_, res: Response) => {
   if (!places) return res.sendStatus(500);
   if (places.length === 0) return res.sendStatus(404);
   res.send(places).status(200); // Success
+});
+
+// GET - Place by ID
+placesRouter.get("/:id", async (req: Request, res: Response) => {
+  const collection = db.collection(placesCollectionName);
+  const { id } = req.params;
+  const query = { _id: new ObjectId(id) };
+  const place: Place | undefined = (await collection.findOne(query)) as Place;
+
+  if (!place) return res.sendStatus(404); // err handling
+  res.send(place).status(200);
 });
 
 // POST - new Place
@@ -65,6 +77,25 @@ placesRouter.delete("/:id", async (req: Request, res: Response) => {
   if (!result) return res.sendStatus(500);
   if (result.deletedCount <= 0) res.send(result).status(304);
   res.send(id).status(200); // Success
+});
+
+// GET - total of item prices in Place
+placesRouter.get("/:id/total", async (req: Request, res: Response) => {
+  const collection = db.collection(placesCollectionName);
+  const { id } = req.params;
+  const query = { _id: new ObjectId(id) };
+  const place: Place | undefined = (await collection.findOne(query)) as Place;
+
+  if (!place || !place.items) return res.sendStatus(404); // err handling
+
+  // Calculate total of items
+  let total: number = 0;
+  const items: Item[] = place.items as Item[];
+  items.forEach((item: Item) => {
+    total += item.price;
+  });
+
+  return res.send(JSON.stringify(total)).status(200);
 });
 
 export { placesRouter };

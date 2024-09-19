@@ -4,7 +4,7 @@ import { createItemSchema } from "./item.schema";
 
 export const createPlaceSchema = z
   .object({
-    date: z.date(),
+    date: z.coerce.date(),
     items: z.array(createItemSchema).optional(),
     contacts: z.array(createContactSchema),
     groupName: z.string().min(2),
