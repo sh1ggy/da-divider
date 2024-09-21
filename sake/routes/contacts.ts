@@ -8,9 +8,8 @@ import {
   updateContactSchema,
 } from "../schemas/contact.schema";
 import { validateSchema } from "../middlewares/validation.middleware";
-import { groupsRouter } from "./groups";
+import { groupsCollectionName } from "./groups";
 
-const groupsCollectionName = "groups";
 const contactsRouter = express.Router();
 
 // GET - all Contacts for group

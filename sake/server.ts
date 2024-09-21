@@ -9,6 +9,7 @@ import { placesRouter } from "./routes/places";
 import { groupsRouter } from "./routes/groups";
 import { errorMiddleware } from "./middlewares/error.middleware";
 import { contactsRouter } from "./routes/contacts";
+import { itemsRouter } from "./routes/items";
 
 const app: Express = express();
 const http: Server = createServer(app);
@@ -22,8 +23,9 @@ app.use(express.json());
 
 // --- Routes
 app.use("/places", placesRouter);
+app.use("/places", itemsRouter);
 app.use("/groups", groupsRouter);
-app.use("/groups", contactsRouter)
+app.use("/groups", contactsRouter);
 
 app.use(errorMiddleware);
 

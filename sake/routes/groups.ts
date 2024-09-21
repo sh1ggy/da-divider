@@ -6,7 +6,7 @@ import { validateSchema } from "../middlewares/validation.middleware";
 import { createGroupSchema, updateGroupSchema } from "../schemas/group.schema";
 import { contactsRouter } from "./contacts";
 
-const groupsCollectionName = "groups";
+export const groupsCollectionName = "groups";
 const groupsRouter = express.Router();
 
 groupsRouter.use("/contacts", contactsRouter)

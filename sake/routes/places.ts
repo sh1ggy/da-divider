@@ -6,7 +6,7 @@ import { validateSchema } from "../middlewares/validation.middleware";
 import { createPlaceSchema, updatePlaceSchema } from "../schemas/place.shema";
 import { Item } from "../models/Item";
 
-const placesCollectionName = "places";
+export const placesCollectionName = "places";
 const placesRouter = express.Router();
 
 // GET - all Places
