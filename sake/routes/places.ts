@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { db } from "../server";
 import { ObjectId } from "mongodb";
-import { Place } from "../models/Place";
+import { Place, PlaceContact } from "../models/Place";
 import { validateSchema } from "../middlewares/validation.middleware";
 import { createPlaceSchema, updatePlaceSchema } from "../schemas/place.shema";
 import { Item } from "../models/Item";
@@ -39,6 +39,7 @@ placesRouter.post(
     const collection = db.collection(placesCollectionName);
     let placeToAdd: Place = req.body as Place;
     placeToAdd.date = new Date();
+    console.log(placeToAdd);
     const result = await collection.insertOne(placeToAdd);
 
     // Error handling & early returns
@@ -89,13 +90,26 @@ placesRouter.get("/:id/total", async (req: Request, res: Response) => {
   if (!place || !place.items) return res.sendStatus(404); // err handling
 
   // Calculate total of items
-  let total: number = 0;
-  const items: Item[] = place.items as Item[];
-  items.forEach((item: Item) => {
-    total += item.price;
+  type ContactTotal = {
+    contactName: string;
+    total: number;
+  };
+
+  const totalPerContact: ContactTotal[] = [];
+
+  // Calculate total
+  place.contacts.forEach((contact: PlaceContact) => {
+    if (!contact.itemAssignments) return; // Early return
+
+    // Calculate total per contact & push to totalPerContact structure
+    let contactTotal: number = 0;
+    contact.itemAssignments.forEach((item: Item) => {
+      contactTotal += item.price;
+    });
+    totalPerContact.push({ contactName: contact.name, total: contactTotal });
   });
 
-  return res.send(JSON.stringify(total)).status(200);
+  res.send(totalPerContact).status(200);
 });
 
 export { placesRouter };

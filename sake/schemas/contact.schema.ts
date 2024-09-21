@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createItemSchema } from "./item.schema";
 
 export const createContactSchema = z
   .object({
@@ -8,5 +9,12 @@ export const createContactSchema = z
   })
   .strict(); //strict prevents the schema from validating payloads with properties not in the schema
 
+export const createPlaceContactSchema = createContactSchema.extend({
+  itemAssignments: z.array(createItemSchema).optional(),
+});
+
 // Creates a partial schema from createUserSchema where all properties are optional
 export const updateContactSchema = createContactSchema.partial();
+
+// Creates a partial schema from createPlaceContactSchema where all properties are optional
+export const updatePlaceContactSchema = createPlaceContactSchema.partial();

@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { createContactSchema } from "./contact.schema";
+import { createPlaceContactSchema } from "./contact.schema";
 import { createItemSchema } from "./item.schema";
 
 export const createPlaceSchema = z
   .object({
     date: z.coerce.date(),
     items: z.array(createItemSchema).optional(),
-    contacts: z.array(createContactSchema),
+    contacts: z.array(createPlaceContactSchema),
     groupName: z.string().min(2),
   })
   .strict(); //strict prevents the schema from validating payloads with properties not in the schema
