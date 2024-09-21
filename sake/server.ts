@@ -5,10 +5,10 @@ import cors from "cors";
 import { Db } from "mongodb";
 import { connectToDatabase } from "./db/connection";
 import { Server, createServer } from "http";
-import { contactsRouter } from "./routes/contacts";
 import { placesRouter } from "./routes/places";
 import { groupsRouter } from "./routes/groups";
 import { errorMiddleware } from "./middlewares/error.middleware";
+import { contactsRouter } from "./routes/contacts";
 
 const app: Express = express();
 const http: Server = createServer(app);
@@ -21,9 +21,9 @@ app.use(cors());
 app.use(express.json());
 
 // --- Routes
-app.use("/contacts", contactsRouter);
 app.use("/places", placesRouter);
 app.use("/groups", groupsRouter);
+app.use("/groups", contactsRouter)
 
 app.use(errorMiddleware);
 

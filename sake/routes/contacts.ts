@@ -8,15 +8,16 @@ import {
   updateContactSchema,
 } from "../schemas/contact.schema";
 import { validateSchema } from "../middlewares/validation.middleware";
+import { groupsRouter } from "./groups";
 
 const groupsCollectionName = "groups";
 const contactsRouter = express.Router();
 
 // GET - all Contacts for group
-contactsRouter.get("/:id", async (req: Request, res: Response) => {
+contactsRouter.get("/:groupId/contacts", async (req: Request, res: Response) => {
   const collection = db.collection(groupsCollectionName);
-  const { id } = req.params;
-  const query = { _id: new ObjectId(id) };
+  const { groupId } = req.params;
+  const query = { _id: new ObjectId(groupId) };
 
   // Find group
   const group: Group | undefined = (await collection.findOne(query)) as Group;
@@ -32,20 +33,20 @@ contactsRouter.get("/:id", async (req: Request, res: Response) => {
 
 // POST - add new Contact to Group
 contactsRouter.post(
-  "/:id",
+  "/:groupId",
   validateSchema(createContactSchema),
   async (req: Request, res: Response) => {
     if (!req) {
       res.sendStatus(400);
       return;
     }
-    const { id } = req.params;
+    const { groupId } = req.params;
     const collection = db.collection(groupsCollectionName);
     let contactToAdd: Contact = req.body as Contact;
 
     // Updating Group with new Contact
     const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(groupId) },
       {
         $push: {
           contacts: { id: new ObjectId(), ...contactToAdd },

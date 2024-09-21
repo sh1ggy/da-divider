@@ -4,9 +4,12 @@ import { ObjectId } from "mongodb";
 import { Group } from "../models/Group";
 import { validateSchema } from "../middlewares/validation.middleware";
 import { createGroupSchema, updateGroupSchema } from "../schemas/group.schema";
+import { contactsRouter } from "./contacts";
 
 const groupsCollectionName = "groups";
 const groupsRouter = express.Router();
+
+groupsRouter.use("/contacts", contactsRouter)
 
 // GET - all Groups
 groupsRouter.get("/", async (_, res: Response) => {
@@ -30,6 +33,8 @@ groupsRouter.get("/:id", async (req: Request, res: Response) => {
   if (!group) return res.sendStatus(404); // err handling
   res.send(group).status(200);
 });
+
+
 
 // POST - add new Group w validation
 groupsRouter.post(
