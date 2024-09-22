@@ -5,7 +5,7 @@ import { ObjectId, PushOperator } from "mongodb";
 import { Place } from "../models/Place";
 import { Item } from "../models/Item";
 import { validateSchema } from "../middlewares/validation.middleware";
-import { createItemSchema } from "../schemas/item.schema";
+import { createItemSchema, updateItemSchema } from "../schemas/item.schema";
 
 const itemsRouter = express.Router();
 
@@ -46,11 +46,69 @@ itemsRouter.post(
       {
         $push: {
           items: { id: new ObjectId(), ...itemToAdd },
-        } as unknown as PushOperator<{ items: Item[] }>,
+        } as PushOperator<{ items: Item[] }>,
       }
     );
     if (!result) return res.sendStatus(500);
     if (result.modifiedCount <= 0) return res.send(result).status(404);
+
+    res.send(result).status(200);
+  }
+);
+
+// PUT - edit existing Item by Place ID and Item ID
+itemsRouter.put(
+  "/:placeId/item/:itemId",
+  validateSchema(updateItemSchema),
+  async (req: Request, res: Response) => {
+    if (!req) {
+      res.sendStatus(400);
+      return;
+    }
+    const placeId = new ObjectId(req.params.placeId);
+    const itemId = new ObjectId(req.params.itemId);
+    const collection = db.collection(placesCollectionName);
+    let itemToUpdate: Item = { id: itemId, ...req.body } as Item;
+
+    // Perform transaction
+    const result = await collection.updateOne(
+      { _id: placeId },
+      {
+        $set: {
+          "items.$[elem]": itemToUpdate,
+        },
+      },
+      {
+        arrayFilters: [
+          {
+            "elem._id": itemId,
+          },
+        ],
+      }
+    );
+
+    if (!result) return res.sendStatus(500);
+    if (result.modifiedCount <= 0) return res.send(result).status(304); // no changes
+
+    res.send(result).status(200);
+  }
+);
+
+// DELETE -- delete item
+itemsRouter.delete(
+  "/:placeId/item/:itemId",
+  async (req: Request, res: Response) => {
+    const placeId = new ObjectId(req.params.placeId);
+    const itemId = new ObjectId(req.params.itemId);
+    const collection = db.collection(placesCollectionName);
+    const result = await collection.updateOne({ _id: placeId }, {
+      $pull: { items: { id: itemId } },
+    } as PushOperator<{
+      items: Item[];
+    }>);
+
+    if (!result) return res.sendStatus(500);
+    if (result.modifiedCount <= 0) return res.send(result).status(304); // no changes
 
     res.send(result).status(200);
   }

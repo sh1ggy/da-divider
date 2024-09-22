@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 
 export const createContactSchema = z
   .object({
-    id: z.instanceof(ObjectId),
+    id: z.custom<ObjectId>(),
     name: z.string().min(2, "Name must be a minimum of two letters"),
     email: z.string().email("Invalid email format"),
     mobile: z.string().min(8, "Mobile must be a minimum of 8 letters"),

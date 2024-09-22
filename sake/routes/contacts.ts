@@ -13,22 +13,25 @@ import { groupsCollectionName } from "./groups";
 const contactsRouter = express.Router();
 
 // GET - all Contacts for group
-contactsRouter.get("/:groupId/contacts", async (req: Request, res: Response) => {
-  const collection = db.collection(groupsCollectionName);
-  const { groupId } = req.params;
-  const query = { _id: new ObjectId(groupId) };
+contactsRouter.get(
+  "/:groupId/contacts",
+  async (req: Request, res: Response) => {
+    const collection = db.collection(groupsCollectionName);
+    const { groupId } = req.params;
+    const query = { _id: new ObjectId(groupId) };
 
-  // Find group
-  const group: Group | undefined = (await collection.findOne(query)) as Group;
-  if (!group) return res.sendStatus(404);
+    // Find group
+    const group: Group | undefined = (await collection.findOne(query)) as Group;
+    if (!group) return res.sendStatus(404);
 
-  // Perform contact transaction
-  const contacts: Contact[] = group.contacts;
-  if (!contacts) return res.sendStatus(500);
-  if (contacts.length === 0) return res.send(group).status(404);
+    // Perform contact transaction
+    const contacts: Contact[] = group.contacts;
+    if (!contacts) return res.sendStatus(500);
+    if (contacts.length === 0) return res.send(group).status(404);
 
-  res.send(contacts).status(200);
-});
+    res.send(contacts).status(200);
+  }
+);
 
 // POST - add new Contact to Group
 contactsRouter.post(
@@ -49,7 +52,7 @@ contactsRouter.post(
       {
         $push: {
           contacts: { id: new ObjectId(), ...contactToAdd },
-        } as unknown as PushOperator<{ contacts: Contact[] }>,
+        } as PushOperator<{ contacts: Contact[] }>,
       }
     );
     if (!result) return res.sendStatus(500);
@@ -84,7 +87,7 @@ contactsRouter.put(
       {
         arrayFilters: [
           {
-            "elem._id": contactId,
+            "elem.id": contactId,
           },
         ],
       }
@@ -97,20 +100,23 @@ contactsRouter.put(
   }
 );
 
+// DELETE -- delete Contact
 contactsRouter.delete(
   "/:groupId/contact/:contactId",
   async (req: Request, res: Response) => {
     const groupId = new ObjectId(req.params.groupId);
     const contactId = new ObjectId(req.params.contactId);
     const collection = db.collection(groupsCollectionName);
+
+    // Perform transaction
     const result = await collection.updateOne({ _id: groupId }, {
-      $pull: { contacts: { _id: contactId } },
-    } as unknown as PushOperator<{
+      $pull: { contacts: { id: contactId } },
+    } as PushOperator<{
       contacts: Contact[];
     }>);
 
     if (!result) return res.sendStatus(500);
-    if (result.modifiedCount <= 0) res.send(result).send(304); // no changes
+    if (result.modifiedCount <= 0) return res.send(result).status(304); // no changes
 
     res.send(result).status(200);
   }
