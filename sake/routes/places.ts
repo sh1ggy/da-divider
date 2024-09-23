@@ -5,7 +5,9 @@ import { Place, PlaceContact } from "../models/Place";
 import { validateSchema } from "../middlewares/validation.middleware";
 import { createPlaceSchema, updatePlaceSchema } from "../schemas/place.schema";
 import { Item, ItemAssignment } from "../models/Item";
-import { createItemAssignmentSchema, createItemSchema } from "../schemas/item.schema";
+import {
+  createItemAssignmentSchema,
+} from "../schemas/item.schema";
 
 export const placesCollectionName = "places";
 const placesRouter = express.Router();
@@ -150,7 +152,7 @@ placesRouter.get("/:id/total", async (req: Request, res: Response) => {
   res.send(totalPerContact).status(200);
 });
 
-// POST -- add new itemAssignment to Place under Contact
+// POST -- add new itemAssignments in bulk to Place under Contact
 placesRouter.post(
   "/:placeId/assign",
   validateSchema(createItemAssignmentSchema),
@@ -159,20 +161,23 @@ placesRouter.post(
 
     const { placeId } = req.params;
     const collection = db.collection(placesCollectionName);
-    let itemAssignmentToAdd: ItemAssignment = req.body as ItemAssignment
+    let itemAssignmentsToAdd: ItemAssignment[] = req.body
+      .itemAssignments as ItemAssignment[];
 
-    // Updating Place with new ItemAssignment
-    const result = await collection.updateOne(
+    // Updating Place with new ItemAssignments (bulk)
+    const result = await collection.updateMany(
       { _id: new ObjectId(placeId) },
       {
-        $push: {
-          itemAssignments: { ...itemAssignmentToAdd },
+        $addToSet: {
+          itemAssignments: { $each: itemAssignmentsToAdd },
         } as PushOperator<{ itemAssignments: ItemAssignment[] }>,
-      }
+      },
+      { upsert: true }
     );
 
     if (!result) return res.sendStatus(500);
     if (result.modifiedCount <= 0) return res.send(result).status(404);
+
     return res.sendStatus(200);
   }
 );

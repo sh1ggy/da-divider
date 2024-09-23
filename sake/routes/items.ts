@@ -102,12 +102,26 @@ itemsRouter.delete(
     const placeId = new ObjectId(req.params.placeId);
     const itemId = new ObjectId(req.params.itemId);
     const collection = db.collection(placesCollectionName);
-    const result = await collection.updateOne({ _id: placeId }, {
-      $pull: { items: { id: itemId } },
+    
+    let result = undefined;
+    // Perform transaction for deleting item
+    result = await collection.updateOne({ _id: placeId }, {
+      $pull: { items: { _id: itemId } },
     } as PushOperator<{
       items: Item[];
     }>);
 
+    // Item not deleted, return before performing further action. 
+    if (!result) return res.sendStatus(500);
+    if (result.modifiedCount <= 0) return res.send(result).status(304); // no changes
+    
+    // Perform transaction for removing instances of item in itemAssignments
+    result = await collection.updateMany({ _id: placeId }, {
+      $pull: { itemAssignments: { itemId: itemId.toString() } },
+    } as PushOperator<{
+      items: Item[];
+    }>);
+    
     if (!result) return res.sendStatus(500);
     if (result.modifiedCount <= 0) return res.send(result).status(304); // no changes
 
