@@ -7,4 +7,9 @@ export const createItemSchema = z.object({
   price: z.number().positive(),
 });
 
+export const createItemAssignmentSchema = z.object({
+  contactId: z.custom<ObjectId>(),
+  itemId: z.custom<ObjectId>(),
+});
+
 export const updateItemSchema = createItemSchema.partial();

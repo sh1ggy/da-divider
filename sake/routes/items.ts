@@ -39,13 +39,14 @@ itemsRouter.post(
     const { placeId } = req.params;
     const collection = db.collection(placesCollectionName);
     let itemToAdd: Item = req.body as Item;
+    itemToAdd._id = new ObjectId();
 
     // Updating Place with new Item
     const result = await collection.updateOne(
       { _id: new ObjectId(placeId) },
       {
         $push: {
-          items: { id: new ObjectId(), ...itemToAdd },
+          items: { ...itemToAdd },
         } as PushOperator<{ items: Item[] }>,
       }
     );
@@ -68,7 +69,7 @@ itemsRouter.put(
     const placeId = new ObjectId(req.params.placeId);
     const itemId = new ObjectId(req.params.itemId);
     const collection = db.collection(placesCollectionName);
-    let itemToUpdate: Item = { id: itemId, ...req.body } as Item;
+    const itemToUpdate: Item = { id: itemId, ...req.body } as Item;
 
     // Perform transaction
     const result = await collection.updateOne(

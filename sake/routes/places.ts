@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
 import { db } from "../server";
-import { ObjectId } from "mongodb";
+import { ObjectId, PushOperator } from "mongodb";
 import { Place, PlaceContact } from "../models/Place";
 import { validateSchema } from "../middlewares/validation.middleware";
-import { createPlaceSchema, updatePlaceSchema } from "../schemas/place.shema";
-import { Item } from "../models/Item";
+import { createPlaceSchema, updatePlaceSchema } from "../schemas/place.schema";
+import { Item, ItemAssignment } from "../models/Item";
+import { createItemAssignmentSchema, createItemSchema } from "../schemas/item.schema";
 
 export const placesCollectionName = "places";
 const placesRouter = express.Router();
@@ -38,8 +39,9 @@ placesRouter.post(
   async (req: Request, res: Response) => {
     const collection = db.collection(placesCollectionName);
     let placeToAdd: Place = req.body as Place;
-    placeToAdd.date = new Date();
-    console.log(placeToAdd);
+    placeToAdd.date = new Date(); // current date
+    placeToAdd.itemAssignments = []; // empty array initialisation
+
     const result = await collection.insertOne(placeToAdd);
 
     // Error handling & early returns
@@ -80,13 +82,12 @@ placesRouter.delete("/:id", async (req: Request, res: Response) => {
   res.send(id).status(200); // Success
 });
 
-// GET - total of item prices in Place
+// GET - total of item prices per Contact in Place
 placesRouter.get("/:id/total", async (req: Request, res: Response) => {
   const collection = db.collection(placesCollectionName);
   const { id } = req.params;
   const query = { _id: new ObjectId(id) };
-  const place: Place | undefined = (await collection.findOne(query)) as Place;
-
+  let place: Place | undefined = (await collection.findOne(query)) as Place;
   if (!place || !place.items) return res.sendStatus(404); // err handling
 
   // Calculate total of items
@@ -97,19 +98,86 @@ placesRouter.get("/:id/total", async (req: Request, res: Response) => {
 
   const totalPerContact: ContactTotal[] = [];
 
-  // Calculate total
-  place.contacts.forEach((contact: PlaceContact) => {
-    if (!contact.itemAssignments) return; // Early return
+  // For each item in the Place, count the amount of assigned contacts per item.
+  place.items.forEach((item: Item) => {
+    let assignedContactsCount = 0;
+    place.itemAssignments.forEach((itemAssignment: ItemAssignment) => {
+      // Early return if no match.
+      if (item._id.toString() !== itemAssignment.itemId.toString()) {
+        // console.log("No item found to add contact count to");
+        return;
+      }
 
-    // Calculate total per contact & push to totalPerContact structure
-    let contactTotal: number = 0;
-    contact.itemAssignments.forEach((item: Item) => {
-      contactTotal += item.price;
+      assignedContactsCount += 1;
     });
-    totalPerContact.push({ contactName: contact.name, total: contactTotal });
+    item.assignedContactsCount = assignedContactsCount;
   });
+
+  // For each contact in the Place calculate the total
+  place.contacts.forEach((placeContact: PlaceContact) => {
+    let placeContactTotal: number = 0; // var initialisation
+    // For each item assignment in the Place, find matching items correlating to the current contact
+    place.itemAssignments.forEach((itemAssignment: ItemAssignment) => {
+      if (placeContact.id !== itemAssignment.contactId) return;
+
+      // Commence calculation
+      // -- Find relevant item to add to total
+      const itemToAddToTotal: Item | undefined = place.items.find(
+        (item: Item) => item._id.toString() === itemAssignment.itemId.toString()
+      );
+
+      // Return if there's no item
+      if (itemToAddToTotal === undefined) {
+        console.log("No item found...");
+        return;
+      }
+
+      // Add to total
+      placeContactTotal +=
+        itemToAddToTotal.price / itemToAddToTotal.assignedContactsCount!;
+    });
+
+    // Push the total to the final object.
+    totalPerContact.push({
+      contactName: placeContact.name,
+      total: placeContactTotal,
+    });
+  });
+
+  // No total calculated
+  if (totalPerContact.length === 0) return res.sendStatus(404);
 
   res.send(totalPerContact).status(200);
 });
+
+// POST -- add new itemAssignment to Place under Contact
+placesRouter.post(
+  "/:placeId/assign",
+  validateSchema(createItemAssignmentSchema),
+  async (req: Request, res: Response) => {
+    if (!req) return res.sendStatus(400);
+
+    const { placeId } = req.params;
+    const collection = db.collection(placesCollectionName);
+    let itemAssignmentToAdd: ItemAssignment = req.body as ItemAssignment
+
+    // Updating Place with new ItemAssignment
+    const result = await collection.updateOne(
+      { _id: new ObjectId(placeId) },
+      {
+        $push: {
+          itemAssignments: { ...itemAssignmentToAdd },
+        } as PushOperator<{ itemAssignments: ItemAssignment[] }>,
+      }
+    );
+
+    if (!result) return res.sendStatus(500);
+    if (result.modifiedCount <= 0) return res.send(result).status(404);
+    return res.sendStatus(200);
+  }
+);
+
+// DELETE -- remove itemAssignments from Place under Contact
+// TODO - implement this
 
 export { placesRouter };

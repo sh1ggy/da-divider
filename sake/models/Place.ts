@@ -1,14 +1,16 @@
-import { WithId } from "mongodb";
-import { Item } from "./Item";
-import { Contact } from "./Contact";
+import { ObjectId, WithId } from "mongodb";
+import { Item, ItemAssignment } from "./Item";
 
 export interface Place extends WithId<Document> {
   date: Date;
   items: Item[];
   contacts: PlaceContact[];
   groupName: string;
+  itemAssignments: ItemAssignment[]; // for tracking Contact & Item links
 }
 
-export interface PlaceContact extends Contact {
-  itemAssignments?: Item[];
+// Contact type for Place
+export interface PlaceContact {
+  id: ObjectId;
+  name: string;
 }

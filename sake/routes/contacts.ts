@@ -38,20 +38,19 @@ contactsRouter.post(
   "/:groupId",
   validateSchema(createContactSchema),
   async (req: Request, res: Response) => {
-    if (!req) {
-      res.sendStatus(400);
-      return;
-    }
+    if (!req) return res.sendStatus(400);
+
     const { groupId } = req.params;
     const collection = db.collection(groupsCollectionName);
     let contactToAdd: Contact = req.body as Contact;
+    contactToAdd._id = new ObjectId();
 
     // Updating Group with new Contact
     const result = await collection.updateOne(
       { _id: new ObjectId(groupId) },
       {
         $push: {
-          contacts: { id: new ObjectId(), ...contactToAdd },
+          contacts: { ...contactToAdd },
         } as PushOperator<{ contacts: Contact[] }>,
       }
     );
@@ -67,10 +66,8 @@ contactsRouter.put(
   "/:groupId/contact/:contactId",
   validateSchema(updateContactSchema),
   async (req: Request, res: Response) => {
-    if (!req) {
-      res.sendStatus(400);
-      return;
-    }
+    if (!req) return res.sendStatus(400);
+
     const groupId = new ObjectId(req.params.groupId);
     const contactId = new ObjectId(req.params.contactId);
     const collection = db.collection(groupsCollectionName);
@@ -87,7 +84,7 @@ contactsRouter.put(
       {
         arrayFilters: [
           {
-            "elem.id": contactId,
+            "elem._id": contactId,
           },
         ],
       }
