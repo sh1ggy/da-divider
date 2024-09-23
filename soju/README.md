@@ -1,16 +1,38 @@
-# Divider
+# create-svelte
 
-![sh1ggy](https://img.shields.io/badge/sh1ggy-darkblue?style=plastic) ![Year](https://img.shields.io/badge/Year-2023-red?style=plastic) ![Language](https://img.shields.io/badge/TypeScript-grey?style=plastic&logo=typescript) ![Framework](https://img.shields.io/badge/Angular-grey?style=plastic&logo=angular) ![Framework](https://img.shields.io/badge/DaisyUI-grey?style=plastic)
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
 
-This is the front-end repo for Divider, a group-shared bill splitting platform. 
+## Creating a project
 
-## Stack
-- [Angular](https://angular.dev/), our chosen front-end JS framework. 
-- [DaisyUI](https://daisyui.com/) our chosen UI plugin TailwindCSS component library
-## Development
-- Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-- Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-- Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-- Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+If you're seeing this, you've probably already done this step. Congrats!
 
->This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.6.
+```bash
+# create a new project in the current directory
+npm create svelte@latest
+
+# create a new project in my-app
+npm create svelte@latest my-app
+```
+
+## Developing
+
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```bash
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+## Building
+
+To create a production version of your app:
+
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
