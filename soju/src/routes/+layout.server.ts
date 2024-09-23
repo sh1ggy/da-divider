@@ -1,6 +1,8 @@
+import type { Group } from '../types/Group';
+
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {
-	let test: any | undefined = undefined;
+	let groups: Group[] | undefined = undefined;
 
 	const url = 'http://localhost:3000/groups';
 	await fetch(url, { method: 'GET' })
@@ -8,7 +10,9 @@ export async function load({ params }) {
 			return res.json();
 		})
 		.then((data) => {
-			test = data;
+			groups = data;
 		});
-	return {test: test};
+    
+	if (!groups) return;
+	return { group: groups[0] };
 }
