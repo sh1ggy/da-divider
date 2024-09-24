@@ -6,7 +6,7 @@
 	import { storePopup, AppBar } from '@skeletonlabs/skeleton';
 	import { initializeStores, Drawer } from '@skeletonlabs/skeleton';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
-	import type { Group } from '../types/Group';
+	import type { Group } from '../types/types';
 
 	initializeStores();
 
@@ -30,7 +30,7 @@
 
 <AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
 	<svelte:fragment slot="lead"
-		><button on:click={() => drawerStore.open()} type="button" class="btn variant-filled-primary"
+		><button on:click={() => drawerStore.open()} type="button" class="btn variant-ghost-primary"
 			>menu</button
 		></svelte:fragment
 	>

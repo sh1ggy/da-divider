@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Group } from '../types/Group';
+	import type { Group } from '../types/types';
 
 	export let data: { group: Group };
 </script>
