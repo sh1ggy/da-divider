@@ -1,19 +1,61 @@
 import type { Contact } from '../../types/types.js';
 
-/** @type {import('./$types').PageLoad} */
-export async function load({ params }) {
+const groupId = '66a80e0c312e1ebdd11ed13f';
+
+// Loader
+export async function load() {
 	let contacts: Contact[] | undefined = undefined;
 
-  const groupId = "66a80e0c312e1ebdd11ed13f"
+	const options = { method: 'GET' };
 	const url = `http://localhost:3000/groups/${groupId}/contacts`;
-	await fetch(url, { method: 'GET' })
+
+  // Fetching GET all Contacts for Group
+	await fetch(url, options)
 		.then((res) => {
 			return res.json();
 		})
 		.then((data) => {
 			contacts = data;
 		});
-    
+
 	if (!contacts) return;
 	return { contacts: contacts };
 }
+
+// Form actions
+export const actions = {
+	default: async ({ request }) => {
+    // Initialise form data
+		const formData = await request.formData();
+		const contact = {
+			name: formData.get('name'),
+			email: formData.get('email'),
+			mobile: formData.get('mobile')
+		} as Contact;
+
+    // fetch params initialisation
+		const body = JSON.stringify(contact);
+		const options = {
+			method: 'POST',
+			body: body,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+		const url = `http://localhost:3000/groups/${groupId}/contact`;
+
+		let response = undefined;
+
+    // Commence fetch operation
+		await fetch(url, options)
+			.then((res) => {
+				return res.json();
+			})
+			.then((data) => {
+				response = data;
+			});
+
+		if (!response) return;
+		return { response: response };
+	}
+};

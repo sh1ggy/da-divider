@@ -35,7 +35,7 @@ contactsRouter.get(
 
 // POST - add new Contact to Group
 contactsRouter.post(
-  "/:groupId",
+  "/:groupId/contact",
   validateSchema(createContactSchema),
   async (req: Request, res: Response) => {
     if (!req) return res.sendStatus(400);

@@ -40,7 +40,19 @@
 					</tr>
 				{/each}
 			</tbody>
+			<tfoot>
+				<tr>
+					<td class="font-bold">Add Contact</td>
+					<td colspan="4"
+						><form method="POST" class="grid columns-4 grid-flow-col gap-3">
+							<input name="name" type="text" placeholder="name" class="input" />
+							<input name="email" type="email" placeholder="email" class="input" />
+							<input name="mobile" type="tel" placeholder="mobile" class="input" />
+							<button class="w-full btn variant-filled-primary">Add Contact</button>
+						</form></td
+					>
+				</tr>
+			</tfoot>
 		</table>
-		<button class="w-full btn variant-filled-primary">Add Contact</button>
 	</div>
 </div>
