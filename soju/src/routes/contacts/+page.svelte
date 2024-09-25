@@ -1,7 +1,28 @@
 <script lang="ts">
 	import type { Contact } from '../../types/types';
 
+  // Variable initialisation
+	const groupId = '66a80e0c312e1ebdd11ed13f';
 	export let data: { contacts: Contact[] };
+	let contacts = data.contacts; // Contact for state
+
+  // Handler method for deleting Contact
+	const handleDeleteContact = async (contact: Contact) => {
+		// Fetch initialisation
+		const url = `http://localhost:3000/groups/${groupId}/contact/${contact._id}`;
+		const options = {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+		// Commence fetch operation
+		await fetch(url, options)
+			.then((res) => res.json())
+			.then((data) => console.log(data));
+		// Match local state with deleted contact
+		contacts = contacts.filter((c) => c._id !== contact._id);
+	};
 </script>
 
 <div class="container h-full mx-auto flex flex-col justify-center items-center">
@@ -20,12 +41,13 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each data.contacts as contact}
+				{#each contacts as contact}
 					<tr>
 						<td>
 							<button
 								on:click={() => navigator.clipboard.writeText(contact._id)}
-								class="code hover:cursor-pointer">{contact._id.substring(0, 7)}...</button
+								class="code hover:cursor-pointer hover:scale-110 transition-all"
+								>{contact._id.substring(0, 7)}...</button
 							>
 						</td>
 						<td><p>{contact.name}</p></td>
@@ -34,7 +56,10 @@
 						<td>
 							<div class="flex gap-3">
 								<button class="btn btn-sm variant-ghost-warning">edit</button>
-								<button class="btn btn-sm variant-ghost-error">delete</button>
+								<button
+									on:click={() => handleDeleteContact(contact)}
+									class="btn btn-sm variant-ghost-error">delete</button
+								>
 							</div>
 						</td>
 					</tr>
@@ -48,7 +73,7 @@
 							<input name="name" type="text" placeholder="name" class="input" />
 							<input name="email" type="email" placeholder="email" class="input" />
 							<input name="mobile" type="tel" placeholder="mobile" class="input" />
-							<button class="w-full btn variant-filled-primary">Add Contact</button>
+							<button type="submit" class="w-full btn variant-filled-primary">Add Contact</button>
 						</form></td
 					>
 				</tr>

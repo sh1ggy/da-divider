@@ -1,4 +1,4 @@
-import type { Group } from '../types/Group';
+import type { Group } from "../types/types";
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {

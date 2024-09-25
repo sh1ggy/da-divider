@@ -107,7 +107,7 @@ contactsRouter.delete(
 
     // Perform transaction
     const result = await collection.updateOne({ _id: groupId }, {
-      $pull: { contacts: { id: contactId } },
+      $pull: { contacts: { _id: contactId } },
     } as PushOperator<{
       contacts: Contact[];
     }>);

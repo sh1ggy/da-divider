@@ -2,7 +2,7 @@ import type { Contact } from '../../types/types.js';
 
 const groupId = '66a80e0c312e1ebdd11ed13f';
 
-// Loader
+/** @type {import('./$types').PageLoad} */
 export async function load() {
 	let contacts: Contact[] | undefined = undefined;
 
@@ -22,7 +22,7 @@ export async function load() {
 	return { contacts: contacts };
 }
 
-// Form actions
+/** @type {import('./$types').Actions} */
 export const actions = {
 	default: async ({ request }) => {
     // Initialise form data
