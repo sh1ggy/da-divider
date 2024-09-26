@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import type { Place } from '../../types/types';
 
 	export let data: { places: Place[] };
@@ -65,7 +66,7 @@
 						>
 						<td>
 							<div class="flex gap-3 items-center">
-								<button class="btn btn-sm text-xs variant-ghost-warning">edit</button>
+								<button on:click={() => goto(`/places/${place._id}`)} class="btn btn-sm text-xs variant-ghost-warning">edit</button>
 								<button
 									on:click={() => handleDeletePlace(place)}
 									class="btn btn-sm text-xs variant-ghost-error">delete</button
