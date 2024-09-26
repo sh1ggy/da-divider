@@ -22,7 +22,7 @@
 			.then((res) => res.json())
 			.then((data) => console.log(data));
 		// Match local state with deleted contact
-		contacts = contacts.filter((c) => c._id !== contact._id);
+		contacts = contacts.filter((c: Contact) => c._id !== contact._id);
 	};
 </script>
 

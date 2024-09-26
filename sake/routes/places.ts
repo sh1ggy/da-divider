@@ -41,7 +41,6 @@ placesRouter.post(
   async (req: Request, res: Response) => {
     const collection = db.collection(placesCollectionName);
     let placeToAdd: Place = req.body as Place;
-    placeToAdd.date = new Date(); // current date
     placeToAdd.itemAssignments = []; // empty array initialisation
 
     const result = await collection.insertOne(placeToAdd);
