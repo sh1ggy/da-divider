@@ -40,7 +40,7 @@
 					</div>
 					<div class="ml-auto gap-3">
 						<button
-							on:click={() => goto(`/places/${contact._id}`)}
+							on:click={() => goto(`/contacts/${contact._id}`)}
 							class="btn btn-sm text-xs variant-ghost-warning">edit</button
 						>
 						<button
