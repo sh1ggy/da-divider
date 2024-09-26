@@ -27,67 +27,54 @@
 </script>
 
 <div class="container h-full mx-auto gap-6 flex flex-col justify-center items-center">
-	<h2 class="h2 w-full variant-ghost-surface rounded-lg p-3 text-center">Places</h2>
-
 	<!-- Places Table -->
-	<div class="table-container">
-		<table class="table table-hover table-fixed">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Name</th>
-					<th>Date</th>
-					<th>Contacts</th>
-					<th>Items</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each places as place}
-					<tr>
-						<td class="align-middle">
-							<button
-								on:click={() => navigator.clipboard.writeText(place._id)}
-								class="code hover:cursor-pointer hover:scale-110 transition-all"
-								>{place._id.substring(0, 7)}...</button
-							>
-						</td>
-						<td class="align-middle">{place.name}</td>
-						<td class="align-middle">{new Date(place.date).toDateString()}</td>
-						<td class="align-middle"
-							><span class={`badge ${place.contacts ? 'variant-filled' : 'variant-filled-warning'}`}
-								>{place.contacts ? place.contacts.length : 'N/A'}</span
-							>
-						</td>
-						<td class="align-middle"
-							><span class={`badge ${place.items ? 'variant-filled' : 'variant-filled-warning'}`}
-								>{place.items ? place.items.length : 'N/A'}</span
-							></td
+	<div class="flex flex-col gap-3 items-center justify-center">
+		<h2 class="h2 w-full variant-ghost-surface rounded-lg p-3 text-center">Places</h2>
+		{#each places as place}
+			<div class="card w-full">
+				<header class="card-header flex gap-3">
+					<div class="flex flex-col">
+						<p>{new Date(place.date).toDateString()}</p>
+						{place.name}
+					</div>
+					<div class="ml-auto gap-3">
+						<button
+							on:click={() => goto(`/places/${place._id}`)}
+							class="btn btn-sm text-xs variant-ghost-warning">edit</button
 						>
-						<td>
-							<div class="flex gap-3 items-center">
-								<button on:click={() => goto(`/places/${place._id}`)} class="btn btn-sm text-xs variant-ghost-warning">edit</button>
-								<button
-									on:click={() => handleDeletePlace(place)}
-									class="btn btn-sm text-xs variant-ghost-error">delete</button
-								>
-							</div>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-			<tfoot>
-				<tr>
-					<td class="font-bold">Add Place</td>
-					<td colspan="5"
-						><form method="POST" class="grid columns-4 grid-flow-col gap-3">
-							<input name="name" type="text" placeholder="name" class="input" />
-							<input name="date" type="date" class="input" />
-							<button type="submit" class="w-full btn variant-filled-primary">Add Place</button>
-						</form></td
-					>
-				</tr>
-			</tfoot>
-		</table>
+						<button
+							on:click={() => handleDeletePlace(place)}
+							class="btn btn-sm text-xs variant-ghost-error">delete</button
+						>
+					</div>
+				</header>
+				<section>
+					<div class="flex flex-col lg:flex-row gap-6 items-center p-4">
+						<div class="flex gap-3">
+							<span class={`badge ${place.contacts ? 'variant-filled' : 'variant-filled-warning'}`}
+								>Contacts: {place.contacts ? place.contacts.length : 'N/A'}</span
+							>
+							<span class={`badge ${place.items ? 'variant-filled' : 'variant-filled-warning'}`}
+								>Items: {place.items ? place.items.length : 'N/A'}</span
+							>
+						</div>
+						<button
+							on:click={() => navigator.clipboard.writeText(place._id)}
+							class="code lg:ml-auto hover:cursor-pointer hover:scale-110 transition-all"
+							>{place._id}</button
+						>
+					</div>
+				</section>
+			</div>
+		{/each}
+		<!-- Add Place form -->
+		<div class="flex flex-col gap-3 rounded-lg badge-glass p-3 w-full">
+			<h3 class="h3 font-bold">Add Place</h3>
+			<form method="POST" class="flex flex-col lg:flex-row gap-3">
+				<input name="name" type="text" placeholder="name" class="input" />
+				<input name="date" type="date" class="input" />
+				<button type="submit" class="w-full btn variant-filled-primary">Add Place</button>
+			</form>
+		</div>
 	</div>
 </div>
