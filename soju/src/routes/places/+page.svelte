@@ -16,6 +16,7 @@
 			<thead>
 				<tr>
 					<th>ID</th>
+					<th>Name</th>
 					<th>Date</th>
 					<th>Contacts</th>
 					<th>Items</th>
@@ -25,14 +26,15 @@
 			<tbody>
 				{#each places as place}
 					<tr>
-						<td class="align-middle">
-							<button
-								on:click={() => navigator.clipboard.writeText(place._id)}
-								class="code hover:cursor-pointer hover:scale-110 transition-all"
-								>{place._id.substring(0, 7)}...</button
+            <td class="align-middle">
+              <button
+              on:click={() => navigator.clipboard.writeText(place._id)}
+              class="code hover:cursor-pointer hover:scale-110 transition-all"
+              >{place._id.substring(0, 7)}...</button
 							>
 						</td>
-						<td class="align-middle">{place.date}</td>
+            <td class="align-middle">{place.name}</td>
+						<td class="align-middle">{(new Date(place.date)).toDateString()}</td>
 						<td class="align-middle"
 							><span class="badge variant-filled">{place.contacts.length}</span>
 						</td>

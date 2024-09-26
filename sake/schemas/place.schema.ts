@@ -5,8 +5,9 @@ import { createItemAssignmentSchema, createItemSchema } from "./item.schema";
 export const createPlaceSchema = z
   .object({
     date: z.coerce.date(),
+    name: z.string(),
     items: z.array(createItemSchema).optional(),
-    contacts: z.array(createPlaceContactSchema),
+    contacts: z.array(createPlaceContactSchema).optional(),
     groupName: z.string().min(2),
     itemAssignments: z.array(createItemAssignmentSchema).optional(),
   })

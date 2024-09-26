@@ -13,6 +13,7 @@ export interface Contact {
 
 export interface Place {
 	_id: string;
+	name: string;
 	date: Date;
 	items: Item[];
 	contacts: PlaceContact[];
