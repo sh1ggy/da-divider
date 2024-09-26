@@ -27,15 +27,15 @@
 </script>
 
 <div class="container h-full mx-auto gap-6 flex flex-col justify-center items-center">
-	<!-- Places Table -->
+	<!-- Places Cards -->
 	<div class="flex flex-col gap-3 items-center justify-center">
 		<h2 class="h2 w-full variant-ghost-surface rounded-lg p-3 text-center">Places</h2>
 		{#each places as place}
 			<div class="card w-full">
 				<header class="card-header flex gap-3">
 					<div class="flex flex-col">
-						<p>{new Date(place.date).toDateString()}</p>
-						{place.name}
+						<p class="font-bold">{new Date(place.date).toDateString()}</p>
+						<p>{place.name}</p>
 					</div>
 					<div class="ml-auto gap-3">
 						<button
