@@ -5,17 +5,17 @@ import { Place, PlaceContact } from "../models/Place";
 import { validateSchema } from "../middlewares/validation.middleware";
 import { createPlaceSchema, updatePlaceSchema } from "../schemas/place.schema";
 import { Item, ItemAssignment } from "../models/Item";
-import {
-  createItemAssignmentSchema,
-} from "../schemas/item.schema";
+import { createItemAssignmentSchema } from "../schemas/item.schema";
 
 export const placesCollectionName = "places";
 const placesRouter = express.Router();
 
-// GET - all Places
-placesRouter.get("/", async (_, res: Response) => {
+// GET - all Places for a group
+placesRouter.get("/", async (req: Request, res: Response) => {
+  const groupName = req.query.groupName;
   const collection = db.collection(placesCollectionName);
-  const places = await collection.find({}).toArray();
+  const query = { groupName: groupName };
+  const places = await collection.find(query).toArray();
 
   // Error handling & early returns
   if (!places) return res.sendStatus(500);
@@ -41,7 +41,6 @@ placesRouter.post(
   async (req: Request, res: Response) => {
     const collection = db.collection(placesCollectionName);
     let placeToAdd: Place = req.body as Place;
-    placeToAdd.date = new Date(); // current date
     placeToAdd.itemAssignments = []; // empty array initialisation
 
     const result = await collection.insertOne(placeToAdd);

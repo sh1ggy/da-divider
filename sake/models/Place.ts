@@ -3,6 +3,7 @@ import { Item, ItemAssignment } from "./Item";
 
 export interface Place extends WithId<Document> {
   date: Date;
+  name: string;
   items: Item[];
   contacts: PlaceContact[];
   groupName: string;
