@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import type { Contact } from '../../types/types';
 
-  // Variable initialisation
+	// Variable initialisation
 	const groupId = '66a80e0c312e1ebdd11ed13f';
 	export let data: { contacts: Contact[] };
 	let contacts = data.contacts; // Contact for state
 
-  // Handler method for deleting Contact
+	// Handler method for deleting Contact
 	const handleDeleteContact = async (contact: Contact) => {
 		// Fetch initialisation
 		const url = `http://localhost:3000/groups/${groupId}/contact/${contact._id}`;
@@ -25,8 +26,8 @@
 	};
 </script>
 
-<div class="container h-full mx-auto flex flex-col justify-center items-center">
-	<h1 class="h1">Contacts</h1>
+<div class="container h-full mx-auto gap-6 flex flex-col justify-center items-center">
+	<h2 class="h2 w-full variant-ghost-surface rounded-lg p-3 text-center">Contacts</h2>
 
 	<!-- Contact Table -->
 	<div class="table-container">
@@ -50,15 +51,18 @@
 								>{contact._id.substring(0, 7)}...</button
 							>
 						</td>
-						<td><p>{contact.name}</p></td>
-						<td>{contact.email}</td>
-						<td>{contact.mobile}</td>
+						<td class="align-middle"><p>{contact.name}</p></td>
+						<td class="align-middle">{contact.email}</td>
+						<td class="align-middle">{contact.mobile}</td>
 						<td>
-							<div class="flex gap-3">
-								<button class="btn btn-sm variant-ghost-warning">edit</button>
+							<div class="flex gap-3 items-center">
+								<button
+									on:click={() => goto(`/contacts/${contact._id}`)}
+									class="btn btn-sm text-xs variant-ghost-warning">edit</button
+								>
 								<button
 									on:click={() => handleDeleteContact(contact)}
-									class="btn btn-sm variant-ghost-error">delete</button
+									class="btn btn-sm text-xs variant-ghost-error">delete</button
 								>
 							</div>
 						</td>

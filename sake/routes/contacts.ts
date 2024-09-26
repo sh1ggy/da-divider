@@ -33,6 +33,33 @@ contactsRouter.get(
   }
 );
 
+// GET - Contact by ID for group
+contactsRouter.get(
+  "/:groupId/contact/:contactId",
+  async (req: Request, res: Response) => {
+    const collection = db.collection(groupsCollectionName);
+    const { groupId, contactId } = req.params;
+    const query = { _id: new ObjectId(groupId) };
+
+    // Find group
+    const group: Group | undefined = (await collection.findOne(query)) as Group;
+    if (!group) return res.sendStatus(404);
+
+    // Perform contact transaction
+    const contacts: Contact[] = group.contacts;
+    if (!contacts) return res.sendStatus(500);
+    if (contacts.length === 0) return res.send(group).status(404);
+
+    const contact: Contact | undefined = contacts.find(
+      (c: Contact) => c._id.toString() === contactId
+    );
+    
+    if (!contact) return res.sendStatus(404);
+
+    res.send(contact).status(200);
+  }
+);
+
 // POST - add new Contact to Group
 contactsRouter.post(
   "/:groupId/contact",
