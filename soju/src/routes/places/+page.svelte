@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { clipboard } from '@skeletonlabs/skeleton';
 	import type { Place } from '../../types/types';
 
 	export let data: { places: Place[] };
@@ -59,7 +60,7 @@
 							>
 						</div>
 						<button
-							on:click={() => navigator.clipboard.writeText(place._id)}
+							use:clipboard={place._id}
 							class="code lg:ml-auto hover:cursor-pointer hover:scale-110 transition-all"
 							>{place._id}</button
 						>

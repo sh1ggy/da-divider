@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { clipboard } from '@skeletonlabs/skeleton';
 	import type { Contact } from '../../types/types';
 
 	// Variable initialisation
@@ -52,7 +53,7 @@
 				<section>
 					<div class="flex flex-col lg:flex-row gap-6 items-center p-4">
 						<button
-							on:click={() => navigator.clipboard.writeText(contact._id)}
+						  use:clipboard={contact._id}
 							class="code hover:cursor-pointer hover:scale-110 transition-all"
 							>{contact._id}</button
 						>
