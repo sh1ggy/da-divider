@@ -2,14 +2,20 @@
 	import { goto } from '$app/navigation';
 	import type { Contact } from '../../types/types';
 	import { enhance } from '$app/forms';
-	import { addContactMsg, deleteContactMsg } from '$lib';
+	import { addContactMsg, deleteContactMsg, formMissingErrorMsg } from '$lib';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import Icon from '@iconify/svelte';
+	import type { ActionData } from './$types';
 
 	// Variable initialisation
 	const toastStore = getToastStore();
+	
 	export let data: { contacts: Contact[]; title: string };
+	// Trigger toast if there's something missing from the form. 
+	export let form: ActionData;
+	$: if (form?.missing)
+		toastStore.trigger({ message: formMissingErrorMsg, background: 'variant-filled-error' });
 
 	$: contacts = data.contacts; // Contacts for reactive state
 
@@ -41,8 +47,8 @@
 				<header class="card-header flex gap-3">
 					<div class="flex flex-col">
 						<h4 class="h4">{contact.name}</h4>
-						<p>{contact.email}</p>
-						<p>{contact.mobile}</p>
+						<p class="flex items-center gap-1"><Icon icon="akar-icons:inbox" />{contact.email}</p>
+						<p class="flex items-center gap-1"><Icon icon="akar-icons:phone" />{contact.mobile}</p>
 					</div>
 				</header>
 				<section class="flex justify-center items-center card-footer gap-1">

@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { Accordion, AccordionItem, clipboard } from '@skeletonlabs/skeleton';
 	import type { Item, Place, PlaceContact } from '../../../types/types.js';
+	import Icon from '@iconify/svelte';
 
 	export let data: {
 		title: string;
@@ -23,7 +24,7 @@
 
 <div class="container h-full mx-auto flex flex-col gap-6 justify-center items-center">
 	<button on:click={() => goto('/places')} class="btn variant-soft-primary">Back to Places</button>
-	<div class="flex flex-col items-center gap-6 rounded-lg bg-slate-800 p-12">
+	<div class="flex flex-col items-center gap-6 rounded-lg bg-slate-800 p-12 w-full">
 		{#if place !== undefined}
 			<form
 				action="?/editPlace"
@@ -45,7 +46,7 @@
 						<span class="chip variant-glass-surface">{contact.name}</span>
 					{/each}
 				</div>
-				<button type="submit" class="btn variant-glass-primary w-full">Submit</button>
+				<button type="submit" class="btn variant-glass-primary">Submit</button>
 			</form>
 
 			<Accordion>
@@ -62,8 +63,12 @@
 											<p class="ml-auto badge mb-auto variant-soft-primary">${item.price}</p>
 										</div>
 										<div class="flex gap-1 mt-auto">
-											<button class="btn btn-sm text-xs variant-ghost-warning">edit</button>
-											<button class="btn btn-sm text-xs variant-ghost-error">delete</button>
+											<button class="btn-sm btn-icon text-md variant-filled-warning"
+												><Icon icon="akar-icons:pencil" /></button
+											>
+											<button class="btn-sm btn-icon text-md variant-filled-error"
+												><Icon icon="akar-icons:trash-bin" /></button
+											>
 										</div>
 									</div>
 								{/each}

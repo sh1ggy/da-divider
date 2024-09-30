@@ -45,7 +45,7 @@
 		>Back to Contacts</button
 	>
 	{#if contact !== undefined}
-		<form method="POST" class="flex flex-col items-center gap-6 rounded-lg bg-slate-800 p-12">
+		<form method="POST" class="flex flex-col items-center gap-6 rounded-lg w-full bg-slate-800 p-12">
 			<label class="label">
 				Name
 				<input
@@ -73,7 +73,7 @@
 					class="input text-sm variant-form-material"
 				/>
 			</label>
-			<button type="submit" class="btn variant-glass-primary w-full">Submit</button>
+			<button type="submit" class="btn variant-glass-primary">Submit</button>
 			<code
 				use:clipboard={contact._id}
 				class="code hover:scale-110 transition-transform hover:cursor-pointer">{contact._id}</code

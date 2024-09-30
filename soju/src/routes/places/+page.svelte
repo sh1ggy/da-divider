@@ -3,14 +3,18 @@
 	import Icon from '@iconify/svelte';
 	import type { Place } from '../../types/types';
 	import { enhance } from '$app/forms';
-	import { addPlaceMsg, deletePlaceMsg } from '$lib';
+	import { addPlaceMsg, deletePlaceMsg, formMissingErrorMsg } from '$lib';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import type { ActionData } from './$types';
 
 	const toastStore = getToastStore();
 	export let data: { places: Place[] };
+	export let form: ActionData;
 
 	$: places = data.places; // Places for reactive state
+	$: if (form?.missing)
+		toastStore.trigger({ message: formMissingErrorMsg, background: 'variant-filled-error' });
 
 	// Handler (progressive enhancement) for adding a contact
 	const handleSubmitAddPlace: SubmitFunction = () => {
@@ -39,7 +43,10 @@
 			<div class="card w-full gap-3 flex flex-col">
 				<header class="card-header flex">
 					<div class="flex flex-col gap-1">
-						<p class="font-bold">{new Date(place.date).toDateString()}</p>
+						<p class="font-bold flex gap-1 items-center">
+							<Icon icon="akar-icons:calendar" />
+							{new Date(place.date).toDateString()}
+						</p>
 						<p>{place.name}</p>
 					</div>
 					<div class="ml-auto flex flex-col gap-1">
@@ -97,7 +104,12 @@
 		<!-- Add Place form -->
 		<div class="lg:col-span-2 flex flex-col gap-3 rounded-lg badge-glass p-3 w-full">
 			<h3 class="h3 font-bold">Add Place</h3>
-			<form action="?/add" method="POST" use:enhance={handleSubmitAddPlace} class="flex flex-col lg:flex-row gap-3">
+			<form
+				action="?/add"
+				method="POST"
+				use:enhance={handleSubmitAddPlace}
+				class="flex flex-col lg:flex-row gap-3"
+			>
 				<input name="name" type="text" placeholder="name" class="input" />
 				<input name="date" type="date" class="input" />
 				<button type="submit" class="w-full btn variant-soft-primary"
