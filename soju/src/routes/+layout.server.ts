@@ -14,5 +14,5 @@ export async function load({ params }) {
 		});
     
 	if (!groups) return;
-	return { group: groups[0] };
+	return { title: 'Home', group: groups[0] };
 }

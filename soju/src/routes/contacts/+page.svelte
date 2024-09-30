@@ -2,10 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { clipboard } from '@skeletonlabs/skeleton';
 	import type { Contact } from '../../types/types';
+	import { applyAction, enhance } from '$app/forms';
+	import { groupId } from '$lib';
 
 	// Variable initialisation
-	const groupId = '66a80e0c312e1ebdd11ed13f';
-	export let data: { contacts: Contact[] };
+	export let data: { contacts: Contact[], title: string };
 	let contacts = data.contacts; // Contact for state
 
 	// Handler method for deleting Contact
@@ -30,7 +31,6 @@
 <div class="container h-full mx-auto gap-6 flex flex-col justify-center items-center">
 	<!-- Contact Cards -->
 	<div class="flex flex-col gap-3 items-center justify-center">
-		<h2 class="h2 w-full variant-ghost-surface rounded-lg p-3 text-center">Contacts</h2>
 		{#each contacts as contact}
 			<div class="card w-full">
 				<header class="card-header flex gap-3">
@@ -53,9 +53,8 @@
 				<section>
 					<div class="flex flex-col lg:flex-row gap-6 items-center p-4">
 						<button
-						  use:clipboard={contact._id}
-							class="code hover:cursor-pointer hover:scale-110 transition-all"
-							>{contact._id}</button
+							use:clipboard={contact._id}
+							class="code hover:cursor-pointer hover:scale-110 transition-all">{contact._id}</button
 						>
 					</div>
 				</section>
@@ -65,7 +64,18 @@
 		<!-- Add Contact form -->
 		<div class="flex flex-col gap-3 rounded-lg badge-glass p-3 w-full">
 			<h3 class="font-bold h3">Add Contact</h3>
-			<form method="POST" class="flex flex-col lg:flex-row gap-3">
+			<form
+				method="POST"
+				use:enhance={({}) => {
+					return async ({ result }) => {
+						console.log(result);
+						
+						await applyAction(result);
+
+					};
+				}}
+				class="flex flex-col lg:flex-row gap-3"
+			>
 				<input name="name" type="text" placeholder="name" class="input" />
 				<input name="email" type="email" placeholder="email" class="input" />
 				<input name="mobile" type="tel" placeholder="mobile" class="input" />
@@ -74,3 +84,4 @@
 		</div>
 	</div>
 </div>
+

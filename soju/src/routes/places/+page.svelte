@@ -30,7 +30,6 @@
 <div class="container h-full mx-auto gap-6 flex flex-col justify-center items-center">
 	<!-- Places Cards -->
 	<div class="flex flex-col gap-3 items-center justify-center">
-		<h2 class="h2 w-full variant-ghost-surface rounded-lg p-3 text-center">Places</h2>
 		{#each places as place}
 			<div class="card w-full">
 				<header class="card-header flex gap-3">

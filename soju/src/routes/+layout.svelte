@@ -1,20 +1,24 @@
 <script lang="ts">
 	import '../app.postcss';
-
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup, AppBar } from '@skeletonlabs/skeleton';
-	import { initializeStores, Drawer } from '@skeletonlabs/skeleton';
+	import { initializeStores, Drawer, Toast } from '@skeletonlabs/skeleton';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import type { Group } from '../types/types';
+	import { page } from '$app/stores';
+
 
 	initializeStores();
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	const drawerStore = getDrawerStore();
-	export let data: { group: Group };
+	export const data: { group: Group } | undefined = undefined;
+	
 </script>
+
+<Toast />
 
 <Drawer>
 	<div class="flex flex-col">
@@ -34,9 +38,10 @@
 			>menu</button
 		></svelte:fragment
 	>
-	<code class="code">{data.group.name}</code>
+	<h2 class="h2">{$page.data.title}</h2>
 	<svelte:fragment slot="trail"><p>divi/dr</p></svelte:fragment>
 </AppBar>
-<div class="p-12">
+
+<div class="lg:p-12">
 	<slot />
 </div>

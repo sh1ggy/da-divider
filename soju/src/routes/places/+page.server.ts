@@ -19,7 +19,7 @@ export async function load() {
 		});
 
 	if (!places) return;
-	return { places: places };
+	return { title: 'Places', places: places };
 }
 
 /** @type {import('./$types').Actions} */

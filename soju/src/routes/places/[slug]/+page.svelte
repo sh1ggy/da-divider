@@ -3,13 +3,17 @@
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import type { Item, Place, PlaceContact } from '../../../types/types.js';
 
-	const groupId = '66a80e0c312e1ebdd11ed13f';
-
-	export let data;
+	export let data: {
+		title: string;
+		place: Place | undefined;
+		items: Item[];
+		contacts: PlaceContact[];
+	};
 
 	let place: Place;
 	let contacts: PlaceContact[];
 	let items: Item[];
+
 	if (data.place) {
 		place = data.place;
 		items = place.items;
@@ -26,11 +30,11 @@
 				method="POST"
 				class="flex flex-col items-center gap-6 rounded-lg bg-slate-800"
 			>
-				<h3 class="mr-auto ml-auto h3">Edit Place</h3>
 				<code class="code">{place._id}</code>
 				<label class="label">
 					Name
 					<input
+						required
 						name="name"
 						type="text"
 						placeholder={place.name}
@@ -50,7 +54,7 @@
 					<!-- <svelte:fragment slot="lead">(icon)</svelte:fragment> -->
 					<svelte:fragment slot="summary"><h4 class="h4">Items</h4></svelte:fragment>
 					<svelte:fragment slot="content">
-						<div class="grid grid-cols-2 gap-3">
+						<div class="grid lg:grid-cols-2 gap-3">
 							{#if items !== undefined}
 								{#each items as item}
 									<div class="card p-4 gap-3 flex flex-col">
@@ -65,12 +69,12 @@
 									</div>
 								{/each}
 							{/if}
-							<div class="col-span-2 gap-3 grid rounded-lg badge-glass p-3">
+							<div class="lg:col-span-2 gap-3 grid rounded-lg badge-glass p-3">
 								<h5 class="font-bold h5">Add Item</h5>
 								<form action="?/addItem" method="POST" class="flex flex-col gap-3">
 									<input required name="name" type="text" placeholder="name" class="input" />
 									<input required name="price" type="number" placeholder="price" class="input" />
-									<button type="submit" class="w-full text-sm btn variant-filled-primary"
+									<button type="submit" class="w-full text-sm btn variant-soft-primary"
 										>Add Item</button
 									>
 								</form>

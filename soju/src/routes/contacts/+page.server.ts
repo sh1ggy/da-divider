@@ -1,6 +1,5 @@
+import { groupId } from '$lib';
 import type { Contact } from '../../types/types.js';
-
-const groupId = '66a80e0c312e1ebdd11ed13f';
 
 /** @type {import('./$types').PageLoad} */
 export async function load() {
@@ -19,7 +18,8 @@ export async function load() {
 		});
 
 	if (!contacts) return;
-	return { contacts: contacts };
+
+	return { contacts: contacts, title: 'Contacts' };
 }
 
 /** @type {import('./$types').Actions} */

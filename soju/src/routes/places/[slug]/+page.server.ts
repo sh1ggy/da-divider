@@ -1,6 +1,5 @@
+import { groupId } from '$lib';
 import type { Item, Place, PlaceContact } from '../../../types/types.js';
-
-const groupId = '66a80e0c312e1ebdd11ed13f';
 
 /** @type {import('./$types').PageLoad} */
 export const load = async ({ params }) => {
@@ -26,6 +25,7 @@ export const load = async ({ params }) => {
 		.then((data) => (contacts = data));
 
 	return {
+		title: 'Edit Place',
 		contacts: contacts,
 		place: place
 	};
@@ -39,7 +39,6 @@ export const actions = {
 	addItem: async ({ params, request }) => {
 		// Initialise form data
 		const formData = await request.formData();
-
 		const item: Item = {
 			name: formData.get('name'),
 			price: parseInt(formData.get('price')!.toString())

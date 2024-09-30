@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { deleteContactMsg, groupId } from '$lib';
 	import type { Contact } from '../../../types/types.js';
+	import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 
-	const groupId = '66a80e0c312e1ebdd11ed13f';
+	const toastStore = getToastStore();
 
 	export let data;
 	let contact: Contact;
@@ -19,10 +21,21 @@
 				'Content-Type': 'application/json'
 			}
 		};
+		const t: ToastSettings = {
+			message: deleteContactMsg, 
+			background: 'variant-soft-primary'
+		};
+
 		// Commence fetch operation
 		await fetch(url, options)
-			.then((res) => res.json())
+			.then((res) => {
+				if (res.ok) {
+					toastStore.trigger(t);
+				}
+				return res.json();
+			})
 			.then((data) => console.log(data));
+
 		goto('/contacts');
 	};
 </script>

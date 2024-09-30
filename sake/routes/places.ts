@@ -52,6 +52,7 @@ placesRouter.post(
 );
 
 // PUT - edit Place
+// TODO fix this edit to detect partial
 placesRouter.put(
   "/:id",
   validateSchema(updatePlaceSchema),

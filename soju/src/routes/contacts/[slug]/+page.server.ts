@@ -1,8 +1,6 @@
-import { goto } from '$app/navigation';
 import { redirect } from '@sveltejs/kit';
 import type { Contact } from '../../../types/types';
-
-const groupId = '66a80e0c312e1ebdd11ed13f';
+import { groupId } from '$lib';
 
 /** @type {import('./$types').PageLoad} */
 export const load = async ({ params }) => {
@@ -19,6 +17,7 @@ export const load = async ({ params }) => {
 		.then((data) => (contact = data));
 
 	return {
+		title: 'Edit Contact',
 		contact: contact
 	};
 };
