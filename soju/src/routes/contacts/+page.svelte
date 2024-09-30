@@ -4,15 +4,15 @@
 	import { enhance } from '$app/forms';
 	import { addContactMsg, deleteContactMsg, formMissingErrorMsg } from '$lib';
 	import { getToastStore } from '@skeletonlabs/skeleton';
-	import type { SubmitFunction } from '@sveltejs/kit';
+	import type { ActionResult, SubmitFunction } from '@sveltejs/kit';
 	import Icon from '@iconify/svelte';
 	import type { ActionData } from './$types';
 
 	// Variable initialisation
 	const toastStore = getToastStore();
-	
+
 	export let data: { contacts: Contact[]; title: string };
-	// Trigger toast if there's something missing from the form. 
+	// Trigger toast if there's something missing from the form.
 	export let form: ActionData;
 	$: if (form?.missing)
 		toastStore.trigger({ message: formMissingErrorMsg, background: 'variant-filled-error' });
@@ -22,13 +22,20 @@
 	// Handler (progressive enhancement) for adding a contact
 	const handleSubmitAddContact: SubmitFunction = () => {
 		return async ({ result, update }) => {
-			const t = {
-				message: addContactMsg,
-				background: 'variant-filled-primary'
-			};
-
+			let t;
 			switch (result.type) {
 				case 'success':
+					t = {
+						message: addContactMsg,
+						background: 'variant-filled-primary'
+					};
+					toastStore.trigger(t);
+					break;
+				case 'failure':
+					t = {
+						message: `${result.status} - ${result.data?.errMsg}`,
+						background: 'variant-filled-error'
+					};
 					toastStore.trigger(t);
 					break;
 				default:
@@ -74,6 +81,8 @@
 										toastStore.trigger(t);
 										// Match local state with deleted contact
 										contacts = contacts.filter((c) => c._id !== contact._id);
+										break;
+									case 'failure':
 										break;
 									default:
 										break;

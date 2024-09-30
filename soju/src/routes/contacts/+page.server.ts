@@ -1,5 +1,5 @@
 import { groupId } from '$lib';
-import { fail } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import type { Contact } from '../../types/types.js';
 
 /** @type {import('./$types').PageLoad} */
@@ -25,6 +25,55 @@ export async function load() {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
+	add: async ({ request }) => {
+		// Initialise form data
+		const formData = await request.formData();
+		const name = formData.get('name');
+		const email = formData.get('email');
+		const mobile = formData.get('mobile');
+
+		if (!email || !mobile || !email) {
+			return fail(400, { missing: true });
+		}
+
+		const contact = {
+			name: name,
+			email: email,
+			mobile: mobile
+		} as Contact;
+
+		// fetch params initialisation
+		const body = JSON.stringify(contact);
+		const options = {
+			method: 'POST',
+			body: body,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+		const url = `http://localhost:3000/groups/${groupId}/contact`;
+		let errFlag = false;
+
+		// Commence fetch operation
+		const response = await fetch(url, options)
+			.then(async (res) => {
+				if (!res.ok) {
+					throw { msg: JSON.parse(await res.text()).message, status: res.status };
+				}
+				return res.json();
+			})
+			.then((data) => {
+				return data;
+			})
+			.catch(async (e) => {
+				errFlag = true;
+				return new Response(e.msg, { status: e.status });
+			});
+
+		if (!response) return;
+		if (errFlag) return fail(response.status, { errMsg: await response.text() });
+		return { response: response };
+	},
 	delete: async ({ request }) => {
 		const formData = await request.formData();
 		const contactId = formData.get('contactId');
@@ -41,47 +90,5 @@ export const actions = {
 		await fetch(url, options)
 			.then((res) => res.json())
 			.then((data) => console.log(data));
-	},
-	add: async ({ request }) => {
-		// Initialise form data
-		const formData = await request.formData();
-		const name = formData.get('name');
-		const email = formData.get('email');
-		const mobile= formData.get('mobile');
-		
-		if (!email || !mobile || !email) {
-			return fail(400, { missing: true });
-		}
-		
-		const contact = {
-			name: name, 
-			email: email,
-			mobile: mobile,
-		} as Contact;
-
-		// fetch params initialisation
-		const body = JSON.stringify(contact);
-		const options = {
-			method: 'POST',
-			body: body,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		};
-		const url = `http://localhost:3000/groups/${groupId}/contact`;
-
-		let response = undefined;
-
-		// Commence fetch operation
-		await fetch(url, options)
-			.then((res) => {
-				return res.json();
-			})
-			.then((data) => {
-				response = data;
-			});
-
-		if (!response) return;
-		return { response: response };
 	}
 };
