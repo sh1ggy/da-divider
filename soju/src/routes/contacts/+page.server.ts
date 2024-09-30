@@ -8,7 +8,7 @@ export async function load() {
 	const options = { method: 'GET' };
 	const url = `http://localhost:3000/groups/${groupId}/contacts`;
 
-  // Fetching GET all Contacts for Group
+	// Fetching GET all Contacts for Group
 	await fetch(url, options)
 		.then((res) => {
 			return res.json();
@@ -24,8 +24,25 @@ export async function load() {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-	default: async ({ request }) => {
-    // Initialise form data
+	delete: async ({ request }) => {
+		const formData = await request.formData();
+		const contactId = formData.get('contactId');
+		// Fetch initialisation
+		const url = `http://localhost:3000/groups/${groupId}/contact/${contactId}`;
+		const options = {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+
+		// Commence fetch operation
+		await fetch(url, options)
+			.then((res) => res.json())
+			.then((data) => console.log(data));
+	},
+	add: async ({ request }) => {
+		// Initialise form data
 		const formData = await request.formData();
 		const contact = {
 			name: formData.get('name'),
@@ -33,7 +50,7 @@ export const actions = {
 			mobile: formData.get('mobile')
 		} as Contact;
 
-    // fetch params initialisation
+		// fetch params initialisation
 		const body = JSON.stringify(contact);
 		const options = {
 			method: 'POST',
@@ -46,7 +63,7 @@ export const actions = {
 
 		let response = undefined;
 
-    // Commence fetch operation
+		// Commence fetch operation
 		await fetch(url, options)
 			.then((res) => {
 				return res.json();

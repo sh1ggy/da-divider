@@ -1,87 +1,107 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { clipboard } from '@skeletonlabs/skeleton';
 	import type { Contact } from '../../types/types';
-	import { applyAction, enhance } from '$app/forms';
-	import { groupId } from '$lib';
+	import { enhance } from '$app/forms';
+	import { addContactMsg, deleteContactMsg } from '$lib';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	import type { SubmitFunction } from '@sveltejs/kit';
+	import Icon from '@iconify/svelte';
 
 	// Variable initialisation
-	export let data: { contacts: Contact[], title: string };
-	let contacts = data.contacts; // Contact for state
+	const toastStore = getToastStore();
+	export let data: { contacts: Contact[]; title: string };
 
-	// Handler method for deleting Contact
-	const handleDeleteContact = async (contact: Contact) => {
-		// Fetch initialisation
-		const url = `http://localhost:3000/groups/${groupId}/contact/${contact._id}`;
-		const options = {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json'
+	$: contacts = data.contacts; // Contacts for reactive state
+
+	// Handler (progressive enhancement) for adding a contact
+	const handleSubmitAddContact: SubmitFunction = () => {
+		return async ({ result, update }) => {
+			const t = {
+				message: addContactMsg,
+				background: 'variant-filled-primary'
+			};
+
+			switch (result.type) {
+				case 'success':
+					toastStore.trigger(t);
+					break;
+				default:
+					break;
 			}
+			await update();
 		};
-		// Commence fetch operation
-		await fetch(url, options)
-			.then((res) => res.json())
-			.then((data) => console.log(data));
-		// Match local state with deleted contact
-		contacts = contacts.filter((c: Contact) => c._id !== contact._id);
 	};
 </script>
 
 <div class="container h-full mx-auto gap-6 flex flex-col justify-center items-center">
 	<!-- Contact Cards -->
-	<div class="flex flex-col gap-3 items-center justify-center">
+	<div class="grid lg:grid-cols-2 grid-cols-1 w-full gap-3 items-center justify-center">
 		{#each contacts as contact}
-			<div class="card w-full">
+			<div class="card w-full gap-3 flex flex-col">
 				<header class="card-header flex gap-3">
 					<div class="flex flex-col">
 						<h4 class="h4">{contact.name}</h4>
 						<p>{contact.email}</p>
 						<p>{contact.mobile}</p>
 					</div>
-					<div class="ml-auto gap-3">
-						<button
-							on:click={() => goto(`/contacts/${contact._id}`)}
-							class="btn btn-sm text-xs variant-ghost-warning">edit</button
-						>
-						<button
-							on:click={() => handleDeleteContact(contact)}
-							class="btn btn-sm text-xs variant-ghost-error">delete</button
-						>
-					</div>
 				</header>
-				<section>
-					<div class="flex flex-col lg:flex-row gap-6 items-center p-4">
-						<button
-							use:clipboard={contact._id}
-							class="code hover:cursor-pointer hover:scale-110 transition-all">{contact._id}</button
+				<section class="flex justify-center items-center card-footer gap-1">
+					<button
+						on:click={() => goto(`/contacts/${contact._id}`)}
+						class="btn btn-sm variant-filled-warning"
+						><span><Icon icon="akar-icons:edit" /></span>
+						<span>Edit</span>
+					</button>
+					<form
+						action="?/delete"
+						method="POST"
+						use:enhance={({ formData }) => {
+							formData.set('contactId', contact._id);
+
+							return async ({ result, update }) => {
+								const t = {
+									message: `${deleteContactMsg} "${contact.name}"`,
+									background: 'variant-filled-primary'
+								};
+								switch (result.type) {
+									case 'success':
+										toastStore.trigger(t);
+										// Match local state with deleted contact
+										contacts = contacts.filter((c) => c._id !== contact._id);
+										break;
+									default:
+										break;
+								}
+								await update();
+							};
+						}}
+					>
+						<button class="btn btn-sm variant-filled-error"
+							><span><Icon icon="akar-icons:trash-bin" /></span>
+							<span>Delete</span></button
 						>
-					</div>
+					</form>
 				</section>
 			</div>
 		{/each}
 
 		<!-- Add Contact form -->
-		<div class="flex flex-col gap-3 rounded-lg badge-glass p-3 w-full">
+		<div class="lg:col-span-2 flex flex-col gap-3 rounded-lg badge-glass p-3 w-full">
 			<h3 class="font-bold h3">Add Contact</h3>
 			<form
 				method="POST"
-				use:enhance={({}) => {
-					return async ({ result }) => {
-						console.log(result);
-						
-						await applyAction(result);
-
-					};
-				}}
+				action="?/add"
+				use:enhance={handleSubmitAddContact}
 				class="flex flex-col lg:flex-row gap-3"
 			>
 				<input name="name" type="text" placeholder="name" class="input" />
 				<input name="email" type="email" placeholder="email" class="input" />
 				<input name="mobile" type="tel" placeholder="mobile" class="input" />
-				<button type="submit" class="w-full btn variant-filled-primary">Add Contact</button>
+				<button type="submit" class="w-full btn variant-soft-primary"
+					><span><Icon icon="akar-icons:person-add" /></span>
+					<span>Add Contact</span></button
+				>
 			</form>
 		</div>
 	</div>
 </div>
-

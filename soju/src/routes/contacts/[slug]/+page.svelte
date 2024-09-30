@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { deleteContactMsg, groupId } from '$lib';
 	import type { Contact } from '../../../types/types.js';
-	import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+	import { clipboard, getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 
 	const toastStore = getToastStore();
 
@@ -22,7 +22,7 @@
 			}
 		};
 		const t: ToastSettings = {
-			message: deleteContactMsg, 
+			message: deleteContactMsg,
 			background: 'variant-soft-primary'
 		};
 
@@ -46,7 +46,6 @@
 	>
 	{#if contact !== undefined}
 		<form method="POST" class="flex flex-col items-center gap-6 rounded-lg bg-slate-800 p-12">
-			<h1 class="mr-auto ml-auto">Edit Contact</h1>
 			<label class="label">
 				Name
 				<input
@@ -75,7 +74,10 @@
 				/>
 			</label>
 			<button type="submit" class="btn variant-glass-primary w-full">Submit</button>
-			<code class="code">{contact._id}</code>
+			<code
+				use:clipboard={contact._id}
+				class="code hover:scale-110 transition-transform hover:cursor-pointer">{contact._id}</code
+			>
 		</form>
 	{/if}
 	<button on:click={() => handleDeleteContact()} class="btn variant-filled-error"

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
+	import { Accordion, AccordionItem, clipboard } from '@skeletonlabs/skeleton';
 	import type { Item, Place, PlaceContact } from '../../../types/types.js';
 
 	export let data: {
@@ -30,7 +30,6 @@
 				method="POST"
 				class="flex flex-col items-center gap-6 rounded-lg bg-slate-800"
 			>
-				<code class="code">{place._id}</code>
 				<label class="label">
 					Name
 					<input
@@ -84,6 +83,10 @@
 				</AccordionItem>
 			</Accordion>
 		{/if}
+		<code
+			use:clipboard={place._id}
+			class="code hover:scale-110 hover:cursor-pointer transition-transform">{place._id}</code
+		>
 	</div>
 	<button on:click={() => console.log('delete')} class="btn variant-filled-error"
 		>Delete Place</button

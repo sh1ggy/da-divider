@@ -24,7 +24,24 @@ export async function load() {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-	default: async ({ request }) => {
+	delete: async ({ request }) => {
+		const formData = await request.formData();
+		const placeId = formData.get('placeId');
+
+		// Fetch initialisation
+		const url = `http://localhost:3000/places/${placeId}`;
+		const options = {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+		// Commence fetch operation
+		await fetch(url, options)
+			.then((res) => res.json())
+			.then((data) => console.log(data));
+	},
+	add: async ({ request }) => {
 		// Initialise form data
 		const formData = await request.formData();
 		const place = {

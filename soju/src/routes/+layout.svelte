@@ -7,7 +7,7 @@
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import type { Group } from '../types/types';
 	import { page } from '$app/stores';
-
+	import Icon from '@iconify/svelte';
 
 	initializeStores();
 
@@ -15,19 +15,26 @@
 
 	const drawerStore = getDrawerStore();
 	export const data: { group: Group } | undefined = undefined;
-	
 </script>
 
 <Toast />
 
 <Drawer>
 	<div class="flex flex-col">
-		<a on:click={() => drawerStore.close()} class="block card card-hover p-4" href="/">Home</a>
-		<a on:click={() => drawerStore.close()} class="block card card-hover p-4" href="/contacts"
-			>Contacts</a
+		<a
+			on:click={() => drawerStore.close()}
+			class="flex items-center gap-3 card card-hover p-4"
+			href="/"><Icon icon="akar-icons:home" />Home</a
 		>
-		<a on:click={() => drawerStore.close()} class="block card card-hover p-4" href="/places"
-			>Places</a
+		<a
+			on:click={() => drawerStore.close()}
+			class="flex items-center gap-3 card card-hover p-4"
+			href="/contacts"><Icon icon="akar-icons:person" />Contacts</a
+		>
+		<a
+			on:click={() => drawerStore.close()}
+			class="flex items-center gap-3 card card-hover p-4"
+			href="/places"><Icon icon="akar-icons:map" />Places</a
 		>
 	</div>
 </Drawer>
@@ -42,6 +49,6 @@
 	<svelte:fragment slot="trail"><p>divi/dr</p></svelte:fragment>
 </AppBar>
 
-<div class="lg:p-12">
+<div class="p-12">
 	<slot />
 </div>
