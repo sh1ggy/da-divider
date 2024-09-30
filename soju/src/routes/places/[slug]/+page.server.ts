@@ -1,4 +1,4 @@
-import type { Place, PlaceContact } from '../../../types/types.js';
+import type { Item, Place, PlaceContact } from '../../../types/types.js';
 
 const groupId = '66a80e0c312e1ebdd11ed13f';
 
@@ -13,7 +13,7 @@ export const load = async ({ params }) => {
 
 	let place: Place | undefined = undefined;
 	let contacts: PlaceContact[] | undefined = undefined;
-  
+
 	let url = `http://localhost:3000/places/${params.slug}`;
 
 	await fetch(url, options)
@@ -25,10 +25,54 @@ export const load = async ({ params }) => {
 		.then((res) => res.json())
 		.then((data) => (contacts = data));
 
-    console.log(contacts);
-
 	return {
-    contacts: contacts,
+		contacts: contacts,
 		place: place
 	};
+};
+
+/** @type {import('./$types').Actions} */
+export const actions = {
+	editPlace: async ({}) => {
+		return { success: true };
+	},
+	addItem: async ({ params, request }) => {
+		// Initialise form data
+		const formData = await request.formData();
+
+		const item: Item = {
+			name: formData.get('name'),
+			price: parseInt(formData.get('price')!.toString())
+		} as Item;
+
+		// fetch params initialisation
+		const body = JSON.stringify(item);
+		console.log(body);
+		const options = {
+			method: 'POST',
+			body: body,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+		const url = `http://localhost:3000/places/${params.slug}/item`;
+
+		let response = undefined;
+		// Commence fetch operation
+		await fetch(url, options)
+			.then((res) => {
+				return res.json();
+			})
+			.then((data) => {
+				console.log(data);
+				response = data;
+			})
+			.catch((e) => {
+				console.log(e);
+				response = undefined;
+			});
+
+		// TODO: proper response
+		return { success: true };
+	}
 };

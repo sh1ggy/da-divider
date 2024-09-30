@@ -21,7 +21,11 @@
 	<button on:click={() => goto('/places')} class="btn variant-soft-primary">Back to Places</button>
 	<div class="flex flex-col items-center gap-6 rounded-lg bg-slate-800 p-12">
 		{#if place !== undefined}
-			<form method="POST" class="flex flex-col items-center gap-6 rounded-lg bg-slate-800">
+			<form
+				action="?/editPlace"
+				method="POST"
+				class="flex flex-col items-center gap-6 rounded-lg bg-slate-800"
+			>
 				<h3 class="mr-auto ml-auto h3">Edit Place</h3>
 				<code class="code">{place._id}</code>
 				<label class="label">
@@ -51,7 +55,7 @@
 								{#each items as item}
 									<div class="card p-4 gap-3 flex flex-col">
 										<div class="flex">
-											<p>{item.name}</p>
+											<p class="w-2/3">{item.name}</p>
 											<p class="ml-auto badge mb-auto variant-soft-primary">${item.price}</p>
 										</div>
 										<div class="flex gap-1 mt-auto">
@@ -60,15 +64,17 @@
 										</div>
 									</div>
 								{/each}
-								<div class="col-span-2 gap-3 grid rounded-lg badge-glass p-3">
-									<h5 class="font-bold h5">Add Item</h5>
-									<form method="POST" class="flex flex-col gap-3">
-										<input name="itemName" type="text" placeholder="name" class="input" />
-										<input name="price" type="number" placeholder="price" class="input" />
-										<button type="submit" class="w-full text-sm btn variant-filled-primary">Add Item</button>
-									</form>
-								</div>
-								{/if}
+							{/if}
+							<div class="col-span-2 gap-3 grid rounded-lg badge-glass p-3">
+								<h5 class="font-bold h5">Add Item</h5>
+								<form action="?/addItem" method="POST" class="flex flex-col gap-3">
+									<input required name="name" type="text" placeholder="name" class="input" />
+									<input required name="price" type="number" placeholder="price" class="input" />
+									<button type="submit" class="w-full text-sm btn variant-filled-primary"
+										>Add Item</button
+									>
+								</form>
+							</div>
 						</div>
 					</svelte:fragment>
 				</AccordionItem>

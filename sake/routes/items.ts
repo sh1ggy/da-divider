@@ -29,7 +29,7 @@ itemsRouter.get("/:placeId/items", async (req: Request, res: Response) => {
 
 // POST - add new Item to Place
 itemsRouter.post(
-  "/:placeId",
+  "/:placeId/item",
   validateSchema(createItemSchema),
   async (req: Request, res: Response) => {
     if (!req) {

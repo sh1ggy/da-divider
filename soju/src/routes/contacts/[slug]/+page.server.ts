@@ -28,7 +28,7 @@ export const actions = {
 	default: async ({ params, request }) => {
 		// Initialise form data
 		const formData = await request.formData();
-		const contact = {
+		const contact: Contact = {
 			name: formData.get('name'),
 			email: formData.get('email'),
 			mobile: formData.get('mobile')
