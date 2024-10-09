@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { deleteContactMsg, groupId } from '$lib';
+	import { deleteContactMsg, formUnchangedErrorMsg, groupId } from '$lib';
+	import type { ActionData } from '../$types.js';
 	import type { Contact } from '../../../types/types.js';
 	import { clipboard, getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 
 	const toastStore = getToastStore();
+
+	export let form: ActionData;
+	$: if (form?.missing)
+		toastStore.trigger({ message: formUnchangedErrorMsg, background: 'variant-filled-error' });
 
 	export let data;
 	let contact: Contact;
@@ -45,7 +50,10 @@
 		>Back to Contacts</button
 	>
 	{#if contact !== undefined}
-		<form method="POST" class="flex flex-col items-center gap-6 rounded-lg w-full bg-slate-800 p-12">
+		<form
+			method="POST"
+			class="flex flex-col items-center gap-6 rounded-lg w-full bg-slate-800 p-12"
+		>
 			<label class="label">
 				Name
 				<input

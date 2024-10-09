@@ -1,5 +1,5 @@
 import { groupId } from '$lib';
-import { error, fail } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { Contact } from '../../types/types.js';
 
 /** @type {import('./$types').PageLoad} */
@@ -8,18 +8,27 @@ export async function load() {
 
 	const options = { method: 'GET' };
 	const url = `http://localhost:3000/groups/${groupId}/contacts`;
+	let errFlag = false;
 
 	// Fetching GET all Contacts for Group
-	await fetch(url, options)
+	const response = await fetch(url, options)
 		.then((res) => {
+			if (!res.ok) {
+				throw res;
+			}
 			return res.json();
 		})
 		.then((data) => {
 			contacts = data;
+			return data;
+		})
+		.catch((e) => {
+			errFlag = true;
+			return new Response(e.msg, { status: e.status });
 		});
 
 	if (!contacts) return;
-
+	if (errFlag) return fail(response.status, { errMsg: await response.text() });
 	return { contacts: contacts, title: 'Contacts' };
 }
 

@@ -46,7 +46,6 @@ export const actions = {
 
 		// fetch params initialisation
 		const body = JSON.stringify(item);
-		console.log(body);
 		const options = {
 			method: 'POST',
 			body: body,

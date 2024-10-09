@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { Contact } from '../../../types/types';
 import { groupId } from '$lib';
 
@@ -27,10 +27,19 @@ export const actions = {
 	default: async ({ params, request }) => {
 		// Initialise form data
 		const formData = await request.formData();
+
+		const name = formData.get('name');
+		const email = formData.get('email');
+		const mobile = formData.get('mobile');
+
+		if (!email && !mobile && !email) {
+			return fail(400, { missing: true });
+		}
+
 		const contact: Contact = {
-			name: formData.get('name'),
-			email: formData.get('email'),
-			mobile: formData.get('mobile')
+			name: name,
+			email: email,
+			mobile: mobile
 		} as Contact;
 
 		// fetch params initialisation

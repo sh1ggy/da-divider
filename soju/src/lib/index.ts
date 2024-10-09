@@ -8,3 +8,4 @@ export const deletePlaceMsg = 'Successfully deleted place';
 export const addPlaceMsg = 'Successfully added place';
 
 export const formMissingErrorMsg = 'A required field is missing'
+export const formUnchangedErrorMsg = 'Nothing to save'
