@@ -46,9 +46,6 @@
 </script>
 
 <div class="container h-full mx-auto flex flex-col gap-6 justify-center items-center">
-	<button on:click={() => goto('/contacts')} class="btn variant-soft-primary"
-		>Back to Contacts</button
-	>
 	{#if contact !== undefined}
 		<form
 			method="POST"

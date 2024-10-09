@@ -40,11 +40,17 @@
 </Drawer>
 
 <AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
-	<svelte:fragment slot="lead"
-		><button on:click={() => drawerStore.open()} type="button" class="btn variant-ghost-primary"
-			>menu</button
-		></svelte:fragment
-	>
+	<svelte:fragment slot="lead">
+		{#if $page.data.back}
+			<button on:click={() => window.history.back()} type="button" class="btn btn-icon variant-ghost-primary"
+				><Icon icon="akar-icons:arrow-left" /></button
+			>
+		{:else}
+			<button on:click={() => drawerStore.open()} type="button" class="btn variant-ghost-primary"
+				>menu</button
+			>
+		{/if}
+	</svelte:fragment>
 	<h2 class="h2">{$page.data.title}</h2>
 	<svelte:fragment slot="trail"><p>divi/dr</p></svelte:fragment>
 </AppBar>

@@ -34,7 +34,7 @@ export const actions = {
 		if (!name || !date) {
 			return fail(400, { missing: true });
 		}
-
+		
 		const place = {
 			name: name,
 			date: date,

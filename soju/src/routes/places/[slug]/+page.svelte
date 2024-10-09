@@ -23,7 +23,6 @@
 </script>
 
 <div class="container h-full mx-auto flex flex-col gap-6 justify-center items-center">
-	<button on:click={() => goto('/places')} class="btn variant-soft-primary">Back to Places</button>
 	<div class="flex flex-col items-center gap-6 rounded-lg bg-slate-800 p-12 w-full">
 		{#if place !== undefined}
 			<form

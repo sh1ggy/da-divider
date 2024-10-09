@@ -18,7 +18,8 @@ export const load = async ({ params }) => {
 
 	return {
 		title: 'Edit Contact',
-		contact: contact
+		contact: contact, 
+		back: true,
 	};
 };
 

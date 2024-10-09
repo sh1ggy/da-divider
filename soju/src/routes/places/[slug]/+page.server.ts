@@ -27,7 +27,8 @@ export const load = async ({ params }) => {
 	return {
 		title: 'Edit Place',
 		contacts: contacts,
-		place: place
+		place: place, 
+		back: true,
 	};
 };
 
