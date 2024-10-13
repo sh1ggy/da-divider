@@ -1,55 +1,77 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { deleteContactMsg, formUnchangedErrorMsg, groupId } from '$lib';
+	import { addContactMsg, deleteContactMsg, editContactMsg } from '$lib';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { ActionData } from '../$types.js';
 	import type { Contact } from '../../../types/types.js';
-	import { clipboard, getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+	import { clipboard, getToastStore } from '@skeletonlabs/skeleton';
 
 	const toastStore = getToastStore();
 
 	export let form: ActionData;
-	$: if (form?.missing)
-		toastStore.trigger({ message: formUnchangedErrorMsg, background: 'variant-filled-error' });
+
+	$: if (form?.response.modifiedCount >= 0) {
+		goto('/contacts');
+	}
 
 	export let data;
 	let contact: Contact;
 	if (data.contact) contact = data.contact;
 
-	// Handler method for deleting Contact
-	const handleDeleteContact = async () => {
-		if (!contact) return;
-		// Fetch initialisation
-		const url = `http://localhost:3000/groups/${groupId}/contact/${contact._id}`;
-		const options = {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		};
-		const t: ToastSettings = {
-			message: deleteContactMsg,
-			background: 'variant-soft-primary'
-		};
-
-		// Commence fetch operation
-		await fetch(url, options)
-			.then((res) => {
-				if (res.ok) {
+	const handleSubmitContact: SubmitFunction = () => {
+		return async ({ result, update }) => {
+			let t;
+			switch (result.type) {
+				case 'success':
+					t = {
+						message: `${editContactMsg} "${contact.name}"`,
+						background: 'variant-filled-primary'
+					};
 					toastStore.trigger(t);
-				}
-				return res.json();
-			})
-			.then((data) => console.log(data));
+					break;
+				case 'failure':
+					t = {
+						message: `${result.status} - ${result.data?.errMsg}`,
+						background: 'variant-filled-error'
+					};
+					toastStore.trigger(t);
+					break;
+				default:
+					break;
+			}
+			await update();
+		};
+	};
 
-		goto('/contacts');
+	// Handler method for deleting Contact
+	const handleDeleteContact: SubmitFunction = async () => {
+		return async ({ result, update }) => {
+			const t = {
+				message: `${deleteContactMsg} "${contact.name}"`,
+				background: 'variant-filled-primary'
+			};
+			switch (result.type) {
+				case 'success':
+					toastStore.trigger(t);
+					break;
+				case 'failure':
+					break;
+				default:
+					break;
+			}
+			await update();
+		};
 	};
 </script>
 
 <div class="container h-full mx-auto flex flex-col gap-6 justify-center items-center">
 	{#if contact !== undefined}
 		<form
+			action="?/submit"
 			method="POST"
 			class="flex flex-col items-center gap-6 rounded-lg w-full bg-slate-800 p-12"
+			use:enhance={handleSubmitContact}
 		>
 			<label class="label">
 				Name
@@ -85,7 +107,7 @@
 			>
 		</form>
 	{/if}
-	<button on:click={() => handleDeleteContact()} class="btn variant-filled-error"
-		>Delete Contact</button
-	>
+	<form action="?/delete" method="POST" use:enhance={handleDeleteContact}>
+		<button class="btn variant-filled-error">Delete Contact</button>
+	</form>
 </div>

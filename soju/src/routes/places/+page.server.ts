@@ -1,5 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import type { Place } from '../../types/types.js';
+import { formMissingErrorMsg } from '$lib';
 
 const groupName = 'coomers';
 
@@ -32,7 +33,7 @@ export const actions = {
 		const date =  formData.get('date') as unknown as Date; // todo: fix this
 
 		if (!name || !date) {
-			return fail(400, { missing: true });
+			return fail(400, { missing: true, errMsg: formMissingErrorMsg });
 		}
 		
 		const place = {

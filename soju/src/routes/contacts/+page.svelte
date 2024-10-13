@@ -2,20 +2,15 @@
 	import { goto } from '$app/navigation';
 	import type { Contact } from '../../types/types';
 	import { enhance } from '$app/forms';
-	import { addContactMsg, deleteContactMsg, formMissingErrorMsg } from '$lib';
+	import { addContactMsg, deleteContactMsg } from '$lib';
 	import { getToastStore } from '@skeletonlabs/skeleton';
-	import type { ActionResult, SubmitFunction } from '@sveltejs/kit';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import Icon from '@iconify/svelte';
-	import type { ActionData } from './$types';
 
 	// Variable initialisation
 	const toastStore = getToastStore();
 
 	export let data: { contacts: Contact[]; title: string };
-	// Trigger toast if there's something missing from the form.
-	export let form: ActionData;
-	$: if (form?.missing)
-		toastStore.trigger({ message: formMissingErrorMsg, background: 'variant-filled-error' });
 
 	$: contacts = data.contacts; // Contacts for reactive state
 
@@ -32,8 +27,9 @@
 					toastStore.trigger(t);
 					break;
 				case 'failure':
+					if (!result.data) break;
 					t = {
-						message: `${result.status} - ${result.data?.errMsg}`,
+						message: `${result.status} - ${result.data.errMsg}`,
 						background: 'variant-filled-error'
 					};
 					toastStore.trigger(t);
@@ -83,6 +79,8 @@
 										contacts = contacts.filter((c) => c._id !== contact._id);
 										break;
 									case 'failure':
+										// TODO: failure handling for delete
+										console.log('todo')
 										break;
 									default:
 										break;

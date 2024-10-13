@@ -1,4 +1,4 @@
-import { groupId } from '$lib';
+import { formMissingErrorMsg, groupId } from '$lib';
 import { fail } from '@sveltejs/kit';
 import type { Contact } from '../../types/types.js';
 
@@ -42,7 +42,7 @@ export const actions = {
 		const mobile = formData.get('mobile');
 
 		if (!email || !mobile || !email) {
-			return fail(400, { missing: true });
+			return fail(400, { errMsg: formMissingErrorMsg });
 		}
 
 		const contact = {

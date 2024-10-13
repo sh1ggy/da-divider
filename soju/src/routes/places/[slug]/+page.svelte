@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { Accordion, AccordionItem, clipboard } from '@skeletonlabs/skeleton';
 	import type { Item, Place, PlaceContact } from '../../../types/types.js';
 	import Icon from '@iconify/svelte';

@@ -3,29 +3,34 @@
 	import Icon from '@iconify/svelte';
 	import type { Place } from '../../types/types';
 	import { enhance } from '$app/forms';
-	import { addPlaceMsg, deletePlaceMsg, formMissingErrorMsg } from '$lib';
+	import { addPlaceMsg, deletePlaceMsg } from '$lib';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import type { ActionData } from './$types';
 
 	const toastStore = getToastStore();
 	export let data: { places: Place[] };
-	export let form: ActionData;
 
 	$: places = data.places; // Places for reactive state
-	$: if (form?.missing)
-		toastStore.trigger({ message: formMissingErrorMsg, background: 'variant-filled-error' });
 
 	// Handler (progressive enhancement) for adding a contact
 	const handleSubmitAddPlace: SubmitFunction = () => {
 		return async ({ result, update }) => {
-			const t = {
-				message: addPlaceMsg,
-				background: 'variant-filled-primary'
-			};
+			let t;
 
 			switch (result.type) {
 				case 'success':
+					t = {
+						message: addPlaceMsg,
+						background: 'variant-filled-primary'
+					};
+					toastStore.trigger(t);
+					break;
+				case 'failure':
+					if (!result.data) break;
+					t = {
+						message: `${result.status} - ${result.data.errMsg}`,
+						background: 'variant-filled-error'
+					};
 					toastStore.trigger(t);
 					break;
 				default:
@@ -85,6 +90,10 @@
 										toastStore.trigger(t);
 										// Match local state with deleted place
 										places = places.filter((p) => p._id !== place._id);
+										break;
+									case 'failure':
+										// TODO: failure handling for delete
+										console.log('todo')
 										break;
 									default:
 										break;
