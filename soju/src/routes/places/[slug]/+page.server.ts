@@ -1,4 +1,5 @@
-import { groupId } from '$lib';
+import { formMissingErrorMsg, groupId } from '$lib';
+import { fail } from '@sveltejs/kit';
 import type { Item, Place, PlaceContact } from '../../../types/types.js';
 
 /** @type {import('./$types').PageLoad} */
@@ -27,8 +28,8 @@ export const load = async ({ params }) => {
 	return {
 		title: 'Edit Place',
 		contacts: contacts,
-		place: place, 
-		back: true,
+		place: place,
+		back: true
 	};
 };
 
@@ -40,9 +41,17 @@ export const actions = {
 	addItem: async ({ params, request }) => {
 		// Initialise form data
 		const formData = await request.formData();
+		const name = formData.get('name');
+		const price = formData.get('price');
+
+		// Err handling
+		if (!name || !price) {
+			return fail(400, { errMsg: formMissingErrorMsg });
+		}
+
 		const item: Item = {
 			name: formData.get('name'),
-			price: parseInt(formData.get('price')!.toString())
+			price: parseInt(price.toString())
 		} as Item;
 
 		// fetch params initialisation
@@ -55,23 +64,64 @@ export const actions = {
 			}
 		};
 		const url = `http://localhost:3000/places/${params.slug}/item`;
+		let errFlag = false;
 
-		let response = undefined;
 		// Commence fetch operation
-		await fetch(url, options)
-			.then((res) => {
+		const response = await fetch(url, options)
+			.then(async (res) => {
+				if (!res.ok) {
+					throw { msg: JSON.parse(await res.text()).message, status: res.status };
+				}
 				return res.json();
 			})
 			.then((data) => {
-				console.log(data);
-				response = data;
+				return data;
 			})
-			.catch((e) => {
-				console.log(e);
-				response = undefined;
+			.catch(async (e) => {
+				errFlag = true;
+				return new Response(e.msg, { status: e.status });
 			});
 
-		// TODO: proper response
-		return { success: true };
+		if (!response) return;
+		if (errFlag) return fail(response.status, { errMsg: await response.text() });
+		return { response: response };
+	},
+	deleteItem: async ({ request, params }) => {
+		// Initialise form data
+		const formData = await request.formData();
+		const itemId = formData.get('itemId');
+
+		// Err handling
+		if (!itemId) return;
+
+		// fetch params initialisation
+		const options = {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+		const url = `http://localhost:3000/places/${params.slug}/item/${itemId}`;
+		let errFlag = false;
+
+		// Commence fetch operation
+		const response = await fetch(url, options)
+			.then(async (res) => {
+				if (!res.ok) {
+					throw { msg: JSON.parse(await res.text()).message, status: res.status };
+				}
+				return res.json();
+			})
+			.then((data) => {
+				return data;
+			})
+			.catch(async (e) => {
+				errFlag = true;
+				return new Response(e.msg, { status: e.status });
+			});
+
+		if (!response) return;
+		if (errFlag) return fail(response.status, { errMsg: await response.text() });
+		return { response: response };
 	}
 };

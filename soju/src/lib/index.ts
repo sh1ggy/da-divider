@@ -8,5 +8,7 @@ export const editContactMsg = 'Successfully edited contact';
 export const deletePlaceMsg = 'Successfully deleted place';
 export const addPlaceMsg = 'Successfully added place';
 
+export const deleteItemMsg = 'Successfully deleted item';
+
 export const formMissingErrorMsg = 'A required field is missing'
 export const formUnchangedErrorMsg = 'Nothing to save'

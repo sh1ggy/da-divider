@@ -2,6 +2,11 @@
 	import { Accordion, AccordionItem, clipboard } from '@skeletonlabs/skeleton';
 	import type { Item, Place, PlaceContact } from '../../../types/types.js';
 	import Icon from '@iconify/svelte';
+	import { enhance } from '$app/forms';
+	import { deleteItemMsg } from '$lib';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+
+	const toastStore = getToastStore();
 
 	export let data: {
 		title: string;
@@ -13,7 +18,7 @@
 	let place: Place;
 	let contacts: PlaceContact[];
 	let items: Item[];
-
+	
 	if (data.place) {
 		place = data.place;
 		items = place.items;
@@ -64,9 +69,38 @@
 											<button class="btn-sm btn-icon text-md variant-filled-warning"
 												><Icon icon="akar-icons:pencil" /></button
 											>
-											<button class="btn-sm btn-icon text-md variant-filled-error"
-												><Icon icon="akar-icons:trash-bin" /></button
+											<form
+												action="?/deleteItem"
+												method="POST"
+												use:enhance={({ formData }) => {
+													formData.set('itemId', item._id);
+
+													return async ({ result, update }) => {
+														const t = {
+															message: `${deleteItemMsg} "${item.name}"`,
+															background: 'variant-filled-primary'
+														};
+														switch (result.type) {
+															case 'success':
+																toastStore.trigger(t);
+																// Match local state with deleted place
+																items = items.filter((i) => i._id !== item._id);
+																break;
+															case 'failure':
+																// TODO: failure handling for delete item
+																console.log('todo');
+																break;
+															default:
+																break;
+														}
+														await update();
+													};
+												}}
 											>
+												<button class="btn-sm btn-icon text-md variant-filled-error"
+													><Icon icon="akar-icons:trash-bin" /></button
+												>
+											</form>
 										</div>
 									</div>
 								{/each}

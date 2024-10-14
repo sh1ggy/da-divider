@@ -92,7 +92,7 @@
 										places = places.filter((p) => p._id !== place._id);
 										break;
 									case 'failure':
-										// TODO: failure handling for delete
+										// TODO: failure handling for delete place
 										console.log('todo')
 										break;
 									default:
