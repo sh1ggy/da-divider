@@ -69,9 +69,15 @@
 				</header>
 				<section class="mt-auto flex card-footer justify-center w-full gap-3">
 					<button
+						on:click={() => goto(`/places/${place._id}/assignment`)}
+						class="btn btn-sm variant-filled-success"
+						><Icon icon="akar-icons:person" />
+						<span>Assign</span>
+					</button>
+					<button
 						on:click={() => goto(`/places/${place._id}`)}
 						class="btn btn-sm variant-filled-warning"
-						><span><Icon icon="akar-icons:edit" /></span>
+						><Icon icon="akar-icons:edit" />
 						<span>Edit</span>
 					</button>
 					<form
@@ -93,7 +99,7 @@
 										break;
 									case 'failure':
 										// TODO: failure handling for delete place
-										console.log('todo')
+										console.log('todo');
 										break;
 									default:
 										break;

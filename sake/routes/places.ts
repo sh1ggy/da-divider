@@ -154,7 +154,7 @@ placesRouter.get("/:id/total", async (req: Request, res: Response) => {
 
 // POST -- add new itemAssignments in bulk to Place under Contact
 placesRouter.post(
-  "/:placeId/assign",
+  "/:placeId/items/assign",
   validateSchema(createItemAssignmentSchema),
   async (req: Request, res: Response) => {
     if (!req) return res.sendStatus(400);

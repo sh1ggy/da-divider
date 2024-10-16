@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Accordion, AccordionItem, clipboard } from '@skeletonlabs/skeleton';
-	import type { Item, Place, PlaceContact } from '../../../types/types.js';
+	import type { Contact, Item, Place, PlaceContact } from '../../../types/types.js';
 	import Icon from '@iconify/svelte';
 	import { enhance } from '$app/forms';
 	import { deleteItemMsg } from '$lib';
@@ -12,18 +12,33 @@
 		title: string;
 		place: Place | undefined;
 		items: Item[];
-		contacts: PlaceContact[];
+		contacts: Contact[];
 	};
 
 	let place: Place;
-	let contacts: PlaceContact[];
+	let contacts: Contact[];
 	let items: Item[];
-	
+	let contactAssignments: Record<string, boolean> = {};
+
 	if (data.place) {
 		place = data.place;
 		items = place.items;
 	}
-	if (data.contacts) contacts = data.contacts;
+	
+	if (data.contacts) {
+		contacts = data.contacts;
+		// Map through each Contact & assign to false by default
+		contacts.map((c: Contact) => {
+			{
+				contactAssignments[c._id] = false;
+			}
+		});
+	}
+
+	// Flip contact assignment boolean
+	function toggle(contact: string): void {
+		contactAssignments[contact] = !contactAssignments[contact];
+	}
 </script>
 
 <div class="container h-full mx-auto flex flex-col gap-6 justify-center items-center">
@@ -46,15 +61,22 @@
 				</label>
 				<div class="flex gap-3">
 					{#each contacts as contact}
-						<span class="chip variant-glass-surface">{contact.name}</span>
+						<button
+							on:click={() => toggle(contact._id)}
+							type="button"
+							class={`${contactAssignments[contact._id] ? 'variant-glass-secondary' : 'variant-glass-surface'} chip`}
+						>
+							{#if contactAssignments[contact._id]}<Icon icon="akar-icons:check" />{/if}
+							<span class="capitalize">{contact.name}</span>
+						</button>
 					{/each}
 				</div>
-				<button type="submit" class="btn variant-glass-primary">Submit</button>
+				<button type="submit" class="btn variant-glass-primary">Save</button>
 			</form>
 
 			<Accordion>
 				<AccordionItem open>
-					<!-- <svelte:fragment slot="lead">(icon)</svelte:fragment> -->
+					<svelte:fragment slot="lead"><Icon icon="akar-icons:shipping-box-01" /></svelte:fragment>
 					<svelte:fragment slot="summary"><h4 class="h4">Items</h4></svelte:fragment>
 					<svelte:fragment slot="content">
 						<div class="grid lg:grid-cols-2 gap-3">
