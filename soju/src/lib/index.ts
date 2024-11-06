@@ -7,8 +7,10 @@ export const editContactMsg = 'Successfully edited contact';
 
 export const deletePlaceMsg = 'Successfully deleted place';
 export const addPlaceMsg = 'Successfully added place';
+export const editPlaceMsg = 'Successfully edited place';
 
 export const deleteItemMsg = 'Successfully deleted item';
+export const submitItemAssignmentsMsg = 'Successfully assigned items';
 
 export const formMissingErrorMsg = 'A required field is missing'
 export const formUnchangedErrorMsg = 'Nothing to save'

@@ -61,7 +61,7 @@ placesRouter.put(
     const id = new ObjectId(req.params.id);
     const placeToUpdate = req.body as Place;
     const result = await collection.updateOne(
-      { id: id },
+      { _id: id },
       { $set: placeToUpdate }
     );
 
@@ -178,7 +178,7 @@ placesRouter.post(
     if (!result) return res.sendStatus(500);
     if (result.modifiedCount <= 0) return res.send(result).status(404);
 
-    return res.sendStatus(200);
+    return res.send(result).status(200);
   }
 );
 

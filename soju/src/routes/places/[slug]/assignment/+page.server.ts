@@ -1,6 +1,6 @@
 import { formMissingErrorMsg, groupId } from '$lib';
 import { fail } from '@sveltejs/kit';
-import type { Place, PlaceContact } from '../../../../types/types';
+import type { ItemAssignment, Place, PlaceContact } from '../../../../types/types';
 
 /** @type {import('./$types').PageLoad} */
 export const load = async ({ params }) => {
@@ -31,4 +31,50 @@ export const load = async ({ params }) => {
 		place: place,
 		back: true
 	};
+};
+
+/** @type {import('./$types').Actions} */
+export const actions = {
+	submit: async ({ request, params }) => {
+		// Initialise form data
+		const formData = await request.formData();
+		const itemAssignments = JSON.parse(formData.get('itemAssignments') as string) as ItemAssignment;
+
+		// Err handling
+		if (!itemAssignments) return;
+
+		const body = { itemAssignments: itemAssignments };
+
+		// fetch params initialisation
+		const options = {
+			method: 'POST',
+			body: JSON.stringify(body),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+
+		const url = `http://localhost:3000/places/${params.slug}/items/assign`;
+		let errFlag = false;
+
+		// Commence fetch operation
+		const response = await fetch(url, options)
+			.then(async (res) => {
+				if (!res.ok) {
+					throw { msg: JSON.parse(await res.text()).message, status: res.status };
+				}
+				return res.json();
+			})
+			.then((data) => {
+				return data;
+			})
+			.catch(async (e) => {
+				errFlag = true;
+				return new Response(e.msg, { status: e.status });
+			});
+
+		if (!response) return;
+		if (errFlag) return fail(response.status, { errMsg: await response.text() });
+		return { response: response };
+	}
 };

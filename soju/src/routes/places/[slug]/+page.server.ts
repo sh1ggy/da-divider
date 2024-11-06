@@ -1,4 +1,4 @@
-import { formMissingErrorMsg, groupId } from '$lib';
+import { formMissingErrorMsg, formUnchangedErrorMsg, groupId } from '$lib';
 import { fail } from '@sveltejs/kit';
 import type { Item, Place, PlaceContact } from '../../../types/types.js';
 
@@ -12,7 +12,7 @@ export const load = async ({ params }) => {
 	};
 
 	let place: Place | undefined = undefined;
-	let contacts: PlaceContact[] | undefined = undefined;
+	let groupContacts: PlaceContact[] | undefined = undefined;
 
 	let url = `http://localhost:3000/places/${params.slug}`;
 
@@ -23,11 +23,11 @@ export const load = async ({ params }) => {
 	url = `http://localhost:3000/groups/${groupId}/contacts`;
 	await fetch(url, options)
 		.then((res) => res.json())
-		.then((data) => (contacts = data));
+		.then((data) => (groupContacts = data));
 
 	return {
 		title: 'Edit Place',
-		contacts: contacts,
+		groupContacts: groupContacts,
 		place: place,
 		back: true
 	};
@@ -35,8 +35,51 @@ export const load = async ({ params }) => {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-	editPlace: async ({}) => {
-		return { success: true };
+	editPlace: async ({ params, request }) => {
+		// Initialise form data
+		const formData = await request.formData();
+
+		const placeName = formData.get('name');
+		const contacts = JSON.parse(formData.get('contactAssignments') as string);
+
+		if (!placeName && !contacts) {
+			return fail(400, { errMsg: formUnchangedErrorMsg });
+		}
+		
+		const place: Place = {
+			name: placeName,
+			contacts: contacts
+		} as Place;
+		
+		// fetch params initialisation
+		const body = JSON.stringify(place);
+		const options = {
+			method: 'PUT',
+			body: body,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		};
+		const url = `http://localhost:3000/places/${params.slug}/`;
+
+		let response = undefined;
+
+		// Commence fetch operation
+		await fetch(url, options)
+			.then((res) => {
+				return res.json();
+			})
+			.then((data) => {
+				response = data;
+			})
+			.catch((e) => {
+				console.log(e);
+				response = undefined;
+			});
+
+		console.log(response);
+
+		return { response: response };
 	},
 	addItem: async ({ params, request }) => {
 		// Initialise form data

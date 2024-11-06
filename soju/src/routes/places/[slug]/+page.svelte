@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Accordion, AccordionItem, clipboard } from '@skeletonlabs/skeleton';
-	import type { Contact, Item, Place, PlaceContact } from '../../../types/types.js';
+	import type { Contact, Item, Place, PlaceContact } from '../../../types/types.ts';
 	import Icon from '@iconify/svelte';
 	import { enhance } from '$app/forms';
-	import { deleteItemMsg } from '$lib';
+	import { deleteItemMsg, editPlaceMsg } from '$lib';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 
 	const toastStore = getToastStore();
@@ -12,11 +12,11 @@
 		title: string;
 		place: Place | undefined;
 		items: Item[];
-		contacts: Contact[];
+		groupContacts: Contact[];
 	};
 
 	let place: Place;
-	let contacts: Contact[];
+	let groupContacts: Contact[];
 	let items: Item[];
 	let contactAssignments: Record<string, boolean> = {};
 
@@ -24,11 +24,20 @@
 		place = data.place;
 		items = place.items;
 	}
-	
-	if (data.contacts) {
-		contacts = data.contacts;
+
+	if (data.groupContacts) {
+		groupContacts = data.groupContacts;
 		// Map through each Contact & assign to false by default
-		contacts.map((c: Contact) => {
+		groupContacts.map((c: Contact) => {
+			// If the contact is in the assigned contacts list of the current place, mark as true
+			if (place.contacts.find((pc: PlaceContact) => pc.id === c._id)) {
+				{
+					contactAssignments[c._id] = true;
+				}
+				return;
+			}
+
+			// Otherwise return false
 			{
 				contactAssignments[c._id] = false;
 			}
@@ -47,12 +56,50 @@
 			<form
 				action="?/editPlace"
 				method="POST"
+				use:enhance={({ formData }) => {
+					const contactAssignmentsFormObject: PlaceContact[] = []; // PlaceContact[]
+
+					Object.entries(contactAssignments).forEach(([key, value]) => {
+						if (!value) return;
+
+						const fullContact = groupContacts.find((c) => c._id === key);
+
+						if (!fullContact) return;
+
+						const contactToAdd = { id: key, name: fullContact.name };
+						contactAssignmentsFormObject.push(contactToAdd);
+					});
+
+					formData.set('contactAssignments', JSON.stringify(contactAssignmentsFormObject));
+
+					return async ({ result, update }) => {
+						let t;
+						switch (result.type) {
+							case 'success':
+								t = {
+									message: `${editPlaceMsg} "${place.name}"`,
+									background: 'variant-filled-primary'
+								};
+								toastStore.trigger(t);
+								break;
+							case 'failure':
+								t = {
+									message: `${result.status} - ${result.data?.errMsg}`,
+									background: 'variant-filled-error'
+								};
+								toastStore.trigger(t);
+								break;
+							default:
+								break;
+						}
+						await update();
+					};
+				}}
 				class="flex flex-col items-center gap-6 rounded-lg bg-slate-800"
 			>
 				<label class="label">
 					Name
 					<input
-						required
 						name="name"
 						type="text"
 						placeholder={place.name}
@@ -60,7 +107,7 @@
 					/>
 				</label>
 				<div class="flex gap-3">
-					{#each contacts as contact}
+					{#each groupContacts as contact}
 						<button
 							on:click={() => toggle(contact._id)}
 							type="button"
