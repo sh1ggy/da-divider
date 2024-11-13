@@ -9,18 +9,18 @@
 
 	const toastStore = getToastStore();
 
-	export let form: ActionData;
-
-	$: if (form?.response.modifiedCount >= 0) {
-		goto('/contacts');
+	interface Props {
+		form: ActionData;
+		data: { contact: Contact };
 	}
 
-	export let data;
-	let contact: Contact;
-	if (data.contact) contact = data.contact;
+	let { form, data }: Props = $props();
+	let contact: Contact | undefined = $state(data.contact);
 
 	const handleSubmitContact: SubmitFunction = () => {
 		return async ({ result, update }) => {
+			if (!contact) return; // Early return
+
 			let t;
 			switch (result.type) {
 				case 'success':
@@ -48,7 +48,7 @@
 	const handleDeleteContact: SubmitFunction = async () => {
 		return async ({ result, update }) => {
 			const t = {
-				message: `${deleteContactMsg} "${contact.name}"`,
+				message: `${deleteContactMsg} "${contact?.name}"`,
 				background: 'variant-filled-primary'
 			};
 			switch (result.type) {
@@ -63,6 +63,11 @@
 			await update();
 		};
 	};
+	$effect(() => {
+		if (form?.response.modifiedCount >= 0) {
+			goto('/contacts');
+		}
+	});
 </script>
 
 <div class="container h-full mx-auto flex flex-col gap-6 justify-center items-center">

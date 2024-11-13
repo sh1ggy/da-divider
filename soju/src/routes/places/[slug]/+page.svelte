@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion, AccordionItem, clipboard } from '@skeletonlabs/skeleton';
+	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import type { Contact, Item, Place, PlaceContact } from '../../../types/types.ts';
 	import Icon from '@iconify/svelte';
 	import { enhance } from '$app/forms';
@@ -8,27 +8,27 @@
 
 	const toastStore = getToastStore();
 
-	export let data: {
-		title: string;
-		place: Place | undefined;
-		items: Item[];
-		groupContacts: Contact[];
-	};
-
-	let place: Place;
-	let groupContacts: Contact[];
-	let items: Item[];
-	let contactAssignments: Record<string, boolean> = {};
-
-	if (data.place) {
-		place = data.place;
-		items = place.items;
+	interface Props {
+		data: {
+			title: string;
+			place: Place | undefined;
+			items: Item[];
+			groupContacts: Contact[];
+		};
 	}
 
-	if (data.groupContacts) {
-		groupContacts = data.groupContacts;
+	let { data }: Props = $props(); 
+
+	let place: Place | undefined = $state(data.place);
+	let groupContacts: Contact[] = $state(data.groupContacts);
+	let items: Item[] = $state(data.place?.items ?? []);
+	let contactAssignments: Record<string, boolean> = $state({});
+
+	// Effect to run every time component is mounted.
+	$effect(() => {
 		// Map through each Contact & assign to false by default
 		groupContacts.map((c: Contact) => {
+			if (!place || !place.contacts) return;
 			// If the contact is in the assigned contacts list of the current place, mark as true
 			if (place.contacts.find((pc: PlaceContact) => pc.id === c._id)) {
 				{
@@ -37,12 +37,11 @@
 				return;
 			}
 
-			// Otherwise return false
-			{
+			{ // Otherwise return false
 				contactAssignments[c._id] = false;
 			}
 		});
-	}
+	});
 
 	// Flip contact assignment boolean
 	function toggle(contact: string): void {
@@ -77,7 +76,7 @@
 						switch (result.type) {
 							case 'success':
 								t = {
-									message: `${editPlaceMsg} "${place.name}"`,
+									message: `${editPlaceMsg} "${place?.name}"`,
 									background: 'variant-filled-primary'
 								};
 								toastStore.trigger(t);
@@ -109,7 +108,7 @@
 				<div class="flex gap-3">
 					{#each groupContacts as contact}
 						<button
-							on:click={() => toggle(contact._id)}
+							onclick={() => toggle(contact._id)}
 							type="button"
 							class={`${contactAssignments[contact._id] ? 'variant-glass-secondary' : 'variant-glass-surface'} chip`}
 						>
@@ -123,9 +122,13 @@
 
 			<Accordion>
 				<AccordionItem open>
-					<svelte:fragment slot="lead"><Icon icon="akar-icons:shipping-box-01" /></svelte:fragment>
-					<svelte:fragment slot="summary"><h4 class="h4">Items</h4></svelte:fragment>
-					<svelte:fragment slot="content">
+					{#snippet lead()}
+						<Icon icon="akar-icons:shipping-box-01" />
+					{/snippet}
+					{#snippet summary()}
+						<h4 class="h4">Items</h4>
+					{/snippet}
+					{#snippet content()}
 						<div class="grid lg:grid-cols-2 gap-3">
 							{#if items !== undefined}
 								{#each items as item}
@@ -185,16 +188,16 @@
 								</form>
 							</div>
 						</div>
-					</svelte:fragment>
+					{/snippet}
 				</AccordionItem>
 			</Accordion>
 		{/if}
-		<code
+		<!-- <code
 			use:clipboard={place._id}
-			class="code hover:scale-110 hover:cursor-pointer transition-transform">{place._id}</code
-		>
+			class="code hover:scale-110 hover:cursor-pointer transition-transform">{place?._id}</code
+		> -->
 	</div>
-	<button on:click={() => console.log('delete')} class="btn variant-filled-error"
+	<button onclick={() => console.log('delete')} class="btn variant-filled-error"
 		>Delete Place</button
 	>
 </div>

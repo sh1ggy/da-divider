@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
 	import type { Place } from '../../types/types';
@@ -8,9 +10,13 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 
 	const toastStore = getToastStore();
-	export let data: { places: Place[] };
+	interface Props {
+		data: { places: Place[] };
+	}
 
-	$: places = data.places; // Places for reactive state
+	let { data }: Props = $props();
+
+	let places: Place[] = $state(data.places);
 
 	// Handler (progressive enhancement) for adding a contact
 	const handleSubmitAddPlace: SubmitFunction = () => {
@@ -69,13 +75,14 @@
 				</header>
 				<section class="mt-auto flex card-footer justify-center w-full gap-3">
 					<button
-						on:click={() => goto(`/places/${place._id}/assignment`)}
+						disabled={!!!place.items}
+						onclick={() => goto(`/places/${place._id}/assignment`)}
 						class="btn btn-sm variant-filled-success"
 						><Icon icon="akar-icons:person" />
 						<span>Assign</span>
 					</button>
 					<button
-						on:click={() => goto(`/places/${place._id}`)}
+						onclick={() => goto(`/places/${place._id}`)}
 						class="btn btn-sm variant-filled-warning"
 						><Icon icon="akar-icons:edit" />
 						<span>Edit</span>

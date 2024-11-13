@@ -8,34 +8,31 @@
 
 	const toastStore = getToastStore();
 
-	export let data: {
-		title: string;
-		place: Place | undefined;
-		items: Item[];
-		contacts: Contact[];
-	};
+	interface Props {
+		data: {
+			title: string;
+			place: Place | undefined;
+			items: Item[];
+			contacts: Contact[];
+		};
+	}
 
-	let place: Place;
-	let contacts: Contact[];
-	let items: Item[];
-	let itemAssignments: Record<string, boolean> = {};
+	let { data }: Props = $props();
 
-	let selectedContactId: string = '';
+	let place: Place | undefined = $state(data.place);
+	let contacts: Contact[] | undefined = $state(data.contacts);
+	let items: Item[] = $state(data.place?.items ?? []);
+	let itemAssignments: Record<string, boolean> = $state({});
 
-	if (data.place) {
-		place = data.place;
-		items = place.items;
-		// Map through each Contact & assign to false by default
+	let selectedContactId: string = $state('');
+
+	$effect(() => {
 		items.map((i: Item) => {
 			{
 				itemAssignments[i._id] = false;
 			}
 		});
-	}
-
-	if (data.contacts) {
-		contacts = data.contacts;
-	}
+	});
 
 	// Flip item assignment boolean
 	function toggle(itemId: string): void {
@@ -83,7 +80,9 @@
 		<label class="label w-full">
 			<select
 				bind:value={selectedContactId}
-				on:change={() => {
+				onchange={() => {
+					if (!place) return; // Early return
+					
 					items.map((i) => {
 						{
 							itemAssignments[i._id] = place.itemAssignments.some(
@@ -91,7 +90,6 @@
 							);
 						}
 					});
-					console.log(itemAssignments)
 				}}
 				placeholder="Select yourself from the list of contacts"
 				class="select"
@@ -113,7 +111,7 @@
 					<label class="card p-4 gap-3 flex items-center">
 						<input
 							type="checkbox"
-							on:click={() => toggle(item._id)}
+							onclick={() => toggle(item._id)}
 							checked={itemAssignments[item._id]}
 							disabled={!selectedContactId}
 							class="checkbox disabled:variant-ghost-warning"

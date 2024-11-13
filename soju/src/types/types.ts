@@ -15,7 +15,7 @@ export interface Place {
 	_id: string;
 	name: string;
 	date: Date;
-	items: Item[];
+	items?: Item[];
 	contacts: PlaceContact[];
 	groupName: string;
 	itemAssignments: ItemAssignment[]; // for tracking Contact & Item links

@@ -1,9 +1,8 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, type ServerLoad, type Actions } from '@sveltejs/kit';
 import type { Contact } from '../../../types/types';
-import { formMissingErrorMsg, formUnchangedErrorMsg, groupId } from '$lib';
+import { formUnchangedErrorMsg, groupId } from '$lib';
 
-/** @type {import('./$types').PageLoad} */
-export const load = async ({ params }) => {
+export const load: ServerLoad = async ({ params }) => {
 	const options = {
 		method: 'GET',
 		headers: {
@@ -32,9 +31,8 @@ export const load = async ({ params }) => {
 	};
 };
 
-/** @type {import('./$types').Actions} */
-export const actions = {
-	submit: async ({ params, request }) => {
+export const actions: Actions = {
+	submit: async ({ request, params }) => {
 		// Initialise form data
 		const formData = await request.formData();
 
