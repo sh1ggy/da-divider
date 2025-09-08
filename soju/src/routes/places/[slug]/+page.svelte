@@ -5,9 +5,7 @@
 	import { enhance } from '$app/forms';
 	import { deleteItemMsg, editPlaceMsg } from '$lib';
 	import { getToastStore } from '@skeletonlabs/skeleton';
-
-	const toastStore = getToastStore();
-
+	import type { ActionResult } from '@sveltejs/kit';
 	interface Props {
 		data: {
 			title: string;
@@ -17,8 +15,8 @@
 		};
 	}
 
-	let { data }: Props = $props(); 
-
+	const toastStore = getToastStore();
+	let { data }: Props = $props();
 	let place: Place | undefined = $state(data.place);
 	let groupContacts: Contact[] = $state(data.groupContacts);
 	let items: Item[] = $state(data.place?.items ?? []);
@@ -37,7 +35,8 @@
 				return;
 			}
 
-			{ // Otherwise return false
+			{
+				// Otherwise return false
 				contactAssignments[c._id] = false;
 			}
 		});
@@ -47,6 +46,48 @@
 	function toggle(contact: string): void {
 		contactAssignments[contact] = !contactAssignments[contact];
 	}
+
+	// Obtain contact assignments for use in the form. 
+	const getContactAssignments = () => {
+		const contactAssignmentsFormObject: PlaceContact[] = []; // PlaceContact[]
+
+		Object.entries(contactAssignments).forEach(([key, value]) => {
+			if (!value) return;
+
+			const fullContact = groupContacts.find((c) => c._id === key);
+
+			if (!fullContact) return;
+
+			const contactToAdd = { id: key, name: fullContact.name };
+			contactAssignmentsFormObject.push(contactToAdd);
+		});
+
+		return contactAssignmentsFormObject;
+	};
+
+	const handleContactAssignmentResult = (
+		result: ActionResult<Record<string, unknown> | undefined, Record<string, unknown> | undefined>
+	) => {
+		let t;
+		switch (result.type) {
+			case 'success':
+				t = {
+					message: `${editPlaceMsg} "${place?.name}"`,
+					background: 'variant-filled-primary'
+				};
+				toastStore.trigger(t);
+				break;
+			case 'failure':
+				t = {
+					message: `${result.status} - ${result.data?.errMsg}`,
+					background: 'variant-filled-error'
+				};
+				toastStore.trigger(t);
+				break;
+			default:
+				break;
+		}
+	};
 </script>
 
 <div class="container h-full mx-auto flex flex-col gap-6 justify-center items-center">
@@ -56,41 +97,9 @@
 				action="?/editPlace"
 				method="POST"
 				use:enhance={({ formData }) => {
-					const contactAssignmentsFormObject: PlaceContact[] = []; // PlaceContact[]
-
-					Object.entries(contactAssignments).forEach(([key, value]) => {
-						if (!value) return;
-
-						const fullContact = groupContacts.find((c) => c._id === key);
-
-						if (!fullContact) return;
-
-						const contactToAdd = { id: key, name: fullContact.name };
-						contactAssignmentsFormObject.push(contactToAdd);
-					});
-
-					formData.set('contactAssignments', JSON.stringify(contactAssignmentsFormObject));
-
+					formData.set('contactAssignments', JSON.stringify(getContactAssignments()));
 					return async ({ result, update }) => {
-						let t;
-						switch (result.type) {
-							case 'success':
-								t = {
-									message: `${editPlaceMsg} "${place?.name}"`,
-									background: 'variant-filled-primary'
-								};
-								toastStore.trigger(t);
-								break;
-							case 'failure':
-								t = {
-									message: `${result.status} - ${result.data?.errMsg}`,
-									background: 'variant-filled-error'
-								};
-								toastStore.trigger(t);
-								break;
-							default:
-								break;
-						}
+						handleContactAssignmentResult(result);
 						await update();
 					};
 				}}

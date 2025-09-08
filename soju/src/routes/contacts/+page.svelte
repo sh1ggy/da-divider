@@ -76,10 +76,8 @@
 							method="POST"
 							use:enhance={({ formData }) => {
 								formData.set('contactId', contact._id);
-
 								return async ({ result, update }) => {
 									if (!contacts) return; // early return
-
 									const t = {
 										message: `${deleteContactMsg} "${contact.name}"`,
 										background: 'variant-filled-primary'

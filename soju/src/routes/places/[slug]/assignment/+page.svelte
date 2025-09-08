@@ -1,10 +1,9 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
-	import type { Place, Item, PlaceContact, ItemAssignment, Contact } from '../../../../types/types';
-	import type { SubmitFunction } from '@sveltejs/kit';
-	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { enhance } from '$app/forms';
 	import { submitItemAssignmentsMsg } from '$lib';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	import type { SubmitFunction } from '@sveltejs/kit';
+	import type { Contact, Item, ItemAssignment, Place, PlaceContact } from '../../../../types/types';
 
 	const toastStore = getToastStore();
 
@@ -20,7 +19,7 @@
 	let { data }: Props = $props();
 
 	let place: Place | undefined = $state(data.place);
-	let contacts: Contact[] | undefined = $state(data.contacts);
+	let contacts: PlaceContact[] | undefined = $state(data.place?.contacts ?? []);
 	let items: Item[] = $state(data.place?.items ?? []);
 	let itemAssignments: Record<string, boolean> = $state({});
 
@@ -32,6 +31,7 @@
 				itemAssignments[i._id] = false;
 			}
 		});
+		$inspect(itemAssignments);
 	});
 
 	// Flip item assignment boolean
@@ -40,13 +40,30 @@
 		// console.log(itemAssignments);
 	}
 
+	// Handle assignment of items on change of selected option
+	const handleItemAssignmentInit = () => {
+		if (!place) return; // Early return
+
+		items.map((i) => {
+			{
+				itemAssignments[i._id] = place.itemAssignments.some(
+					(ia) => ia.itemId === i._id && ia.contactId === selectedContactId
+				);
+			}
+		});
+	};
+	``;
+
+	// Submit handler for item assignments
 	const handleSubmitItemAssignments: SubmitFunction = ({ formData }) => {
-		if (!selectedContactId) return;
+		if (!selectedContactId) return; // Early return
 
 		const contactItemAssignments: ItemAssignment[] = [];
 		Object.keys(itemAssignments).forEach((ia) => {
-			contactItemAssignments.push({ contactId: selectedContactId, itemId: ia });
+			if (itemAssignments[ia] === true)
+				contactItemAssignments.push({ contactId: selectedContactId, itemId: ia });
 		});
+		console.log(contactItemAssignments);
 
 		formData.set('itemAssignments', JSON.stringify(contactItemAssignments));
 
@@ -78,25 +95,16 @@
 <div class="container h-full mx-auto flex flex-col gap-6 justify-center items-center">
 	<div class="flex flex-col items-center gap-6 rounded-lg bg-slate-800 p-12 w-full">
 		<label class="label w-full">
+			<h1 class="text-xl text-left">Who are you?</h1>
 			<select
 				bind:value={selectedContactId}
-				onchange={() => {
-					if (!place) return; // Early return
-					
-					items.map((i) => {
-						{
-							itemAssignments[i._id] = place.itemAssignments.some(
-								(ia) => ia.itemId === i._id && ia.contactId === selectedContactId
-							);
-						}
-					});
-				}}
+				onchange={() => handleItemAssignmentInit()}
 				placeholder="Select yourself from the list of contacts"
 				class="select"
 			>
 				<option disabled value="" selected>Select yourself from the list of contacts</option>
 				{#each contacts as contact}
-					<option value={contact._id}>{contact.name}</option>
+					<option value={contact.id}>{contact.name}</option>
 				{/each}
 			</select>
 		</label>
@@ -105,11 +113,13 @@
 				action="?/submit"
 				method="POST"
 				use:enhance={handleSubmitItemAssignments}
-				class="flex flex-col w-1/2 gap-3"
+				class="flex flex-col w-full gap-3"
 			>
+				<h1 class="text-xl">What did you buy?</h1>
 				{#each items as item}
-					<label class="card p-4 gap-3 flex items-center">
+					<label class="card p-4 gap-3 flex items-center" for={item._id}>
 						<input
+							id={item._id}
 							type="checkbox"
 							onclick={() => toggle(item._id)}
 							checked={itemAssignments[item._id]}

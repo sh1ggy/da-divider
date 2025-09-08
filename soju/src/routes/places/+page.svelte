@@ -7,7 +7,7 @@
 	import { enhance } from '$app/forms';
 	import { addPlaceMsg, deletePlaceMsg } from '$lib';
 	import { getToastStore } from '@skeletonlabs/skeleton';
-	import type { SubmitFunction } from '@sveltejs/kit';
+	import type { ActionResult, SubmitFunction } from '@sveltejs/kit';
 
 	const toastStore = getToastStore();
 	interface Props {
@@ -18,7 +18,7 @@
 
 	let places: Place[] = $state(data.places);
 
-	// Handler (progressive enhancement) for adding a contact
+	// Handler (progressive enhancement) for adding a Place
 	const handleSubmitAddPlace: SubmitFunction = () => {
 		return async ({ result, update }) => {
 			let t;
@@ -42,6 +42,37 @@
 				default:
 					break;
 			}
+			await update();
+		};
+	};
+
+	const handleDeletePlaceResult = (
+		result: ActionResult<Record<string, unknown> | undefined, Record<string, unknown> | undefined>,
+		place: Place
+	) => {
+		const t = {
+			message: `${deletePlaceMsg} "${place.name}"`,
+			background: 'variant-filled-primary'
+		};
+		switch (result.type) {
+			case 'success':
+				toastStore.trigger(t);
+				// Match local state with deleted place
+				places = places.filter((p) => p._id !== place._id);
+				break;
+			case 'failure':
+				// TODO: failure handling for delete place
+				console.log('todo');
+				break;
+			default:
+				break;
+		}
+	};
+
+	const handleEnhance = (formData: FormData, place: Place) => () => {
+		formData.set('placeId', place._id);
+		return async ({ result, update }) => {
+			handleDeletePlaceResult(result, place);
 			await update();
 		};
 	};
@@ -75,7 +106,7 @@
 				</header>
 				<section class="mt-auto flex card-footer justify-center w-full gap-3">
 					<button
-						disabled={!!!place.items}
+						disabled={!!!place.items || !!!place.contacts}
 						onclick={() => goto(`/places/${place._id}/assignment`)}
 						class="btn btn-sm variant-filled-success"
 						><Icon icon="akar-icons:person" />
@@ -90,30 +121,7 @@
 					<form
 						action="?/delete"
 						method="POST"
-						use:enhance={({ formData }) => {
-							formData.set('placeId', place._id);
-
-							return async ({ result, update }) => {
-								const t = {
-									message: `${deletePlaceMsg} "${place.name}"`,
-									background: 'variant-filled-primary'
-								};
-								switch (result.type) {
-									case 'success':
-										toastStore.trigger(t);
-										// Match local state with deleted place
-										places = places.filter((p) => p._id !== place._id);
-										break;
-									case 'failure':
-										// TODO: failure handling for delete place
-										console.log('todo');
-										break;
-									default:
-										break;
-								}
-								await update();
-							};
-						}}
+						use:enhance={({ formData }) => handleEnhance(formData, place)}
 					>
 						<button class="btn btn-sm variant-filled-error"
 							><span><Icon icon="akar-icons:trash-can" /></span>

@@ -1,7 +1,10 @@
+// This file is a server-side module for handling the loading and actions of the contact edit page
 import { fail, type ServerLoad, type Actions } from '@sveltejs/kit';
 import type { Contact } from '../../../types/types';
 import { formUnchangedErrorMsg, groupId } from '$lib';
 
+// This function loads the contact data based on the slug parameter from the URL, 
+// returning it to the page on page load
 export const load: ServerLoad = async ({ params }) => {
 	const options = {
 		method: 'GET',
@@ -31,11 +34,13 @@ export const load: ServerLoad = async ({ params }) => {
 	};
 };
 
+// This function handles the form submission for editing a contact
+// It retrieves the form data, constructs a contact object, and sends a PUT request to update the contact
 export const actions: Actions = {
+	// -- SUBMIT ACTION (form submission)
 	submit: async ({ request, params }) => {
 		// Initialise form data
 		const formData = await request.formData();
-
 		const name = formData.get('name');
 		const email = formData.get('email');
 		const mobile = formData.get('mobile');
@@ -78,6 +83,7 @@ export const actions: Actions = {
 
 		return { response: response };
 	},
+	// -- DELETE ACTION (delete contact)
 	delete: async ({ params }) => {
 		// Fetch initialisation
 		const options = {

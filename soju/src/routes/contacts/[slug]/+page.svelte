@@ -1,14 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { addContactMsg, deleteContactMsg, editContactMsg } from '$lib';
+	import { deleteContactMsg, editContactMsg } from '$lib';
+	import { clipboard, getToastStore } from '@skeletonlabs/skeleton';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { ActionData } from '../$types.js';
 	import type { Contact } from '../../../types/types.js';
-	import { clipboard, getToastStore } from '@skeletonlabs/skeleton';
-
-	const toastStore = getToastStore();
-
 	interface Props {
 		form: ActionData;
 		data: { contact: Contact };
@@ -16,12 +13,13 @@
 
 	let { form, data }: Props = $props();
 	let contact: Contact | undefined = $state(data.contact);
+	const toastStore = getToastStore();
 
+	// Handler (progressive enhancement) for adding a Contact, the rest is done on the server-side
 	const handleSubmitContact: SubmitFunction = () => {
 		return async ({ result, update }) => {
 			if (!contact) return; // Early return
-
-			let t;
+			let t; // toast
 			switch (result.type) {
 				case 'success':
 					t = {
